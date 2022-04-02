@@ -1,0 +1,20 @@
+server:
+  port: 6064
+outer-service:
+  translator: http://localhost:6032/translate
+  avatar: http://localhost:6032/translate
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dating
+    username: postgres
+    password: postgres
+    hikari:
+      schema: dating
+  flyway:
+    enabled: false
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+logging:
+  level:
+    sql: debug
