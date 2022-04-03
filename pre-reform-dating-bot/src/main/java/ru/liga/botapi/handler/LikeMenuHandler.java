@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import ru.liga.Dto.SearchProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
 import ru.liga.keyboard.KeyboardName;
@@ -19,10 +20,10 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class FavoriteMenuHandler implements UserInputHandler {
-    private final UserDataCache userDataCache;
+public class LikeMenuHandler implements UserInputHandler {
     private final LocaleMessageService localeMessageService;
     private final KeyboardService keyboardService;
+    private final UserDataCache userDataCache;
 
     @Override
     public List<BotApiMethod<?>> handle(Message message) {
@@ -37,16 +38,13 @@ public class FavoriteMenuHandler implements UserInputHandler {
 
         UserProfileList userProfileList = userDataCache.getUserProfileList(userId);
 
-        if (text.equals(localeMessageService.getMessage("button.favorite.menu"))) {
-            sendMessage.setText("Главное меню");
-            sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.MAIN_MENU));
-            userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
-        } else if (text.equals(localeMessageService.getMessage("button.search.left"))) {
-            //здесь должна быть проверка по взаимным лайкам придется опять обращаться к серверу
-            sendMessage.setText(userProfileList.getPrevious().toString());
-        } else if (text.equals(localeMessageService.getMessage("button.search.right"))) {
-            //здесь должна быть проверка по взаимным лайкам придется опять обращаться к серверу
-            sendMessage.setText(userProfileList.getNext().toString());
+        if (text.equals(localeMessageService.getMessage("button.like.next"))) {
+            SearchProfileDto next = userProfileList.getNext();
+            sendMessage.setText(next.getChatId() + "=" + next.getName());
+            sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.SEARCH_MENU));
+            userDataCache.setUserCurrentBotState(userId, BotState.SEARCH_MENU);
+        } else if (text.equals(localeMessageService.getMessage("button.like.chat"))) {
+            sendMessage.setText("Функционал не доступен, перейдите к следующей анкете");
         } else {
             sendMessage.setText(localeMessageService.getMessage("reply.error.invalidValue"));
         }
@@ -58,6 +56,6 @@ public class FavoriteMenuHandler implements UserInputHandler {
 
     @Override
     public BotState getHandlerName() {
-        return BotState.FAVORITE_MENU;
+        return BotState.LIKE_MENU;
     }
 }

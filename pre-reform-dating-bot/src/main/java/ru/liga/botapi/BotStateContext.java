@@ -1,7 +1,7 @@
 package ru.liga.botapi;
 
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.liga.botapi.handler.UserInputHandler;
 
@@ -17,7 +17,7 @@ public class BotStateContext {
         messageHandlerList.forEach(handler -> this.messageHandlerMap.put(handler.getHandlerName(), handler));
     }
 
-    public SendMessage processInputMessage(BotState currentState, Message message) {
+    public List<BotApiMethod<?>> processInputMessage(BotState currentState, Message message) {
         UserInputHandler currentMessageHandler = messageHandlerMap.get(currentState);
         return currentMessageHandler.handle(message);
     }

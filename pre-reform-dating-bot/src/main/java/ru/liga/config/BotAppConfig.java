@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import ru.liga.Bot;
 import ru.liga.botapi.TelegramFacade;
+import ru.liga.cache.UserDataCache;
 
 
 @Getter
@@ -20,12 +21,10 @@ public class BotAppConfig {
     private String botToken;
 
     @Bean
-    public Bot Bot(TelegramFacade telegramFacade) {
-        Bot bot = new Bot(telegramFacade);
-
+    public Bot Bot(TelegramFacade telegramFacade, UserDataCache userDataCache) {
+        Bot bot = new Bot(telegramFacade, userDataCache);
         bot.setBotUsername(botUsername);
         bot.setBotToken(botToken);
-
         return bot;
     }
 

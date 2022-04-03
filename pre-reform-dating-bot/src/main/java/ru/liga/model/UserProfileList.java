@@ -32,4 +32,8 @@ public class UserProfileList {
     private boolean isLast() {
         return idx == userProfileList.size() - 1;
     }
+
+    public boolean isEmpty() {
+        return userProfileList.isEmpty();
+    }
 }

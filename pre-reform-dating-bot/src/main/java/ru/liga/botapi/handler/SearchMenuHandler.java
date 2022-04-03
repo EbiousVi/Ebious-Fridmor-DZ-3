@@ -7,29 +7,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import ru.liga.Dto.Favourites;
 import ru.liga.Dto.FavouritesDto;
 import ru.liga.Dto.SearchProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
-import ru.liga.keyboard.Keyboard;
+import ru.liga.keyboard.KeyboardName;
 import ru.liga.keyboard.KeyboardService;
 import ru.liga.model.UserProfileList;
 import ru.liga.service.LocaleMessageService;
+import ru.liga.service.RestTemplateService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class SearchMenuHandler implements UserInputHandler {
-
-    private final UserDataCache userDataCache;
     private final LocaleMessageService localeMessageService;
+    private final RestTemplateService restTemplateService;
     private final KeyboardService keyboardService;
-    private final RestTemplate restTemplate;
+    private final UserDataCache userDataCache;
 
     @Override
-    public SendMessage handle(Message message) {
+    public List<BotApiMethod<?>> handle(Message message) {
+        List<BotApiMethod<?>> botApiMethodList = new ArrayList<>();
+
         long userId = message.getFrom().getId();
         long chatId = message.getChatId();
         String text = message.getText();
@@ -40,38 +47,30 @@ public class SearchMenuHandler implements UserInputHandler {
         UserProfileList userProfileList = userDataCache.getUserProfileList(userId);
 
         if (text.equals(localeMessageService.getMessage("button.search.menu"))) {
-            sendMessage.setText("Главное меню");
-            sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(Keyboard.MAIN_MENU));
+            sendMessage.setText(localeMessageService.getMessage("reply.main.info"));
+            sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.MAIN_MENU));
             userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
         } else if (text.equals(localeMessageService.getMessage("button.search.left"))) {
-            sendMessage.setText(userProfileList.getNext().toString());
-        } else if (text.equals(localeMessageService.getMessage("button.search.right"))) {
-            //ставим лайк обращаемся к серверу и проверяем есть ли взаимный лайк
             SearchProfileDto next = userProfileList.getNext();
             sendMessage.setText(next.getChatId() + "=" + next.getName());
-            restChooseAFavourite(chatId, next.getChatId());
+        } else if (text.equals(localeMessageService.getMessage("button.search.right"))) {
+            SearchProfileDto current = userProfileList.getCurrent();
+            restTemplateService.setFavoriteUser(chatId, current.getChatId());
+            if (current.getFavourites() != null && current.getFavourites().equals(Favourites.ME)) {
+                sendMessage.setText("Вы любимы");
+                sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.LIKE_MENU));
+                userDataCache.setUserCurrentBotState(userId, BotState.LIKE_MENU);
+            } else {
+                SearchProfileDto next = userProfileList.getNext();
+                sendMessage.setText(next.getChatId() + "=" + next.getName());
+            }
         } else {
             sendMessage.setText(localeMessageService.getMessage("reply.error.invalidValue"));
         }
 
-        return sendMessage;
-    }
+        botApiMethodList.add(sendMessage);
 
-
-    public void restChooseAFavourite(Long fromChatId, Long toChatId) {
-        try {
-            HttpEntity<FavouritesDto> request = new HttpEntity<>(new FavouritesDto(fromChatId, toChatId));
-
-            ResponseEntity<Void> resp = restTemplate.postForEntity("http://localhost:6064/dating-server/favourites/like", request, Void.class);
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return;
-            } else {
-                throw new RuntimeException("Pre reform translator return bad response!");
-            }
-        } catch (RestClientException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
+        return botApiMethodList;
     }
 
     @Override

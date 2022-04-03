@@ -1,5 +1,6 @@
 package ru.liga.keyboard;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
@@ -9,15 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class KeyboardService {
-    private LocaleMessageService messageService;
+    private final LocaleMessageService messageService;
 
-    public KeyboardService(LocaleMessageService messageService) {
-        this.messageService = messageService;
-    }
-
-    public ReplyKeyboardMarkup getReplyKeyboard(Keyboard keyboard) {
+    public ReplyKeyboardMarkup getReplyKeyboard(KeyboardName keyboard) {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+
         switch (keyboard) {
             case MAIN_MENU:
                 replyKeyboardMarkup.setKeyboard(getMainMenuButtons());
@@ -25,17 +24,19 @@ public class KeyboardService {
             case SEARCH_MENU:
                 replyKeyboardMarkup.setKeyboard(getSearchMenuButtons());
                 break;
-            case PROFILE_MENU:
+            case LIKE_MENU:
+                replyKeyboardMarkup.setKeyboard(getLikeMenuButtons());
             case FAVORITE_MENU:
-                replyKeyboardMarkup.setKeyboard(getLikesMenuButtons());
+                replyKeyboardMarkup.setKeyboard(getFavoriteMenuButtons());
                 break;
             case GENDER_SELECT:
-                replyKeyboardMarkup.setKeyboard(getGenderButtons());
+                replyKeyboardMarkup.setKeyboard(getGenderSelectButtons());
                 break;
             case PREFERENCE_SELECT:
-                replyKeyboardMarkup.setKeyboard(getPreferenceButtons());
+                replyKeyboardMarkup.setKeyboard(getPreferenceSelectButtons());
                 break;
         }
+
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setSelective(true);
 
@@ -46,9 +47,9 @@ public class KeyboardService {
         List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow row1 = new KeyboardRow();
-        row1.add(messageService.getMessage("button.main.search" ));
+        row1.add(messageService.getMessage("button.main.search"));
         KeyboardRow row2 = new KeyboardRow();
-        row2.add(messageService.getMessage("button.main.profile" ));
+        row2.add(messageService.getMessage("button.main.profile"));
         KeyboardRow row3 = new KeyboardRow();
         row3.add(messageService.getMessage("button.main.favorite"));
 
@@ -63,10 +64,10 @@ public class KeyboardService {
         List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow row1 = new KeyboardRow();
-        row1.add(messageService.getMessage("button.search.left" ));
-        row1.add(messageService.getMessage("button.search.right" ));
+        row1.add(messageService.getMessage("button.search.left"));
+        row1.add(messageService.getMessage("button.search.right"));
         KeyboardRow row2 = new KeyboardRow();
-        row2.add(messageService.getMessage("button.search.menu" ));
+        row2.add(messageService.getMessage("button.search.menu"));
 
         keyboard.add(row1);
         keyboard.add(row2);
@@ -74,7 +75,21 @@ public class KeyboardService {
         return keyboard;
     }
 
-    private List<KeyboardRow> getLikesMenuButtons() {
+    private List<KeyboardRow> getLikeMenuButtons() {
+        List<KeyboardRow> keyboard = new ArrayList<>();
+
+        KeyboardRow row1 = new KeyboardRow();
+        row1.add(messageService.getMessage("button.like.next"));
+        KeyboardRow row2 = new KeyboardRow();
+        row2.add(messageService.getMessage("button.like.chat"));
+
+        keyboard.add(row1);
+        keyboard.add(row2);
+
+        return keyboard;
+    }
+
+    private List<KeyboardRow> getFavoriteMenuButtons() {
         List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow row1 = new KeyboardRow();
@@ -89,26 +104,26 @@ public class KeyboardService {
         return keyboard;
     }
 
-    private List<KeyboardRow> getGenderButtons() {
+    private List<KeyboardRow> getGenderSelectButtons() {
         List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow row = new KeyboardRow();
-        row.add(messageService.getMessage("button.gender.male" ));
-        row.add(messageService.getMessage("button.gender.female" ));
+        row.add(messageService.getMessage("button.gender.male"));
+        row.add(messageService.getMessage("button.gender.female"));
 
         keyboard.add(row);
 
         return keyboard;
     }
 
-    private List<KeyboardRow> getPreferenceButtons() {
+    private List<KeyboardRow> getPreferenceSelectButtons() {
         List<KeyboardRow> keyboard = new ArrayList<>();
 
         KeyboardRow row1 = new KeyboardRow();
-        row1.add(messageService.getMessage("button.preference.male" ));
-        row1.add(messageService.getMessage("button.preference.female" ));
+        row1.add(messageService.getMessage("button.preference.male"));
+        row1.add(messageService.getMessage("button.preference.female"));
         KeyboardRow row2 = new KeyboardRow();
-        row2.add(messageService.getMessage("button.preference.all" ));
+        row2.add(messageService.getMessage("button.preference.all"));
 
         keyboard.add(row1);
         keyboard.add(row2);

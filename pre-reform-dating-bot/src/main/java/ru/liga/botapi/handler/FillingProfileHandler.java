@@ -7,17 +7,19 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
-import ru.liga.keyboard.Keyboard;
+import ru.liga.keyboard.KeyboardName;
 import ru.liga.keyboard.KeyboardService;
 import ru.liga.model.UserProfileGender;
 import ru.liga.model.UserProfileData;
 import ru.liga.model.UserProfileState;
 import ru.liga.service.LocaleMessageService;
+import ru.liga.service.RestTemplateService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +29,15 @@ import java.util.stream.Stream;
 @Component
 @RequiredArgsConstructor
 public class FillingProfileHandler implements UserInputHandler {
-    private final UserDataCache userDataCache;
     private final LocaleMessageService localeMessageService;
+    private final RestTemplateService restTemplateService;
     private final KeyboardService keyboardService;
-    private final RestTemplate restTemplate;
+    private final UserDataCache userDataCache;
 
     @Override
-    public SendMessage handle(Message message) {
+    public List<BotApiMethod<?>> handle(Message message) {
+        List<BotApiMethod<?>> botApiMethodList = new ArrayList<>();
+
         long userId = message.getFrom().getId();
         long chatId = message.getChatId();
         String text = message.getText();
@@ -50,12 +54,12 @@ public class FillingProfileHandler implements UserInputHandler {
                 userDataCache.setUserProfileData(userId, profileData);
                 profileData.setProfileState(UserProfileState.SET_GENDER);
                 sendMessage.setText(localeMessageService.getMessage("reply.fill.askGender"));
-                sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(Keyboard.GENDER_SELECT));
+                sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.GENDER_SELECT));
                 break;
             case SET_GENDER:
                 if (Stream.of(UserProfileGender.values()).noneMatch(g -> g.getValue().equals(text))) {
                     sendMessage.setText(localeMessageService.getMessage("reply.error.invalidValue"));
-                    sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(Keyboard.GENDER_SELECT));
+                    sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.GENDER_SELECT));
                     break;
                 }
                 profileData.setSex(UserProfileGender.getByValue(text));
@@ -73,13 +77,13 @@ public class FillingProfileHandler implements UserInputHandler {
                 profileData.setDescription(text);
                 profileData.setProfileState(UserProfileState.SET_PREFERENCE);
                 sendMessage.setText(localeMessageService.getMessage("reply.fill.askPreference"));
-                sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(Keyboard.PREFERENCE_SELECT));
+                sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.PREFERENCE_SELECT));
                 break;
             case SET_PREFERENCE:
                 if (Stream.of(UserProfileGender.values()).noneMatch(g -> g.getValue().equals(text)) &&
                         !text.equals(localeMessageService.getMessage("button.preference.all"))) {
                     sendMessage.setText(localeMessageService.getMessage("reply.error.invalidValue"));
-                    sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(Keyboard.PREFERENCE_SELECT));
+                    sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.PREFERENCE_SELECT));
                     break;
                 }
                 List<UserProfileGender> preferenceList = new ArrayList<>();
@@ -91,26 +95,21 @@ public class FillingProfileHandler implements UserInputHandler {
                 }
                 profileData.setPreferences(preferenceList);
                 profileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
-                //Выводим на экран анкету пользователя
-                rest(profileData);
-                sendMessage.setText(profileData.toString());
-                sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(Keyboard.MAIN_MENU));
+
+                sendMessage.setText(localeMessageService.getMessage("reply.main.info"));
+                sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.MAIN_MENU));
                 userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
+
+                restTemplateService.createUserProfile(profileData);
                 break;
             default:
                 log.error("Filling profile error in {} class", FillingProfileHandler.class.getSimpleName());
                 sendMessage.setText("Ошибка на стороне сервера: filling profile error");
         }
-        return sendMessage;
-    }
 
-    public void rest(UserProfileData userProfile) {
-        HttpEntity<UserProfileData> request = new HttpEntity<>(userProfile);
-        String url = "http://localhost:6064/dating-server/profiles/";
-        ResponseEntity<Resource> resourceResponseEntity = restTemplate.postForEntity(url, request, Resource.class);
-        if (!resourceResponseEntity.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("asdasdausdjasd");
-        }
+        botApiMethodList.add(sendMessage);
+
+        return botApiMethodList;
     }
 
     @Override

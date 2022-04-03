@@ -6,10 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import ru.liga.Dto.NewProfileDto;
-import ru.liga.Dto.SearchProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.model.UserProfileData;
-import ru.liga.model.UserProfileGender;
 import ru.liga.model.UserProfileList;
 
 import java.util.ArrayList;
@@ -79,8 +77,9 @@ public class UserDataCache {
                 throw new RuntimeException("Pre reform translator return bad response!");
             }
         } catch (RestClientException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
+//            e.printStackTrace();
+//            throw new RuntimeException(e.getMessage());
+            return null;
         }
     }
 }
