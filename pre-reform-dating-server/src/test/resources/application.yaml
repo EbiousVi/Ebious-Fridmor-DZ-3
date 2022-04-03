@@ -17,4 +17,5 @@ spring:
       fail-on-empty-beans: false
 logging:
   level:
-    sql: debug
+    sql: TRACE
+    org.springframework.jdbc.core: TRACE

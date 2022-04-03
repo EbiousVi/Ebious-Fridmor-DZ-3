@@ -23,6 +23,9 @@ spring:
       fail-on-empty-beans: false
 logging:
   level:
-    sql: debug
+    sql: DEBUG
+    org.springframework.jdbc.core: DEBUG
+
+
 
 
