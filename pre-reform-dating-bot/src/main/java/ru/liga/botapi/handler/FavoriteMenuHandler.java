@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import ru.liga.Dto.SearchProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
 import ru.liga.keyboard.KeyboardName;
@@ -38,15 +39,25 @@ public class FavoriteMenuHandler implements UserInputHandler {
         UserProfileList userProfileList = userDataCache.getUserProfileList(userId);
 
         if (text.equals(localeMessageService.getMessage("button.favorite.menu"))) {
-            sendMessage.setText("Главное меню");
+            sendMessage.setText(localeMessageService.getMessage("reply.main.info"));
             sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.MAIN_MENU));
             userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
         } else if (text.equals(localeMessageService.getMessage("button.search.left"))) {
-            //здесь должна быть проверка по взаимным лайкам придется опять обращаться к серверу
-            sendMessage.setText(userProfileList.getPrevious().toString());
+            SearchProfileDto searchProfileDto = userProfileList.getPrevious();
+            String likesInfo = searchProfileDto.getFavourites().value;
+            if (likesInfo != null) {
+                sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": " + likesInfo);
+            } else {
+                sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": no info about likes");
+            }
         } else if (text.equals(localeMessageService.getMessage("button.search.right"))) {
-            //здесь должна быть проверка по взаимным лайкам придется опять обращаться к серверу
-            sendMessage.setText(userProfileList.getNext().toString());
+            SearchProfileDto searchProfileDto = userProfileList.getNext();
+            String likesInfo = searchProfileDto.getFavourites().value;
+            if (likesInfo != null) {
+                sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": " + likesInfo);
+            } else {
+                sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": no info about likes");
+            }
         } else {
             sendMessage.setText(localeMessageService.getMessage("reply.error.invalidValue"));
         }
