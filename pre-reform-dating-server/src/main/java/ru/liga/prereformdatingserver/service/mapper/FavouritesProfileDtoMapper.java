@@ -30,9 +30,9 @@ public class FavouritesProfileDtoMapper {
 
     public FavouritesProfileDto map(UserProfile userProfile, Favourites favourites) {
         TypeMap<UserProfile, FavouritesProfileDto> typeMap = mapper.getTypeMap(UserProfile.class, FavouritesProfileDto.class);
-        typeMap.addMapping(UserProfile::getChatId, (FavouritesProfileDto::setChatId));
-        typeMap.addMapping(UserProfile::getName, (FavouritesProfileDto::setName));
-        typeMap.addMapping(UserProfile::getSex, (FavouritesProfileDto::setSex));
+        typeMap.addMapping(UserProfile::getChatId, FavouritesProfileDto::setChatId);
+        typeMap.addMapping(UserProfile::getName, FavouritesProfileDto::setName);
+        typeMap.addMapping(UserProfile::getSex, FavouritesProfileDto::setSex);
         FavouritesProfileDto favouritesProfileDto = mapper.map(userProfile, FavouritesProfileDto.class);
         favouritesProfileDto.setFavourites(favourites);
         favouritesProfileDto.setAvatar(storage.avatarToByteArray(userProfile.getAvatar()));

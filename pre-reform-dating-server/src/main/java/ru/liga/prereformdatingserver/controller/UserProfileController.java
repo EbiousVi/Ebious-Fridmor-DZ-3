@@ -4,33 +4,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.liga.prereformdatingserver.domain.dto.profileDto.CreateProfileDto;
 import ru.liga.prereformdatingserver.domain.dto.profileDto.NewProfileDto;
-import ru.liga.prereformdatingserver.domain.entity.UserProfile;
-import ru.liga.prereformdatingserver.service.dao.profile.UserCreatorService;
-import ru.liga.prereformdatingserver.service.dao.profile.UserProfileService;
+import ru.liga.prereformdatingserver.domain.dto.profileDto.UserProfileDto;
+import ru.liga.prereformdatingserver.service.profile.ProfileCreatorService;
 
 
 @RestController
 @RequestMapping("/dating-server")
 public class UserProfileController {
 
-    private final UserCreatorService userCreatorService;
-    private final UserProfileService userProfileService;
+    private final ProfileCreatorService profileCreatorService;
 
     @Autowired
-    public UserProfileController(UserCreatorService userCreatorService,
-                                 UserProfileService userProfileService) {
-        this.userCreatorService = userCreatorService;
-        this.userProfileService = userProfileService;
+    public UserProfileController(ProfileCreatorService profileCreatorService) {
+        this.profileCreatorService = profileCreatorService;
+    }
+
+    @GetMapping("/profiles/{chatId}")
+    public UserProfileDto getUserProfile(@PathVariable Long chatId) {
+        return profileCreatorService.getProfileDtoByChatId(chatId);
     }
 
     @PostMapping("/profiles")
     public CreateProfileDto registerProfile(@RequestBody NewProfileDto newProfileDto) {
-        return userCreatorService.createProfile(newProfileDto);
+        return profileCreatorService.createProfile(newProfileDto);
     }
 
-    @GetMapping("/profiles/{chatId}")
-    public NewProfileDto registerProfile(@PathVariable Long chatId) {
-        return userCreatorService.getUser(chatId);
+    @PutMapping("/profile/{chatId}")
+    public void updateUserProfile(@PathVariable Long chatId, @RequestBody NewProfileDto profileDto) {
+        profileCreatorService.updateProfile(chatId, profileDto);
     }
 }
 
