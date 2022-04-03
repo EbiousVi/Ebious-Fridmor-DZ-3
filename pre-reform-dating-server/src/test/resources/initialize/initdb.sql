@@ -1,8 +1,8 @@
-CREATE SCHEMA DATING;
+CREATE SCHEMA IF NOT EXISTS DATING;
 
 CREATE TYPE dating.sex AS ENUM ('Сударъ', 'Сударыня');
 
-CREATE CAST (varchar AS dating.sex) WITH INOUT AS IMPLICIT;
+CREATE CAST (VARCHAR AS dating.sex) WITH INOUT AS IMPLICIT;
 
 CREATE TABLE dating.user_profile
 (
@@ -11,7 +11,7 @@ CREATE TABLE dating.user_profile
     sex         dating.sex   NOT NULL,
     description TEXT         NOT NULL,
     avatar      VARCHAR(255),
-    CONSTRAINT pk_user_profile PRIMARY KEY (chat_id)
+    CONSTRAINT PK_user_profile PRIMARY KEY (chat_id)
 );
 
 CREATE TABLE dating.preferences
@@ -19,8 +19,8 @@ CREATE TABLE dating.preferences
     id      BIGINT GENERATED ALWAYS AS IDENTITY,
     chat_id BIGINT     NOT NULL REFERENCES dating.user_profile (chat_id) ON DELETE CASCADE ON UPDATE CASCADE,
     sex     dating.sex NOT NULL,
-    CONSTRAINT pk_preferences PRIMARY KEY (id),
-    CONSTRAINT preferences_chat_id_sex_unique UNIQUE (chat_id, sex)
+    CONSTRAINT PK_preferences PRIMARY KEY (id),
+    CONSTRAINT UQ_preferences_chat_id_sex UNIQUE (chat_id, sex)
 );
 
 CREATE TABLE dating.favourites
@@ -28,28 +28,37 @@ CREATE TABLE dating.favourites
     id           BIGINT GENERATED ALWAYS AS IDENTITY,
     from_chat_id BIGINT REFERENCES dating.user_profile (chat_id) ON DELETE CASCADE ON UPDATE CASCADE,
     to_chat_id   BIGINT REFERENCES dating.user_profile (chat_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT pk_favourites PRIMARY KEY (id),
-    CONSTRAINT from_chat_id_to_chat_id_unique UNIQUE (from_chat_id, to_chat_id)
+    CONSTRAINT PK_favourites PRIMARY KEY (id),
+    CONSTRAINT UQ_from_chat_id_to_chat_id UNIQUE (from_chat_id, to_chat_id)
 );
 
+CREATE TABLE dating.credentials
+(
+    id            BIGINT GENERATED ALWAYS AS IDENTITY,
+    chat_id       BIGINT REFERENCES dating.user_profile (chat_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    refresh_token BIGINT REFERENCES dating.user_profile (chat_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT PK_credentials PRIMARY KEY (id)
+);
+--MALE
 -------------------------------------------------------------------------------------
 INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (100, 'U_100', 'U_100 like_to(500,700) like_from(500) mathces(500)', 'Сударъ', '1.jpg');
+VALUES (100, 'U_100', 'U_100_DESCRIPTION', 'Сударъ', '1.jpg');
 INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (200, 'U_200', 'U_200 like_to(600) like_from(700) mathces(-)', 'Сударъ', '2.jpg');
+VALUES (200, 'U_200', 'U_200_DESCRIPTION', 'Сударъ', '2.jpg');
 INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (300, 'U_300', 'U_300 like_to(700) like_from(600) mathces(-)', 'Сударъ', '3.jpg');
+VALUES (300, 'U_300', 'U_300_DESCRIPTION', 'Сударъ', '3.jpg');
 INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (400, 'U_400', 'U_4_INFO', 'Сударъ', '4.jpg');
+VALUES (400, 'U_400', 'U_400_DESCRIPTION', 'Сударъ', '4.jpg');
+--FEMALE
 -------------------------------------------------------------------------------------
 INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (500, 'U_500', 'U_500 like_to(100) like_from(100) mathces(100)', 'Сударыня', '5.jpg');
+VALUES (500, 'U_500', 'U_500_DESCRIPTION', 'Сударыня', '5.jpg');
 INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (600, 'U_600', 'U_600 like_to(300) like_from(200) mathces(-)', 'Сударыня', '6.jpg');
+VALUES (600, 'U_600', 'U_600_DESCRIPTION', 'Сударыня', '6.jpg');
 INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (700, 'U_700', 'U_700 like_to(200) like_from(300) mathces(-)', 'Сударыня', '7.jpg');
+VALUES (700, 'U_700', 'U_700_DESCRIPTION', 'Сударыня', '7.jpg');
 INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (800, 'U_800', 'U_800 FIND_ALL', 'Сударыня', '8.jpg');
+VALUES (800, 'U_800', 'U_800_DESCRIPTION', 'Сударыня', '8.jpg');
 -------------------------------------------------------------------------------------
 INSERT INTO dating.preferences (chat_id, sex)
 VALUES (100, 'Сударыня');
@@ -70,6 +79,7 @@ INSERT INTO dating.preferences (chat_id, sex)
 VALUES (800, 'Сударъ');
 INSERT INTO dating.preferences (chat_id, sex)
 VALUES (800, 'Сударыня');
+--bi
 -------------------------------------------------------------------------------------
 --MATCHES
 INSERT INTO dating.favourites (from_chat_id, to_chat_id)
@@ -86,5 +96,7 @@ VALUES (300, 700);
 --FEMALE LIKES
 INSERT INTO dating.favourites (from_chat_id, to_chat_id)
 VALUES (600, 300);
+INSERT INTO dating.favourites (from_chat_id, to_chat_id)
+VALUES (600, 100);
 INSERT INTO dating.favourites (from_chat_id, to_chat_id)
 VALUES (700, 200);

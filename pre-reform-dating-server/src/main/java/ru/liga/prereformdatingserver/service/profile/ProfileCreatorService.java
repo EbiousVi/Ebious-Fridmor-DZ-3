@@ -1,15 +1,13 @@
 package ru.liga.prereformdatingserver.service.profile;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.CreateProfileDto;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.NewProfileDto;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.UserProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.req.NewProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.resp.UserProfileDto;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
 import ru.liga.prereformdatingserver.domain.enums.Sex;
-import ru.liga.prereformdatingserver.service.mapper.CreateProfileDtoMapper;
+import ru.liga.prereformdatingserver.service.mapper.UserProfileDtoMapper;
 import ru.liga.prereformdatingserver.service.outer.avatar.RestAvatarService;
 import ru.liga.prereformdatingserver.service.outer.translator.RestTranslatorService;
 
@@ -22,26 +20,26 @@ public class ProfileCreatorService {
     private final RestTranslatorService restTranslatorService;
     private final RestAvatarService restAvatarService;
     private final UserProfileService userProfileService;
-    private final CreateProfileDtoMapper createProfileDtoMapper;
+    private final UserProfileDtoMapper userProfileDtoMapper;
 
     @Autowired
     public ProfileCreatorService(RestTranslatorService restTranslatorService, RestAvatarService restAvatarService,
-                                 UserProfileService userProfileService, CreateProfileDtoMapper createProfileDtoMapper) {
+                                 UserProfileService userProfileService, UserProfileDtoMapper userProfileDtoMapper) {
         this.restTranslatorService = restTranslatorService;
         this.restAvatarService = restAvatarService;
         this.userProfileService = userProfileService;
-        this.createProfileDtoMapper = createProfileDtoMapper;
+        this.userProfileDtoMapper = userProfileDtoMapper;
     }
 
     @Transactional
-    public CreateProfileDto createProfile(NewProfileDto dto) {
+    public UserProfileDto createProfile(NewProfileDto dto) {
        /* String description = restTranslatorService.translateIntoPreReformDialect(dto.getDescription());
         dto.setDescription(description);
         Path avatar = restAvatarService.createAvatar(dto.getDescription());
         dto.setAvatar(avatar);*/
         dto.setAvatar(Path.of("1.jpg"));
         UserProfile userProfile = userProfileService.createUserProfile(dto);
-        return createProfileDtoMapper.map(userProfile);
+        return userProfileDtoMapper.map(userProfile);
     }
 
     @Transactional

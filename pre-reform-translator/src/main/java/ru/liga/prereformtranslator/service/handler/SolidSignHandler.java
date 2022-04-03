@@ -12,12 +12,12 @@ import java.util.regex.Pattern;
  * Исключение — слова, оканчивающиеся на «и краткое»: й считался гласной.
  * В тех словах, где мы сейчас пишем на конце мягкий знак, в дореформенной орфографии тоже нужен он: олень, мышь, сидишь.
  */
-
 @Service
 @Order(3)
 public class SolidSignHandler implements Handler {
 
     private static final Pattern CONSONANT_AT_THE_END = Pattern.compile("[бвгджзклмнпрстфхцчшщ]$");
+    private static final String END_OF_WORD_PATTERN = "ь$";
     private static final String SOFT_SIGN = "ь";
     private static final String SOLID_SIGN = "ъ";
 
@@ -37,7 +37,7 @@ public class SolidSignHandler implements Handler {
 
     private String replaceSoftSignAtTheEnd(String token) {
         if (token.endsWith(SOFT_SIGN)) {
-            return token.replaceAll(SOFT_SIGN + "$", SOLID_SIGN);
+            return token.replaceAll(END_OF_WORD_PATTERN, SOLID_SIGN);
         }
         return token;
     }

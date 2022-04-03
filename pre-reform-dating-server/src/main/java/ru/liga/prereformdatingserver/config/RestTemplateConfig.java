@@ -10,10 +10,13 @@ import java.time.Duration;
 @Configuration
 public class RestTemplateConfig {
 
+    private static final long TIMEOUT = 300_000L;
+    private static final long READ_TIMEOUT = 300_000L;
+
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.setConnectTimeout(Duration.ofMillis(300_000))
-                .setReadTimeout(Duration.ofMillis(300_000))
+        return builder.setConnectTimeout(Duration.ofMillis(TIMEOUT))
+                .setReadTimeout(Duration.ofMillis(READ_TIMEOUT))
                 .build();
     }
 }

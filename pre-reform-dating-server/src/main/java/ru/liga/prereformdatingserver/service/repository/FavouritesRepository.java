@@ -13,7 +13,4 @@ public interface FavouritesRepository extends CrudRepository<Favourites, Long> {
             "       (SELECT * FROM DATING.FAVOURITES " +
             "        WHERE FROM_CHAT_ID = :from AND TO_CHAT_ID = :to)")
     Boolean checkMatches(@Param("from") Long from, @Param("to") Long to);
-
-
-
 }

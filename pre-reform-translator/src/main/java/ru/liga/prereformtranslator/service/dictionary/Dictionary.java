@@ -1,5 +1,8 @@
 package ru.liga.prereformtranslator.service.dictionary;
 
+import lombok.Data;
+
+@Data
 public class Dictionary {
 
     private final String key;
@@ -8,21 +11,5 @@ public class Dictionary {
     public Dictionary(String key, String value) {
         this.key = key;
         this.value = value;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        return "Dictionary{" +
-                "key='" + key + '\'' +
-                ", value='" + value + '\'' +
-                '}';
     }
 }

@@ -1,5 +1,6 @@
 package ru.liga.prereformtranslator.service.dictionary;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +10,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class DictionaryService {
 
     private final CsvReader csvReader;
-    private Map<String, String> dictionary;
+    private Map<String, String> dictionary ;
 
     @Autowired
     public DictionaryService(CsvReader csvReader) {
@@ -21,16 +23,15 @@ public class DictionaryService {
 
     @PostConstruct
     public void initDictionary() {
-        Map<String, String> csv = null;
         try {
-            csv = csvReader.readDataSetFromCsv()
+            Map<String, String> init = csvReader.readDataSetFromCsv()
                     .stream()
                     .collect(Collectors.toMap(Dictionary::getKey, Dictionary::getValue));
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            dictionary = Collections.unmodifiableMap(init);
+        } catch (ReaderException e) {
+            log.error("Can not init translator!", e);
+            System.exit(-1);
         }
-        dictionary = Collections.unmodifiableMap(csv);
     }
 
     public String getMask(String key) {

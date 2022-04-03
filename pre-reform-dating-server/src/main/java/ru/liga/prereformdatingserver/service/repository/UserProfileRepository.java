@@ -40,10 +40,11 @@ public interface UserProfileRepository extends CrudRepository<UserProfile, Long>
             "WHERE SEARCHED_PROFILE.SEX IN " +
             "                              (SELECT SEX FROM DATING.PREFERENCES AS USER_PREF " +
             "                               WHERE USER_PREF.CHAT_ID = :chatId) " +
+            "AND SEARCHED_PROFILE.CHAT_ID != :chatId " +
             "AND EXISTS " +
             "       (SELECT * FROM DATING.PREFERENCES AS SEARCHED_PROFILE_PREF " +
             "        WHERE SEARCHED_PROFILE_PREF.CHAT_ID = SEARCHED_PROFILE.CHAT_ID " +
-            "        AND SEARCHED_PROFILE_PREF.SEX IN " +
+            "        AND SEARCHED_PROFILE_PREF.SEX = " +
             "                                        (SELECT SEX FROM DATING.USER_PROFILE AS USER_PROF " +
             "                                         WHERE USER_PROF.CHAT_ID = :chatId)) " +
             "AND NOT EXISTS " +

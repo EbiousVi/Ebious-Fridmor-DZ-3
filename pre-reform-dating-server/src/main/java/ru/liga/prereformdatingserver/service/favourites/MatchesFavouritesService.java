@@ -2,7 +2,7 @@ package ru.liga.prereformdatingserver.service.favourites;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.FavouritesProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.resp.FavouritesProfileDto;
 import ru.liga.prereformdatingserver.domain.enums.Favourites;
 import ru.liga.prereformdatingserver.service.repository.UserProfileRepository;
 import ru.liga.prereformdatingserver.service.mapper.FavouritesProfileDtoMapper;

@@ -1,8 +1,7 @@
-package ru.liga.prereformdatingserver.domain.dto.profileDto;
+package ru.liga.prereformdatingserver.domain.dto.profile.resp;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import ru.liga.prereformdatingserver.domain.enums.Sex;
 
 import java.util.List;
@@ -12,7 +11,10 @@ import java.util.List;
 public class UserProfileDto {
     private Long chatId;
     private String name;
-    private String description;
     private Sex sex;
+    private String description;
     private List<Sex> preferences;
+    private byte[] avatar;
 }
+//после регистрации
+//или запроса на проверку существования

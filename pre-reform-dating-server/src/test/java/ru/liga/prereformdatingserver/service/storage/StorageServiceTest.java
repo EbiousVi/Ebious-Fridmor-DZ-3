@@ -28,7 +28,7 @@ class StorageServiceTest {
 
     @Test
     void avatarToByteArray() {
-        byte[] bytes = storage.avatarToByteArray("1.jpg");
+        byte[] bytes = storage.findAvatarAsByteArray("1.jpg");
         assertThat(bytes).hasSizeGreaterThan(1);
     }
 

@@ -2,11 +2,9 @@ package ru.liga.prereformdatingserver.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.CreateProfileDto;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.NewProfileDto;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.UserProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.req.NewProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.resp.UserProfileDto;
 import ru.liga.prereformdatingserver.service.profile.ProfileCreatorService;
-
 
 @RestController
 @RequestMapping("/dating-server")
@@ -25,7 +23,7 @@ public class UserProfileController {
     }
 
     @PostMapping("/profiles")
-    public CreateProfileDto registerProfile(@RequestBody NewProfileDto newProfileDto) {
+    public UserProfileDto registerProfile(@RequestBody NewProfileDto newProfileDto) {
         return profileCreatorService.createProfile(newProfileDto);
     }
 

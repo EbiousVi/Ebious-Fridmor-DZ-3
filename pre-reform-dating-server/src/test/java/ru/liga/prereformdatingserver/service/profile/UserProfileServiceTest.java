@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectUpdateSemanticsDataAccessException;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import ru.liga.prereformdatingserver.PostgresContainer;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.NewProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.req.NewProfileDto;
 import ru.liga.prereformdatingserver.domain.entity.Preferences;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
 import ru.liga.prereformdatingserver.domain.enums.Sex;
@@ -30,7 +30,7 @@ class UserProfileServiceTest extends PostgresContainer {
                 .chatId(100L)
                 .name("U_100")
                 .sex(Sex.MALE.name)
-                .description("U_100 like_to(500,700) like_from(500) mathces(500)")
+                .description("U_100_DESCRIPTION")
                 .avatar("1.jpg")
                 .isNew(true)
                 .preferences(Set.of(new Preferences(1L, 100L, Sex.FEMALE.name)))
@@ -84,8 +84,7 @@ class UserProfileServiceTest extends PostgresContainer {
                 .preferences(List.of(Sex.MALE))
                 .build();
         Assertions.assertThatThrownBy(() -> userProfileService.createUserProfile(dto))
-                .isInstanceOf(DbActionExecutionException.class)
-                .getCause().isInstanceOf(UserProfileException.class);
+                .isInstanceOf(UserProfileException.class).hasMessage("User profile = 100 already register!");
     }
 
     @Test
@@ -99,7 +98,7 @@ class UserProfileServiceTest extends PostgresContainer {
                 .avatar(Path.of("100.jpg"))
                 .preferences(List.of(Sex.MALE))
                 .build();
-        Assertions.assertThatThrownBy(() ->  userProfileService.updateUserProfile(incorrectChatId, dto))
+        Assertions.assertThatThrownBy(() -> userProfileService.updateUserProfile(incorrectChatId, dto))
                 .isInstanceOf(DbActionExecutionException.class)
                 .getCause().isInstanceOf(IncorrectUpdateSemanticsDataAccessException.class);
     }

@@ -2,7 +2,7 @@ package ru.liga.prereformdatingserver.service.favourites;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.FavouritesProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.resp.FavouritesProfileDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ public class FavouritesCollector {
 
     @Autowired
     public FavouritesCollector(WhoFavouriteAmIService whoFavouriteAmIService,
-                               MatchesFavouritesService matchesFavouritesService,
+                               ru.liga.prereformdatingserver.service.favourites.MatchesFavouritesService matchesFavouritesService,
                                MyFavouritesService myFavouritesService) {
         this.whoFavouriteAmIService = whoFavouriteAmIService;
         this.matchesFavouritesService = matchesFavouritesService;

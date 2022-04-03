@@ -11,6 +11,7 @@ import java.util.List;
 @Service
 public class Translator {
 
+    private static final String WHITESPACE = " ";
     private final List<Handler> handlers;
     private final TextSplitter splitter;
 
@@ -27,14 +28,8 @@ public class Translator {
             for (Handler handler : handlers) {
                 token = handler.handle(token);
             }
-            sb.append(token).append(" ");
+            sb.append(token).append(WHITESPACE);
         }
         return sb.toString();
-    }
-
-    @PostConstruct
-    public void postConstruct() {
-        System.out.println("Handler order, does matter?");
-        System.out.println(handlers);
     }
 }

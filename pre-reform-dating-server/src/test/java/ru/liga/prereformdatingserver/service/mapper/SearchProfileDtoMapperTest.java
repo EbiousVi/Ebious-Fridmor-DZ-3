@@ -3,29 +3,35 @@ package ru.liga.prereformdatingserver.service.mapper;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.SearchProfileDto;
+import ru.liga.prereformdatingserver.PostgresContainer;
+import ru.liga.prereformdatingserver.domain.dto.profile.resp.SearchProfileDto;
+import ru.liga.prereformdatingserver.domain.entity.Preferences;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
-import ru.liga.prereformdatingserver.domain.enums.Favourites;
 import ru.liga.prereformdatingserver.domain.enums.Sex;
 
 import java.util.Set;
 
-@SpringBootTest
-class SearchProfileDtoMapperTest {
+class SearchProfileDtoMapperTest extends PostgresContainer {
 
     @Autowired
     SearchProfileDtoMapper searchProfileDtoMapper;
 
     @Test
-    void map() {
-        UserProfile userProfile = new UserProfile( 100L, "U_1", Sex.MALE.name, "U_1_description", "1.jpg", Set.of());
-        SearchProfileDto searchProfileDto = searchProfileDtoMapper.map(userProfile, Favourites.MATCHES);
+    void searchProfileDtoMapper() {
+        UserProfile expected = UserProfile.builder()
+                .chatId(100L)
+                .name("U_100")
+                .sex(Sex.MALE.name)
+                .description("U_100_description")
+                .avatar("1.jpg")
+                .preferences(Set.of(new Preferences(100L, Sex.FEMALE.name))).build();
+        SearchProfileDto searchProfileDto = searchProfileDtoMapper.map(expected, false);
         SoftAssertions assertions = new SoftAssertions();
-        assertions.assertThat(searchProfileDto.getChatId()).isEqualTo(userProfile.getChatId());
-        assertions.assertThat(searchProfileDto.getName()).isEqualTo(userProfile.getName());
-        assertions.assertThat(searchProfileDto.getSex()).isEqualTo(userProfile.getSex());
-        assertions.assertThat(searchProfileDto.getFavourites()).isEqualTo(Favourites.MATCHES);
+        assertions.assertThat(searchProfileDto.getChatId()).isEqualTo(expected.getChatId());
+        assertions.assertThat(searchProfileDto.getName()).isEqualTo(expected.getName());
+        assertions.assertThat(searchProfileDto.getSex()).isEqualTo(expected.getSex());
+        assertions.assertThat(searchProfileDto.getIsMatch()).isEqualTo(false);
+        assertions.assertThat(searchProfileDto.getAvatar()).hasSizeGreaterThan(1);
         assertions.assertAll();
     }
 }

@@ -5,9 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.liga.prereformdatingserver.PostgresContainer;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.CreateProfileDto;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.NewProfileDto;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.UserProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.req.NewProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.resp.UserProfileDto;
 import ru.liga.prereformdatingserver.domain.enums.Sex;
 
 import ru.liga.prereformdatingserver.service.outer.avatar.RestAvatarService;
@@ -43,11 +42,11 @@ class ProfileCreatorServiceTest extends PostgresContainer {
                 .build();
         when(restTranslatorService.translateIntoPreReformDialect(dto.getDescription())).thenReturn("");
         when(restAvatarService.createAvatar("")).thenReturn(Paths.get("1.jpg"));
-        CreateProfileDto createProfileDto = profileCreatorService.createProfile(dto);
+        UserProfileDto profileDto = profileCreatorService.createProfile(dto);
         SoftAssertions assertions = new SoftAssertions();
-        assertions.assertThat(createProfileDto.getChatId()).isEqualTo(dto.getChatId());
-        assertions.assertThat(createProfileDto.getName()).isEqualTo(dto.getName());
-        assertions.assertThat(createProfileDto.getSex()).isEqualTo(dto.getSex().name);
+        assertions.assertThat(profileDto.getChatId()).isEqualTo(dto.getChatId());
+        assertions.assertThat(profileDto.getName()).isEqualTo(dto.getName());
+        assertions.assertThat(profileDto.getSex()).isEqualTo(dto.getSex());
         assertions.assertAll();
     }
 

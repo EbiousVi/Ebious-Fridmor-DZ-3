@@ -2,8 +2,7 @@ package ru.liga.prereformdatingserver.service.search;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.SearchProfileDto;
-import ru.liga.prereformdatingserver.domain.enums.Favourites;
+import ru.liga.prereformdatingserver.domain.dto.profile.resp.SearchProfileDto;
 import ru.liga.prereformdatingserver.service.favourites.FavouritesService;
 import ru.liga.prereformdatingserver.service.repository.UserProfileRepository;
 import ru.liga.prereformdatingserver.service.mapper.SearchProfileDtoMapper;
@@ -31,10 +30,10 @@ public class SearchService {
         return userProfileService.searchProfiles(chatId)
                 .stream()
                 .map(profile -> {
-                    if (favouritesService.checkMatches(profile.getChatId(), chatId)) {
-                        return searchProfileDtoMapper.map(profile, Favourites.MATCHES);
+                    if (favouritesService.checkPotentialMatches(profile.getChatId(), chatId)) {
+                        return searchProfileDtoMapper.map(profile, true);
                     } else {
-                        return searchProfileDtoMapper.map(profile, null);
+                        return searchProfileDtoMapper.map(profile, false);
                     }
                 })
                 .collect(Collectors.toList());

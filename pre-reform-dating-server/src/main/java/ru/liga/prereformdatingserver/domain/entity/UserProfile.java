@@ -28,7 +28,9 @@ public class UserProfile implements Persistable<Long> {
     private String avatar;
 
     @Transient
+    @EqualsAndHashCode.Exclude
     private Boolean isNew;
+
     @MappedCollection(idColumn = "chat_id")
     private Set<Preferences> preferences;
 

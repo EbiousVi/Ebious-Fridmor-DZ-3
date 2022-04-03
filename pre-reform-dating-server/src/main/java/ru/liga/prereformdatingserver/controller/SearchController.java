@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.liga.prereformdatingserver.domain.dto.profileDto.SearchProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.resp.SearchProfileDto;
 import ru.liga.prereformdatingserver.service.search.SearchService;
 
 import java.util.List;

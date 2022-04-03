@@ -1,4 +1,4 @@
-package ru.liga.prereformdatingserver.domain.dto.profileDto;
+package ru.liga.prereformdatingserver.domain.dto.profile.req;
 
 import lombok.*;
 import ru.liga.prereformdatingserver.domain.enums.Sex;
