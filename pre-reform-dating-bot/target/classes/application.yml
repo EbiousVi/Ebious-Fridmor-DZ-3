@@ -1,9 +1,0 @@
-server:
-  port: 5050
-
-localeTag:
-  RU: "ru-RU"
-
-telegram:
-  botUsername: "@PrereformBot"
-  botToken: "5289273285:AAGfAnafV_dSMk6syZZVWIWMVvYcS242vTQ"
