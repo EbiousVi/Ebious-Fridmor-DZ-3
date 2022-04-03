@@ -4,69 +4,68 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.data.annotation.Transient;
 
-import java.util.List;
+import java.util.Set;
 
 @Table("user_profile")
-@Getter
-@Setter
-@NoArgsConstructor
-@ToString
-@EqualsAndHashCode
+@Data
 public class UserProfile implements Persistable<Long> {
 
     @Id
-    private Long id;
-
+    @Column("chat_id")
     private Long chatId;
-
+    @Column("name")
     private String name;
-
+    @Column("sex")
     private String sex;
-
+    @Column("description")
     private String description;
-
+    @Column("avatar")
     private String avatar;
-    @Transient
-    @MappedCollection(idColumn = "chat_id")
-    private List<Preferences> preferences;
 
     @Transient
     private Boolean isNew;
+    @MappedCollection(idColumn = "chat_id")
+    private Set<Preferences> preferences;
 
-    public UserProfile(Long id, Long chatId, String name, String sex, String description,
-                       String avatar, Boolean isNew) {
-        this.id = id;
+    @Builder
+    public UserProfile(Long chatId, String name, String sex,
+                       String description, String avatar, Boolean isNew,
+                       Set<Preferences> preferences) {
         this.chatId = chatId;
         this.name = name;
         this.sex = sex;
         this.description = description;
         this.avatar = avatar;
         this.isNew = isNew;
+        this.preferences = preferences;
     }
 
-    public UserProfile(Long id, Long chatId, String name, String sex, String description,
-                       String avatar, List<Preferences> preferences, Boolean isNew) {
-        this.id = id;
+    @PersistenceConstructor
+    public UserProfile(Long chatId,
+                       String name, String sex,
+                       String description, String avatar,
+                       Set<Preferences> preferences) {
         this.chatId = chatId;
         this.name = name;
         this.sex = sex;
         this.description = description;
         this.avatar = avatar;
         this.preferences = preferences;
-        this.isNew = isNew;
+        this.isNew = false;
+    }
+
+    @Override
+    public Long getId() {
+        return chatId;
     }
 
     @Override
     public boolean isNew() {
         return isNew;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
     }
 }

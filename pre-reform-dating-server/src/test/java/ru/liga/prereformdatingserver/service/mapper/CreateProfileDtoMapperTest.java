@@ -9,6 +9,7 @@ import ru.liga.prereformdatingserver.domain.entity.UserProfile;
 import ru.liga.prereformdatingserver.domain.enums.Sex;
 
 import java.io.IOException;
+import java.util.Set;
 
 @SpringBootTest
 class CreateProfileDtoMapperTest {
@@ -17,14 +18,13 @@ class CreateProfileDtoMapperTest {
     CreateProfileDtoMapper createProfileDtoMapper;
 
     @Test
-    void map() throws IOException {
-        UserProfile userProfile = new UserProfile(1L, 100L, "U_1", Sex.MALE.name, "U_1_description", "1.jpg", true);
+    void map() {
+        UserProfile userProfile = new UserProfile( 100L, "U_1", Sex.MALE.name, "U_1_description", "1.jpg", Set.of());
         CreateProfileDto createProfileDto = createProfileDtoMapper.map(userProfile);
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(createProfileDto.getChatId()).isEqualTo(userProfile.getChatId());
         assertions.assertThat(createProfileDto.getName()).isEqualTo(userProfile.getName());
         assertions.assertThat(createProfileDto.getSex()).isEqualTo(userProfile.getSex());
-        //assertions.assertThat(createProfileDto.getResource().exists()).isTrue();
         assertions.assertAll();
     }
 }
