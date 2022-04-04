@@ -17,6 +17,8 @@ import java.util.Objects;
 public class FormCreation {
 
     public byte[] execute(String description) throws IOException, FontFormatException {
+
+        System.err.println(description.contains("\n"));
         InputStream imageStream = getClass().getClassLoader().getResourceAsStream("prerev-background.jpg");
         InputStream fontStream = getClass().getClassLoader().getResourceAsStream("OldStandardTT-Regular.ttf");
         int minFontSize = 10;

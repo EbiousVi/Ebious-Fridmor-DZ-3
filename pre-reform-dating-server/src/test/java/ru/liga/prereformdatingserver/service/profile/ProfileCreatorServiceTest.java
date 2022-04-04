@@ -25,10 +25,10 @@ class ProfileCreatorServiceTest extends PostgresContainer {
     @Autowired
     ProfileCreatorService profileCreatorService;
 
-    @MockBean
+/*    @MockBean
     RestAvatarService restAvatarService;
     @MockBean
-    RestTranslatorService restTranslatorService;
+    RestTranslatorService restTranslatorService;*/
 
     @Test
     void createProfile() {
@@ -36,12 +36,12 @@ class ProfileCreatorServiceTest extends PostgresContainer {
                 .chatId(100_000L)
                 .name("U_100_000")
                 .sex(Sex.FEMALE)
-                .description("U_100_000_DESCRIPTION")
+                .description("Врач-терапевт возрасте 48 лет \n уравновешенная, доброжелательная, обаятельная женщина, держится вхорошей спортивной форме, сын взрослый, живет отдельно, познакомится порядочным человеком мужественной профессии, бывшим военнослужащим».")
                 .avatar(Path.of("1.jpg"))
                 .preferences(List.of(Sex.MALE))
                 .build();
-        when(restTranslatorService.translateIntoPreReformDialect(dto.getDescription())).thenReturn("");
-        when(restAvatarService.createAvatar("")).thenReturn(Paths.get("1.jpg"));
+/*        when(restTranslatorService.translateIntoPreReformDialect(dto.getDescription())).thenReturn("");
+        when(restAvatarService.createAvatar("")).thenReturn(Paths.get("1.jpg"));*/
         UserProfileDto profileDto = profileCreatorService.createProfile(dto);
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(profileDto.getChatId()).isEqualTo(dto.getChatId());
@@ -68,8 +68,8 @@ class ProfileCreatorServiceTest extends PostgresContainer {
                 .avatar(Path.of("2.jpg"))
                 .preferences(List.of(Sex.MALE))
                 .build();
-        when(restTranslatorService.translateIntoPreReformDialect(dto.getDescription())).thenReturn("");
-        when(restAvatarService.createAvatar("")).thenReturn(Paths.get("1.jpg"));
+/*        when(restTranslatorService.translateIntoPreReformDialect(dto.getDescription())).thenReturn("");
+        when(restAvatarService.createAvatar("")).thenReturn(Paths.get("1.jpg"));*/
         profileCreatorService.updateProfile(100L, dto);
     }
 }

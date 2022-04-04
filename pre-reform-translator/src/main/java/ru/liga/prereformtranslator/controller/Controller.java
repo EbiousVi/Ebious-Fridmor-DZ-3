@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ru.liga.prereformtranslator.service.domain.Domain;
 import ru.liga.prereformtranslator.service.transaltor.Translator;
 
 @RestController
@@ -16,8 +17,13 @@ public class Controller {
         this.translator = translator;
     }
 
-    @PostMapping("/translate")
-    public String translate(@RequestBody String text) {
-        return translator.translate(text);
+    @PostMapping("/translate-to-string")
+    public String translateToString(@RequestBody String text) {
+        return translator.translateToString(text);
+    }
+
+    @PostMapping("/translate-to-object")
+    public Domain translateToObject(@RequestBody String text) {
+        return translator.translateToObject(text);
     }
 }

@@ -13,8 +13,8 @@ public class AppController {
 
     private final FormCreation formCreation;
 
-    @GetMapping("/getImage")
-    public byte[] getImage(@RequestBody String description) throws IOException, FontFormatException {
+    @GetMapping("/getImage/{text}")
+    public byte[] getImage(@PathVariable("text") String description) throws IOException, FontFormatException {
         return formCreation.execute(description);
     }
 }

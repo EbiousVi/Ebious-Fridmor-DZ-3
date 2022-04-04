@@ -29,11 +29,12 @@ public class ProfileCreatorService {
 
     @Transactional
     public UserProfileDto createProfile(NewProfileDto dto) {
-       /* String description = restTranslatorService.translateIntoPreReformDialect(dto.getDescription());
+        String name = restTranslatorService.translateIntoPreReformDialect(dto.getName());
+        dto.setDescription(name);
+        String description = restTranslatorService.translateIntoPreReformDialect(dto.getDescription());
         dto.setDescription(description);
         Path avatar = restAvatarService.createAvatar(dto.getDescription());
-        dto.setAvatar(avatar);*/
-        dto.setAvatar(Path.of("1.jpg"));
+        dto.setAvatar(avatar);
         UserProfile userProfile = userProfileService.createUserProfile(dto);
         favouritesService.raisePopularity(userProfile.getChatId());
         return userProfileDtoMapper.map(userProfile);
