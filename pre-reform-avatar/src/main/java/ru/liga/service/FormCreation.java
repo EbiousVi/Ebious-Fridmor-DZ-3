@@ -1,6 +1,7 @@
 package ru.liga.service;
 
 import org.springframework.stereotype.Service;
+import ru.liga.domain.Domain;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -16,9 +17,7 @@ import java.util.Objects;
 @Service
 public class FormCreation {
 
-    public byte[] execute(String description) throws IOException, FontFormatException {
-
-        System.err.println(description.contains("\n"));
+    public byte[] execute(Domain description) throws IOException, FontFormatException {
         InputStream imageStream = getClass().getClassLoader().getResourceAsStream("prerev-background.jpg");
         InputStream fontStream = getClass().getClassLoader().getResourceAsStream("OldStandardTT-Regular.ttf");
         int minFontSize = 10;
@@ -42,20 +41,9 @@ public class FormCreation {
 
         int curX = 0;
 
-        String[] lines = description.split("\n");
 
-        String header;
-        List<String> wordList = new ArrayList<>();
-        if (lines.length > 1) {
-            header = lines[0];
-            for (int i = 1; i < lines.length; i++) {
-                wordList.addAll(Arrays.asList(lines[i].split("\\s+")));
-            }
-        } else {
-            String[] wordArray = lines[0].split("\\s+");
-            header = wordArray[0];
-            wordList.addAll(Arrays.asList(wordArray).subList(1, wordArray.length));
-        }
+        String header = description.getTittle();
+        List<String> wordList = List.of(description.getBody().split("\\s+"));
 
         /* ------------------------------------------------------------------------------------------------------ */
 
