@@ -11,8 +11,10 @@ import java.util.List;
 @Repository
 public interface UserProfileRepository extends CrudRepository<UserProfile, Long> {
 
-    @Query("SELECT *\n" +
-            "FROM DATING.USER_PROFILE " +
+    @Query("SELECT * FROM DATING.USER_PROFILE WHERE CHAT_ID != :chatId")
+    List<UserProfile> findAll(@Param("chatId") Long chatId);
+
+    @Query("SELECT * FROM DATING.USER_PROFILE " +
             "WHERE CHAT_ID IN " +
             "(SELECT TO_CHAT_ID FROM DATING.FAVOURITES " +
             "WHERE FROM_CHAT_ID = :chatId)")
@@ -24,11 +26,22 @@ public interface UserProfileRepository extends CrudRepository<UserProfile, Long>
             "WHERE TO_CHAT_ID = :chatId)")
     List<UserProfile> findWhoseFavouriteAmI(@Param("chatId") Long chatId);
 
-    @Query("SELECT * FROM DATING.USER_PROFILE " +
+/*    @Query("SELECT * FROM DATING.USER_PROFILE " +
             "WHERE CHAT_ID IN " +
             "(SELECT FROM_CHAT_ID FROM DATING.FAVOURITES " +
             "WHERE FROM_CHAT_ID IN " +
             "(SELECT FROM_CHAT_ID FROM DATING.FAVOURITES WHERE TO_CHAT_ID = :chatId))")
+    List<UserProfile> findMatches(@Param("chatId") Long chatId);*/
+
+    @Query("SELECT * FROM DATING.USER_PROFILE " +
+            "WHERE CHAT_ID IN " +
+            "                (SELECT TO_CHAT_ID FROM DATING.FAVOURITES " +
+            "                 WHERE FROM_CHAT_ID = :chatId) " +
+            "INTERSECT " +
+            "SELECT * FROM DATING.USER_PROFILE " +
+            "WHERE CHAT_ID IN " +
+            "                 (SELECT FROM_CHAT_ID FROM DATING.FAVOURITES" +
+            "                  WHERE TO_CHAT_ID = :chatId)")
     List<UserProfile> findMatches(@Param("chatId") Long chatId);
 
     @Query("SELECT DISTINCT " +

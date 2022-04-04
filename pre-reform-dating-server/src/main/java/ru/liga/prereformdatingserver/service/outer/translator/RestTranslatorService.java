@@ -1,5 +1,7 @@
 package ru.liga.prereformdatingserver.service.outer.translator;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,18 +13,13 @@ import org.springframework.web.client.RestTemplate;
 import ru.liga.prereformdatingserver.exception.RestOuterServiceException;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class RestTranslatorService {
 
     private final RestTemplate restTemplate;
-
     @Value("${outer-service.translator}")
     private String translatorUrl;
-
-    @Autowired
-    public RestTranslatorService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
 
     public String translateIntoPreReformDialect(String text) {
         try {

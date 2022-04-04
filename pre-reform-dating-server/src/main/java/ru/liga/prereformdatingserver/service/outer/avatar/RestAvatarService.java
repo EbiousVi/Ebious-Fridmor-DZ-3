@@ -1,5 +1,7 @@
 package ru.liga.prereformdatingserver.service.outer.avatar;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +17,7 @@ import ru.liga.prereformdatingserver.service.storage.StorageService;
 import java.nio.file.Path;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class RestAvatarService {
 
@@ -22,12 +25,6 @@ public class RestAvatarService {
     private final StorageService storage;
     @Value("${outer-service.translator}")
     private String avatarUrl;
-
-    @Autowired
-    public RestAvatarService(RestTemplate restTemplate, StorageService storage) {
-        this.restTemplate = restTemplate;
-        this.storage = storage;
-    }
 
     public Path createAvatar(String text) {
         try {

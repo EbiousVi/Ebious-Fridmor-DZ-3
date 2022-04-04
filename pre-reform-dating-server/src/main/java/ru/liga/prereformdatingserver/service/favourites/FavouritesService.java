@@ -1,25 +1,27 @@
 package ru.liga.prereformdatingserver.service.favourites;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.liga.prereformdatingserver.domain.entity.Favourites;
+import ru.liga.prereformdatingserver.domain.entity.UserProfile;
 import ru.liga.prereformdatingserver.service.repository.FavouritesRepository;
+import ru.liga.prereformdatingserver.service.repository.UserProfileRepository;
+
+import java.util.Collections;
+import java.util.List;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class FavouritesService {
 
     private final FavouritesRepository favouritesRepository;
-
-    @Autowired
-    public FavouritesService(FavouritesRepository favouritesRepository) {
-        this.favouritesRepository = favouritesRepository;
-    }
+    private final UserProfileRepository userProfileRepository;
 
     @Transactional
     public void setAFavorite(Long fromChatId, Long toChatId) {
@@ -38,5 +40,15 @@ public class FavouritesService {
 
     public Boolean checkPotentialMatches(Long fromChatId, Long toChatId) {
         return favouritesRepository.checkMatches(fromChatId, toChatId);
+    }
+
+    public void raisePopularity(Long chatId) {
+        int raisePopularityScore = 10;
+        List<UserProfile> allProfiles = userProfileRepository.findAll(chatId);
+        Collections.shuffle(allProfiles);
+        allProfiles.stream()
+                .filter(profile -> !profile.getChatId().equals(chatId))
+                .limit(raisePopularityScore)
+                .forEach(profile -> setAFavorite(profile.getChatId(), chatId));
     }
 }

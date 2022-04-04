@@ -1,33 +1,32 @@
 package ru.liga.prereformdatingserver.service.favourites;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.liga.prereformdatingserver.domain.dto.profile.resp.FavouritesProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.resp.ProfileDto;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
+@AllArgsConstructor
 public class FavouritesCollector {
 
     private final WhoFavouriteAmIService whoFavouriteAmIService;
     private final MatchesFavouritesService matchesFavouritesService;
     private final MyFavouritesService myFavouritesService;
 
-    @Autowired
-    public FavouritesCollector(WhoFavouriteAmIService whoFavouriteAmIService,
-                               ru.liga.prereformdatingserver.service.favourites.MatchesFavouritesService matchesFavouritesService,
-                               MyFavouritesService myFavouritesService) {
-        this.whoFavouriteAmIService = whoFavouriteAmIService;
-        this.matchesFavouritesService = matchesFavouritesService;
-        this.myFavouritesService = myFavouritesService;
-    }
-
-    public List<FavouritesProfileDto> collectAllFavourites(Long chatId) {
-        List<FavouritesProfileDto> collect = new ArrayList<>();
-        collect.addAll(matchesFavouritesService.getMatchesFavourites(chatId));
-        collect.addAll(myFavouritesService.getMyFavourites(chatId));
-        collect.addAll(whoFavouriteAmIService.getWhoseFavouriteAmI(chatId));
-        return collect;
+    public List<ProfileDto> collectAllFavourites(Long chatId) {
+        return Stream.of(
+                        matchesFavouritesService.getMatchesFavourites(chatId),
+                        myFavouritesService.getMyFavourites(chatId),
+                        whoFavouriteAmIService.getWhoseFavouriteAmI(chatId))
+                .flatMap(Collection::stream).collect(Collectors
+                        .collectingAndThen(
+                                Collectors.toMap(dto -> List.of(dto.getChatId()),
+                                        dto -> dto,
+                                        BinaryOperator.minBy(Comparator.comparing(ProfileDto::getStatus))),
+                                map -> new ArrayList<>(map.values())));
     }
 }

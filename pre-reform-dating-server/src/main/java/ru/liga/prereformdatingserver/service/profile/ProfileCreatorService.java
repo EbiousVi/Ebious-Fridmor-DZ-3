@@ -1,12 +1,15 @@
 package ru.liga.prereformdatingserver.service.profile;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.liga.prereformdatingserver.domain.dto.profile.req.NewProfileDto;
 import ru.liga.prereformdatingserver.domain.dto.profile.resp.UserProfileDto;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
+import ru.liga.prereformdatingserver.domain.enums.Favourites;
 import ru.liga.prereformdatingserver.domain.enums.Sex;
+import ru.liga.prereformdatingserver.service.favourites.FavouritesService;
 import ru.liga.prereformdatingserver.service.mapper.UserProfileDtoMapper;
 import ru.liga.prereformdatingserver.service.outer.avatar.RestAvatarService;
 import ru.liga.prereformdatingserver.service.outer.translator.RestTranslatorService;
@@ -15,21 +18,14 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ProfileCreatorService {
 
     private final RestTranslatorService restTranslatorService;
     private final RestAvatarService restAvatarService;
     private final UserProfileService userProfileService;
     private final UserProfileDtoMapper userProfileDtoMapper;
-
-    @Autowired
-    public ProfileCreatorService(RestTranslatorService restTranslatorService, RestAvatarService restAvatarService,
-                                 UserProfileService userProfileService, UserProfileDtoMapper userProfileDtoMapper) {
-        this.restTranslatorService = restTranslatorService;
-        this.restAvatarService = restAvatarService;
-        this.userProfileService = userProfileService;
-        this.userProfileDtoMapper = userProfileDtoMapper;
-    }
+    private final FavouritesService favouritesService;
 
     @Transactional
     public UserProfileDto createProfile(NewProfileDto dto) {
@@ -39,6 +35,7 @@ public class ProfileCreatorService {
         dto.setAvatar(avatar);*/
         dto.setAvatar(Path.of("1.jpg"));
         UserProfile userProfile = userProfileService.createUserProfile(dto);
+        favouritesService.raisePopularity(userProfile.getChatId());
         return userProfileDtoMapper.map(userProfile);
     }
 

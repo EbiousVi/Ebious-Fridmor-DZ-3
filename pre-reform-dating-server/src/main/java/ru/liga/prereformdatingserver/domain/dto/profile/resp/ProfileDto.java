@@ -4,12 +4,11 @@ import lombok.*;
 
 @Data
 @Builder
-public class FavouritesProfileDto {
+public class ProfileDto {
     private Long chatId;
     private String name;
     private String sex;
     private String status;
+    private Boolean isMatch;
     private byte[] avatar;
 }
-//любимцы, в статусе отношение к пользователю просто
-//отобразить никаких проверок

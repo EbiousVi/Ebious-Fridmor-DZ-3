@@ -1,28 +1,24 @@
 package ru.liga.prereformdatingserver.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.liga.prereformdatingserver.domain.dto.profile.resp.SearchProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.resp.ProfileDto;
 import ru.liga.prereformdatingserver.service.search.SearchService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/dating-server")
+@AllArgsConstructor
 public class SearchController {
 
     private final SearchService search;
 
-    @Autowired
-    public SearchController(SearchService search) {
-        this.search = search;
-    }
-
     @GetMapping("/search/for/{chat-id}")
-    public List<SearchProfileDto> search(@PathVariable("chat-id") Long chatId) {
+    public List<ProfileDto> search(@PathVariable("chat-id") Long chatId) {
         return search.searchProfiles(chatId);
     }
 }

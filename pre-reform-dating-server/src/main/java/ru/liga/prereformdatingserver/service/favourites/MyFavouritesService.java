@@ -1,36 +1,27 @@
 package ru.liga.prereformdatingserver.service.favourites;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.liga.prereformdatingserver.domain.dto.profile.resp.FavouritesProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.resp.ProfileDto;
 import ru.liga.prereformdatingserver.domain.enums.Favourites;
+import ru.liga.prereformdatingserver.service.mapper.ProfileDtoMapper;
 import ru.liga.prereformdatingserver.service.repository.UserProfileRepository;
-import ru.liga.prereformdatingserver.service.mapper.FavouritesProfileDtoMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class MyFavouritesService {
 
     private static final Favourites MY = Favourites.MY;
     private final UserProfileRepository userProfileRepository;
-    private final FavouritesProfileDtoMapper favouritesProfileDtoMapper;
+    private final ProfileDtoMapper mapper;
 
-    @Autowired
-    public MyFavouritesService(UserProfileRepository userProfileRepository,
-                               FavouritesProfileDtoMapper favouritesProfileDtoMapper) {
-        this.userProfileRepository = userProfileRepository;
-        this.favouritesProfileDtoMapper = favouritesProfileDtoMapper;
-    }
-
-    /**
-     * Мои лайки
-     */
-    public List<FavouritesProfileDto> getMyFavourites(Long chatId) {
+    public List<ProfileDto> getMyFavourites(Long chatId) {
         return userProfileRepository.findMyFavourites(chatId)
                 .stream()
-                .map(profile -> favouritesProfileDtoMapper.map(profile, MY))
+                .map(profile -> mapper.map(profile, MY, false))
                 .collect(Collectors.toList());
     }
 }
