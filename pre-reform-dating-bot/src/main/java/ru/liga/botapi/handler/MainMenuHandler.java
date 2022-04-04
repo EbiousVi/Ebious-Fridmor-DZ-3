@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import ru.liga.Dto.FavouritesProfileDto;
 import ru.liga.Dto.SearchProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
@@ -45,7 +46,9 @@ public class MainMenuHandler implements UserInputHandler {
             UserProfileList userProfileList = new UserProfileList(restTemplateService.getSearchList(chatId));
             userDataCache.setUserProfileList(userId, userProfileList);
 
-            sendMessage.setText(userProfileList.getCurrent().getChatId() + userProfileList.getCurrent().getName());
+            SearchProfileDto currProf = (SearchProfileDto) userProfileList.getCurrent();
+
+            sendMessage.setText(currProf.getChatId() + currProf.getName());
             sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.SEARCH_MENU));
             userDataCache.setUserCurrentBotState(userId, BotState.SEARCH_MENU);
         } else if (text.equals(localeMessageService.getMessage("button.main.profile"))) {
@@ -60,7 +63,9 @@ public class MainMenuHandler implements UserInputHandler {
 
             userDataCache.setUserProfileList(userId, userProfileList);
 
-            sendMessage.setText(userProfileList.getCurrent().getChatId() + userProfileList.getCurrent().getName());
+            FavouritesProfileDto currProf = (FavouritesProfileDto) userProfileList.getCurrent();
+
+            sendMessage.setText(currProf.getChatId() + "=" + currProf.getName() + ": " + currProf.getStatus());
             sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.FAVORITE_MENU));
             userDataCache.setUserCurrentBotState(userId, BotState.FAVORITE_MENU);
         } else {

@@ -8,6 +8,6 @@ public class SearchProfileDto {
     private Long chatId;
     private String name;
     private String sex;
-    private Favourites favourites;
-    private byte[] image;
+    private Boolean isMatch;
+    private byte[] avatar;
 }

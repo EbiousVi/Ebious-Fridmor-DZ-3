@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import ru.liga.Dto.FavouritesProfileDto;
 import ru.liga.Dto.SearchProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
@@ -43,21 +44,22 @@ public class FavoriteMenuHandler implements UserInputHandler {
             sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.MAIN_MENU));
             userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
         } else if (text.equals(localeMessageService.getMessage("button.search.left"))) {
-            SearchProfileDto searchProfileDto = userProfileList.getPrevious();
-            String likesInfo = searchProfileDto.getFavourites().value;
-            if (likesInfo != null) {
-                sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": " + likesInfo);
-            } else {
-                sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": no info about likes");
-            }
+            FavouritesProfileDto searchProfileDto = (FavouritesProfileDto) userProfileList.getPrevious();
+//            if (searchProfileDto.getIsMatch()) {
+//                sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": ");
+//            } else {
+//                sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": no info about likes");
+//            }
+            sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": " + searchProfileDto.getStatus());
+
         } else if (text.equals(localeMessageService.getMessage("button.search.right"))) {
-            SearchProfileDto searchProfileDto = userProfileList.getNext();
-            String likesInfo = searchProfileDto.getFavourites().value;
-            if (likesInfo != null) {
-                sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": " + likesInfo);
-            } else {
-                sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": no info about likes");
-            }
+            FavouritesProfileDto searchProfileDto = (FavouritesProfileDto) userProfileList.getNext();
+//            if (searchProfileDto.getIsMatch()) {
+//                sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": ");
+//            } else {
+//                sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": no info about likes");
+//            }
+            sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": " + searchProfileDto.getStatus());
         } else {
             sendMessage.setText(localeMessageService.getMessage("reply.error.invalidValue"));
         }

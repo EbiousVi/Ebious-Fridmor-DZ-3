@@ -28,6 +28,7 @@ public class UserDataCache {
         if (botState == null) {
             NewProfileDto newProfileDto = restSearch(userId);
             if (newProfileDto == null) {
+                userBotStateMap.put(userId, BotState.FILLING_PROFILE);
                 return BotState.FILLING_PROFILE;
             } else {
                 UserProfileData userProfileData = new UserProfileData();

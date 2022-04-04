@@ -8,19 +8,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserProfileList {
 
-    private final List<SearchProfileDto> userProfileList;
+    private final List<?> userProfileList;
     private int idx = 0;
 
-    public SearchProfileDto getCurrent() {
+    public Object getCurrent() {
         return userProfileList.get(idx);
     }
 
-    public SearchProfileDto getNext() {
+    public Object getNext() {
         idx = isLast() ? 0 : idx + 1;
         return userProfileList.get(idx);
     }
 
-    public SearchProfileDto getPrevious() {
+    public Object getPrevious() {
         idx = isFirst() ? userProfileList.size() - 1 : idx - 1;
         return userProfileList.get(idx);
     }

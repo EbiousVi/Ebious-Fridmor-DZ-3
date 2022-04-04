@@ -39,7 +39,7 @@ public class LikeMenuHandler implements UserInputHandler {
         UserProfileList userProfileList = userDataCache.getUserProfileList(userId);
 
         if (text.equals(localeMessageService.getMessage("button.like.next"))) {
-            SearchProfileDto next = userProfileList.getNext();
+            SearchProfileDto next = (SearchProfileDto) userProfileList.getNext();
             sendMessage.setText(next.getChatId() + "=" + next.getName());
             sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.SEARCH_MENU));
             userDataCache.setUserCurrentBotState(userId, BotState.SEARCH_MENU);

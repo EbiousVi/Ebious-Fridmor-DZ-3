@@ -51,17 +51,17 @@ public class SearchMenuHandler implements UserInputHandler {
             sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.MAIN_MENU));
             userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
         } else if (text.equals(localeMessageService.getMessage("button.search.left"))) {
-            SearchProfileDto next = userProfileList.getNext();
+            SearchProfileDto next = (SearchProfileDto) userProfileList.getNext();
             sendMessage.setText(next.getChatId() + "=" + next.getName());
         } else if (text.equals(localeMessageService.getMessage("button.search.right"))) {
-            SearchProfileDto current = userProfileList.getCurrent();
+            SearchProfileDto current = (SearchProfileDto) userProfileList.getCurrent();
             restTemplateService.setFavoriteUser(chatId, current.getChatId());
-            if (current.getFavourites() != null && current.getFavourites().equals(Favourites.ME)) {
+            if (current.getIsMatch()) {
                 sendMessage.setText("Вы любимы");
                 sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.LIKE_MENU));
                 userDataCache.setUserCurrentBotState(userId, BotState.LIKE_MENU);
             } else {
-                SearchProfileDto next = userProfileList.getNext();
+                SearchProfileDto next = (SearchProfileDto) userProfileList.getNext();
                 sendMessage.setText(next.getChatId() + "=" + next.getName());
             }
         } else {

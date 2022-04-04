@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import ru.liga.Dto.FavouritesDto;
+import ru.liga.Dto.FavouritesProfileDto;
 import ru.liga.Dto.SearchProfileDto;
 import ru.liga.model.UserProfileData;
 
@@ -41,9 +42,9 @@ public class RestTemplateService {
         }
     }
 
-    public List<SearchProfileDto> getFavoriteList(long chatId) {
+    public List<FavouritesProfileDto> getFavoriteList(long chatId) {
         try {
-            ResponseEntity<SearchProfileDto[]> resp = restTemplate.getForEntity("http://localhost:6064/dating-server/favourites/" + chatId, SearchProfileDto[].class);
+            ResponseEntity<FavouritesProfileDto[]> resp = restTemplate.getForEntity("http://localhost:6064/dating-server/favourites/" + chatId, FavouritesProfileDto[].class);
             if (resp.getStatusCode().is2xxSuccessful()) {
                 return List.of(resp.getBody());
             } else {
