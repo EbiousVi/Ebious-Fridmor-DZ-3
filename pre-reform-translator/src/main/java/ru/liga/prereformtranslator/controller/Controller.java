@@ -17,12 +17,12 @@ public class Controller {
         this.translator = translator;
     }
 
-    @PostMapping("/translate-to-string")
+    @PostMapping("/translate-string")
     public String translateToString(@RequestBody String text) {
         return translator.translateToString(text);
     }
 
-    @PostMapping("/translate-to-object")
+    @PostMapping("/translate-object")
     public Domain translateToObject(@RequestBody String text) {
         return translator.translateToObject(text);
     }

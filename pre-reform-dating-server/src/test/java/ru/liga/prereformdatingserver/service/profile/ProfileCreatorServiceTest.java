@@ -2,6 +2,7 @@ package ru.liga.prereformdatingserver.service.profile;
 
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.liga.prereformdatingserver.PostgresContainer;
@@ -9,6 +10,7 @@ import ru.liga.prereformdatingserver.domain.dto.profile.req.NewProfileDto;
 import ru.liga.prereformdatingserver.domain.dto.profile.resp.UserProfileDto;
 import ru.liga.prereformdatingserver.domain.enums.Sex;
 
+import ru.liga.prereformdatingserver.service.outer.avatar.Domain;
 import ru.liga.prereformdatingserver.service.outer.avatar.RestAvatarService;
 import ru.liga.prereformdatingserver.service.outer.translator.RestTranslatorService;
 
@@ -25,10 +27,10 @@ class ProfileCreatorServiceTest extends PostgresContainer {
     @Autowired
     ProfileCreatorService profileCreatorService;
 
-/*    @MockBean
+    @MockBean
     RestAvatarService restAvatarService;
     @MockBean
-    RestTranslatorService restTranslatorService;*/
+    RestTranslatorService restTranslatorService;
 
     @Test
     void createProfile() {
@@ -36,13 +38,14 @@ class ProfileCreatorServiceTest extends PostgresContainer {
                 .chatId(100_000L)
                 .name("U_100_000")
                 .sex(Sex.FEMALE)
-                .description("Врач-терапевт возрасте 48 лет \n уравновешенная, доброжелательная, обаятельная женщина, держится вхорошей спортивной форме, сын взрослый, живет отдельно, познакомится порядочным человеком мужественной профессии, бывшим военнослужащим».")
+                .description("Врач-терапевт возрасте 48 лет уравновешенная, доброжелательная, обаятельная женщина, держится вхорошей спортивной форме, сын взрослый, живет отдельно, познакомится порядочным человеком мужественной профессии, бывшим военнослужащим».")
                 .avatar(Path.of("1.jpg"))
                 .preferences(List.of(Sex.MALE))
                 .build();
-/*        when(restTranslatorService.translateIntoPreReformDialect(dto.getDescription())).thenReturn("");
-        when(restAvatarService.createAvatar("")).thenReturn(Paths.get("1.jpg"));*/
+        when(restTranslatorService.translateToObject(dto.getDescription())).thenReturn(new Domain("", ""));
+        when(restAvatarService.createAvatar(new Domain("", ""))).thenReturn(Paths.get("1.jpg"));
         UserProfileDto profileDto = profileCreatorService.createProfile(dto);
+        System.out.println(profileCreatorService.getProfileDtoByChatId(dto.getChatId()).getDescription());
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(profileDto.getChatId()).isEqualTo(dto.getChatId());
         assertions.assertThat(profileDto.getName()).isEqualTo(dto.getName());
@@ -68,8 +71,8 @@ class ProfileCreatorServiceTest extends PostgresContainer {
                 .avatar(Path.of("2.jpg"))
                 .preferences(List.of(Sex.MALE))
                 .build();
-/*        when(restTranslatorService.translateIntoPreReformDialect(dto.getDescription())).thenReturn("");
-        when(restAvatarService.createAvatar("")).thenReturn(Paths.get("1.jpg"));*/
+        when(restTranslatorService.translateToObject(dto.getDescription())).thenReturn(new Domain("", ""));
+        when(restAvatarService.createAvatar(new Domain("", ""))).thenReturn(Paths.get("1.jpg"));
         profileCreatorService.updateProfile(100L, dto);
     }
 }

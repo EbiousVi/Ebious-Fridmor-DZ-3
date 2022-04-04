@@ -31,11 +31,10 @@ public class Translator {
             return new Domain(replace.substring(0, firstLineSeparatorIndex), replace.substring(firstLineSeparatorIndex + 1));
         } else {
             String replaceAll = replace.replaceAll("\\s+", WHITESPACE);
-            Pattern compile = Pattern.compile("^[а-яА-Я]{1,20}");
+            Pattern compile = Pattern.compile("^[а-яА-Я]{1,24}");
             Matcher matcher = compile.matcher(replaceAll);
             if (matcher.find()) {
                 String group = matcher.group();
-                System.out.println(group);
                 return new Domain(matcher.group(), replaceAll.substring(group.length()));
             } else {
                 return new Domain("Title", text);

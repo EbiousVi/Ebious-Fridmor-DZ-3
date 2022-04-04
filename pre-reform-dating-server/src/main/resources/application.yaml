@@ -1,8 +1,8 @@
 server:
   port: 6064
 outer-service:
-  translator: http://localhost:6032/translate
-  avatar: http://localhost:6032/translate
+  translator: http://localhost:6032
+  avatar: http://localhost:6016
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/dating

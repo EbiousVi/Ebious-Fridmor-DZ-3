@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.nio.file.Path;
@@ -34,8 +33,7 @@ class StorageServiceTest {
 
     @Test
     void save() {
-        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", new byte[]{1, 0, 1});
-        Path save = storage.save(mockMultipartFile);
+        Path save = storage.saveAvatar(new byte[]{1, 0, 1});
         assertThat(save).exists();
     }
 }
