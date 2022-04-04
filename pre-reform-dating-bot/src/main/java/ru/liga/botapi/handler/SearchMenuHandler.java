@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.liga.Dto.Favourites;
 import ru.liga.Dto.FavouritesDto;
+import ru.liga.Dto.ProfileDto;
 import ru.liga.Dto.SearchProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
@@ -28,6 +29,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class SearchMenuHandler implements UserInputHandler {
+
     private final LocaleMessageService localeMessageService;
     private final RestTemplateService restTemplateService;
     private final KeyboardService keyboardService;
@@ -51,17 +53,17 @@ public class SearchMenuHandler implements UserInputHandler {
             sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.MAIN_MENU));
             userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
         } else if (text.equals(localeMessageService.getMessage("button.search.left"))) {
-            SearchProfileDto next = (SearchProfileDto) userProfileList.getNext();
+            ProfileDto next =  userProfileList.getNext();
             sendMessage.setText(next.getChatId() + "=" + next.getName());
         } else if (text.equals(localeMessageService.getMessage("button.search.right"))) {
-            SearchProfileDto current = (SearchProfileDto) userProfileList.getCurrent();
+            ProfileDto current =  userProfileList.getCurrent();
             restTemplateService.setFavoriteUser(chatId, current.getChatId());
             if (current.getIsMatch()) {
                 sendMessage.setText("Вы любимы");
                 sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.LIKE_MENU));
                 userDataCache.setUserCurrentBotState(userId, BotState.LIKE_MENU);
             } else {
-                SearchProfileDto next = (SearchProfileDto) userProfileList.getNext();
+                ProfileDto next =  userProfileList.getNext();
                 sendMessage.setText(next.getChatId() + "=" + next.getName());
             }
         } else {

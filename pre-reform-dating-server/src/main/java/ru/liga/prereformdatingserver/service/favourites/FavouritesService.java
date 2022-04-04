@@ -43,7 +43,7 @@ public class FavouritesService {
     }
 
     public void raisePopularity(Long chatId) {
-        int raisePopularityScore = 10;
+        int raisePopularityScore = 3;
         List<UserProfile> allProfiles = userProfileRepository.findAll(chatId);
         Collections.shuffle(allProfiles);
         allProfiles.stream()

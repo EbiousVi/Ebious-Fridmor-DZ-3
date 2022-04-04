@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.liga.Dto.FavouritesProfileDto;
+import ru.liga.Dto.ProfileDto;
 import ru.liga.Dto.SearchProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
@@ -44,7 +45,7 @@ public class FavoriteMenuHandler implements UserInputHandler {
             sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.MAIN_MENU));
             userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
         } else if (text.equals(localeMessageService.getMessage("button.search.left"))) {
-            FavouritesProfileDto searchProfileDto = (FavouritesProfileDto) userProfileList.getPrevious();
+            ProfileDto searchProfileDto =  userProfileList.getPrevious();
 //            if (searchProfileDto.getIsMatch()) {
 //                sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": ");
 //            } else {
@@ -53,7 +54,7 @@ public class FavoriteMenuHandler implements UserInputHandler {
             sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": " + searchProfileDto.getStatus());
 
         } else if (text.equals(localeMessageService.getMessage("button.search.right"))) {
-            FavouritesProfileDto searchProfileDto = (FavouritesProfileDto) userProfileList.getNext();
+            ProfileDto searchProfileDto =  userProfileList.getNext();
 //            if (searchProfileDto.getIsMatch()) {
 //                sendMessage.setText(searchProfileDto.getChatId() + "=" + searchProfileDto.getName() + ": ");
 //            } else {

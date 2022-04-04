@@ -1,6 +1,7 @@
 package ru.liga.model;
 
 import lombok.RequiredArgsConstructor;
+import ru.liga.Dto.ProfileDto;
 import ru.liga.Dto.SearchProfileDto;
 
 import java.util.List;
@@ -8,19 +9,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class  UserProfileList {
 
-    private final List<?> userProfileList;
+    private final List<ProfileDto> userProfileList;
     private int idx = 0;
 
-    public Object getCurrent() {
+    public ProfileDto getCurrent() {
         return userProfileList.get(idx);
     }
 
-    public Object getNext() {
+    public ProfileDto getNext() {
         idx = isLast() ? 0 : idx + 1;
         return userProfileList.get(idx);
     }
 
-    public Object getPrevious() {
+    public ProfileDto getPrevious() {
         idx = isFirst() ? userProfileList.size() - 1 : idx - 1;
         return userProfileList.get(idx);
     }

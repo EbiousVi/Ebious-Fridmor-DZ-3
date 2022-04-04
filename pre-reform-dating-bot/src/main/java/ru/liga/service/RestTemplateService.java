@@ -9,6 +9,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import ru.liga.Dto.FavouritesDto;
 import ru.liga.Dto.FavouritesProfileDto;
+import ru.liga.Dto.ProfileDto;
 import ru.liga.Dto.SearchProfileDto;
 import ru.liga.model.UserProfileData;
 
@@ -28,9 +29,9 @@ public class RestTemplateService {
         }
     }
 
-    public List<SearchProfileDto> getSearchList(long chatId) {
+    public List<ProfileDto> getSearchList(long chatId) {
         try {
-            ResponseEntity<SearchProfileDto[]> resp = restTemplate.getForEntity("http://localhost:6064/dating-server/search/for/" + chatId, SearchProfileDto[].class);
+            ResponseEntity<ProfileDto[]> resp = restTemplate.getForEntity("http://localhost:6064/dating-server/search/for/" + chatId, ProfileDto[].class);
             if (resp.getStatusCode().is2xxSuccessful()) {
                 return List.of(resp.getBody());
             } else {
@@ -42,9 +43,9 @@ public class RestTemplateService {
         }
     }
 
-    public List<FavouritesProfileDto> getFavoriteList(long chatId) {
+    public List<ProfileDto> getFavoriteList(long chatId) {
         try {
-            ResponseEntity<FavouritesProfileDto[]> resp = restTemplate.getForEntity("http://localhost:6064/dating-server/favourites/" + chatId, FavouritesProfileDto[].class);
+            ResponseEntity<ProfileDto[]> resp = restTemplate.getForEntity("http://localhost:6064/dating-server/favourites/" + chatId, ProfileDto[].class);
             if (resp.getStatusCode().is2xxSuccessful()) {
                 return List.of(resp.getBody());
             } else {

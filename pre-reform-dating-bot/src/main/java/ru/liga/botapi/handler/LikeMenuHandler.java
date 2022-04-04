@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import ru.liga.Dto.ProfileDto;
 import ru.liga.Dto.SearchProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
@@ -39,7 +40,7 @@ public class LikeMenuHandler implements UserInputHandler {
         UserProfileList userProfileList = userDataCache.getUserProfileList(userId);
 
         if (text.equals(localeMessageService.getMessage("button.like.next"))) {
-            SearchProfileDto next = (SearchProfileDto) userProfileList.getNext();
+            ProfileDto next = userProfileList.getNext();
             sendMessage.setText(next.getChatId() + "=" + next.getName());
             sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.SEARCH_MENU));
             userDataCache.setUserCurrentBotState(userId, BotState.SEARCH_MENU);

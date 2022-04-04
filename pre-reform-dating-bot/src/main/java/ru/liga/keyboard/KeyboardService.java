@@ -26,6 +26,7 @@ public class KeyboardService {
                 break;
             case LIKE_MENU:
                 replyKeyboardMarkup.setKeyboard(getLikeMenuButtons());
+                break;
             case FAVORITE_MENU:
                 replyKeyboardMarkup.setKeyboard(getFavoriteMenuButtons());
                 break;
