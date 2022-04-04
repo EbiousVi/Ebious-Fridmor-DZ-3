@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.liga.Dto.ProfileDto;
 import ru.liga.Dto.SearchProfileDto;
@@ -27,8 +29,8 @@ public class LikeMenuHandler implements UserInputHandler {
     private final UserDataCache userDataCache;
 
     @Override
-    public List<BotApiMethod<?>> handle(Message message) {
-        List<BotApiMethod<?>> botApiMethodList = new ArrayList<>();
+    public List<PartialBotApiMethod<?>> handle(Message message) {
+        List<PartialBotApiMethod<?>> botApiMethodList = new ArrayList<>();
 
         long userId = message.getFrom().getId();
         long chatId = message.getChatId();

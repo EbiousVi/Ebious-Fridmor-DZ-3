@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.liga.cache.UserDataCache;
@@ -18,8 +19,8 @@ public class TelegramFacade {
     private final UserDataCache userDataCache;
 
 
-    public List<BotApiMethod<?>> handleUpdate(Update update) {
-        List<BotApiMethod<?>> replyMessage = null;
+    public List<PartialBotApiMethod<?>> handleUpdate(Update update) {
+        List<PartialBotApiMethod<?>> replyMessage = null;
 
         Message message = update.getMessage();
 
@@ -32,7 +33,7 @@ public class TelegramFacade {
         return replyMessage;
     }
 
-    private List<BotApiMethod<?>> handleInputMessage(Message message) {
+    private List<PartialBotApiMethod<?>> handleInputMessage(Message message) {
         long userId = message.getFrom().getId();
         BotState botState = userDataCache.getUserCurrentBotState(userId);
         return botStateContext.processInputMessage(botState, message);

@@ -7,10 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import ru.liga.Dto.FavouritesDto;
-import ru.liga.Dto.FavouritesProfileDto;
-import ru.liga.Dto.ProfileDto;
-import ru.liga.Dto.SearchProfileDto;
+import ru.liga.Dto.*;
 import ru.liga.model.UserProfileData;
 
 import java.util.List;
@@ -20,12 +17,14 @@ import java.util.List;
 public class RestTemplateService {
     private final RestTemplate restTemplate;
 
-    public void createUserProfile(UserProfileData userProfile) {
+    public UserProfileDto createUserProfile(UserProfileData userProfile) {
         HttpEntity<UserProfileData> request = new HttpEntity<>(userProfile);
         String url = "http://localhost:6064/dating-server/profiles/";
-        ResponseEntity<Resource> resourceResponseEntity = restTemplate.postForEntity(url, request, Resource.class);
-        if (!resourceResponseEntity.getStatusCode().is2xxSuccessful()) {
+        ResponseEntity<UserProfileDto> resp = restTemplate.postForEntity(url, request, UserProfileDto.class);
+        if (!resp.getStatusCode().is2xxSuccessful()) {
             throw new RuntimeException("asdasdausdjasd");
+        } else {
+            return resp.getBody();
         }
     }
 

@@ -2,12 +2,16 @@ package ru.liga.botapi.handler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.liga.Dto.FavouritesProfileDto;
 import ru.liga.Dto.ProfileDto;
@@ -20,6 +24,8 @@ import ru.liga.model.UserProfileList;
 import ru.liga.service.LocaleMessageService;
 import ru.liga.service.RestTemplateService;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +39,8 @@ public class MainMenuHandler implements UserInputHandler {
     private final UserDataCache userDataCache;
 
     @Override
-    public List<BotApiMethod<?>> handle(Message message) {
-        List<BotApiMethod<?>> botApiMethodList = new ArrayList<>();
+    public List<PartialBotApiMethod<?>> handle(Message message) {
+        List<PartialBotApiMethod<?>> botApiMethodList = new ArrayList<>();
 
         long userId = message.getFrom().getId();
         long chatId = message.getChatId();
@@ -53,7 +59,21 @@ public class MainMenuHandler implements UserInputHandler {
             sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.SEARCH_MENU));
             userDataCache.setUserCurrentBotState(userId, BotState.SEARCH_MENU);
         } else if (text.equals(localeMessageService.getMessage("button.main.profile"))) {
-            sendMessage.setText(userDataCache.getUserProfileData(userId).toString());
+
+            try {
+                FileUtils.writeByteArrayToFile(new File("asd.jpg"), userDataCache.getUserProfileData(userId).getAvatar());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            File photo = new File("asd.jpg");
+
+            SendPhoto sendPhoto = new SendPhoto(String.valueOf(chatId), new InputFile(photo));
+            sendPhoto.setCaption(userDataCache.getUserProfileData(userId).getName() + " " + userDataCache.getUserProfileData(userId).getSex());
+            botApiMethodList.add(sendPhoto);
+            return botApiMethodList;
+
+//            sendMessage.setText(userDataCache.getUserProfileData(userId).toString());
         } else if (text.equals(localeMessageService.getMessage("button.main.favorite"))) {
             UserProfileList userProfileList = new UserProfileList(restTemplateService.getFavoriteList(chatId));
 

@@ -2,13 +2,18 @@ package ru.liga;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.liga.botapi.TelegramFacade;
 import ru.liga.cache.UserDataCache;
 
+@Slf4j
 @Getter
 @Setter
 public class Bot extends TelegramLongPollingBot {
@@ -25,13 +30,24 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        for (BotApiMethod<?> botApiMethod : telegramFacade.handleUpdate(update)) {
-            try {
-                execute(botApiMethod);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
+        for (PartialBotApiMethod<?> partialBotApiMethod : telegramFacade.handleUpdate(update)) {
+            executeMethod((partialBotApiMethod));
         }
+    }
+
+    private Message executeMethod(PartialBotApiMethod<?> method) {
+        try {
+            if (method == null) {
+                return null;
+            } else if (method instanceof SendPhoto) {
+                return execute((SendPhoto) method);
+            } else if (method instanceof SendMessage) {
+                return execute((SendMessage) method);
+            }
+        } catch (TelegramApiException e) {
+            log.info(e.getMessage());
+        }
+        return null;
     }
 }
 

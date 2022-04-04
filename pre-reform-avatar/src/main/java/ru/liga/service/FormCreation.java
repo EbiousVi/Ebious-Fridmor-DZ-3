@@ -42,8 +42,8 @@ public class FormCreation {
         int curX = 0;
 
 
-        String header = description.getTittle();
-        List<String> wordList = List.of(description.getBody().split("\\s+"));
+        String header = description.getTittle().trim();
+        List<String> wordList = List.of(description.getBody().trim().split("\\s+"));
 
         /* ------------------------------------------------------------------------------------------------------ */
 
