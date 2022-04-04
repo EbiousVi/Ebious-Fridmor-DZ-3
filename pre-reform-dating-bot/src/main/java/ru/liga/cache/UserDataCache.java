@@ -1,14 +1,12 @@
 package ru.liga.cache;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 import ru.liga.Dto.NewProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.model.UserProfileData;
 import ru.liga.model.UserProfileList;
+import ru.liga.service.RestTemplateService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,13 +18,12 @@ public class UserDataCache {
     private final Map<Long, BotState> userBotStateMap = new HashMap<>();
     private final Map<Long, UserProfileData> userProfileDataMap = new HashMap<>();
     private final Map<Long, UserProfileList> userProfileListMap = new HashMap<>();
-    private final RestTemplate restTemplate;
+    private final RestTemplateService restTemplateService;
 
     public BotState getUserCurrentBotState(long userId) {
         BotState botState = userBotStateMap.get(userId);
-
         if (botState == null) {
-            NewProfileDto newProfileDto = restSearch(userId);
+            NewProfileDto newProfileDto = restTemplateService.getUserProfile(userId);
             if (newProfileDto == null) {
                 userBotStateMap.put(userId, BotState.FILLING_PROFILE);
                 return BotState.FILLING_PROFILE;
@@ -43,8 +40,6 @@ public class UserDataCache {
         } else {
             return botState;
         }
-
-//        return botState != null ? botState: BotState.FILLING_PROFILE;
     }
 
     public void setUserCurrentBotState(long userId, BotState botState) {
@@ -67,20 +62,5 @@ public class UserDataCache {
 
     public void setUserProfileList(long userId, UserProfileList userProfileList) {
         userProfileListMap.put(userId, userProfileList);
-    }
-
-    public NewProfileDto restSearch(long chatId) {
-        try {
-            ResponseEntity<NewProfileDto> resp = restTemplate.getForEntity("http://localhost:6064/dating-server/profiles/" + chatId, NewProfileDto.class);
-            if (resp.getStatusCode().is2xxSuccessful()) {
-                return resp.getBody();
-            } else {
-                throw new RuntimeException("Pre reform translator return bad response!");
-            }
-        } catch (RestClientException e) {
-//            e.printStackTrace();
-//            throw new RuntimeException(e.getMessage());
-            return null;
-        }
     }
 }

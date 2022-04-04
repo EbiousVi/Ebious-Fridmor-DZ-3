@@ -17,5 +17,4 @@ public class NewProfileDto {
     private String description;
     private UserProfileGender sex;
     private List<UserProfileGender> preferences;
-
 }

@@ -2,7 +2,6 @@ package ru.liga.model;
 
 import lombok.RequiredArgsConstructor;
 import ru.liga.Dto.ProfileDto;
-import ru.liga.Dto.SearchProfileDto;
 
 import java.util.List;
 

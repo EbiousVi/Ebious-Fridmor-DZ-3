@@ -2,23 +2,17 @@ package ru.liga.botapi.handler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
-import ru.liga.Dto.UserProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
 import ru.liga.keyboard.KeyboardName;
 import ru.liga.keyboard.KeyboardService;
-import ru.liga.model.UserProfileGender;
 import ru.liga.model.UserProfileData;
+import ru.liga.model.UserProfileGender;
 import ru.liga.model.UserProfileState;
 import ru.liga.service.LocaleMessageService;
 import ru.liga.service.RestTemplateService;
@@ -97,7 +91,6 @@ public class FillingProfileHandler implements UserInputHandler {
                 }
                 profileData.setPreferences(preferenceList);
                 profileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
-
                 profileData.setAvatar(restTemplateService.createUserProfile(profileData).getAvatar());
 
                 sendMessage.setText(localeMessageService.getMessage("reply.main.info"));

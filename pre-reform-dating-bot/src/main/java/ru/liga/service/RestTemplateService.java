@@ -1,13 +1,15 @@
 package ru.liga.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import ru.liga.Dto.*;
+import ru.liga.Dto.FavouritesDto;
+import ru.liga.Dto.NewProfileDto;
+import ru.liga.Dto.ProfileDto;
+import ru.liga.Dto.UserProfileDto;
 import ru.liga.model.UserProfileData;
 
 import java.util.List;
@@ -21,10 +23,23 @@ public class RestTemplateService {
         HttpEntity<UserProfileData> request = new HttpEntity<>(userProfile);
         String url = "http://localhost:6064/dating-server/profiles/";
         ResponseEntity<UserProfileDto> resp = restTemplate.postForEntity(url, request, UserProfileDto.class);
-        if (!resp.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("asdasdausdjasd");
-        } else {
+        if (resp.getStatusCode().is2xxSuccessful()) {
             return resp.getBody();
+        } else {
+            throw new RuntimeException("asdasdausdjasd");
+        }
+    }
+
+    public NewProfileDto getUserProfile(long chatId) {
+        try {
+            ResponseEntity<NewProfileDto> resp = restTemplate.getForEntity("http://localhost:6064/dating-server/profiles/" + chatId, NewProfileDto.class);
+            if (resp.getStatusCode().is2xxSuccessful()) {
+                return resp.getBody();
+            } else {
+                throw new RuntimeException("Pre reform translator return bad response!");
+            }
+        } catch (RestClientException e) {
+            return null;
         }
     }
 
@@ -37,7 +52,6 @@ public class RestTemplateService {
                 throw new RuntimeException("Pre reform translator return bad response!");
             }
         } catch (RestClientException e) {
-            e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -51,7 +65,6 @@ public class RestTemplateService {
                 throw new RuntimeException("Pre reform translator return bad response!");
             }
         } catch (RestClientException e) {
-            e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -64,7 +77,6 @@ public class RestTemplateService {
                 throw new RuntimeException("Pre reform translator return bad response!");
             }
         } catch (RestClientException e) {
-            e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }
     }

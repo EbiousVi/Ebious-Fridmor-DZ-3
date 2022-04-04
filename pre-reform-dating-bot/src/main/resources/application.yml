@@ -1,5 +1,5 @@
 server:
-  port: 5050
+  port: "5050"
 
 localeTag:
   RU: "ru-RU"

@@ -9,88 +9,58 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 @Service
 public class FormCreation {
 
-    public byte[] execute(Domain description) throws IOException, FontFormatException {
-        InputStream imageStream = getClass().getClassLoader().getResourceAsStream("prerev-background.jpg");
-        InputStream fontStream = getClass().getClassLoader().getResourceAsStream("OldStandardTT-Regular.ttf");
-        int minFontSize = 10;
+    public byte[] execute(Domain description) {
+        try {
+            InputStream imageStream = getClass().getClassLoader().getResourceAsStream("prerev-background.jpg");
+            InputStream fontStream = getClass().getClassLoader().getResourceAsStream("OldStandardTT-Regular.ttf");
+            int minFontSize = 10;
 
-        BufferedImage image = ImageIO.read(Objects.requireNonNull(imageStream));
-        int imageWidth = image.getWidth();
-        int imageHeight = image.getHeight();
+            BufferedImage image = ImageIO.read(Objects.requireNonNull(imageStream));
+            int imageHeight = image.getHeight();
+            int imageWidth = image.getWidth();
 
-        Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(fontStream));
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        ge.registerFont(font);
+            Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(fontStream));
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(font);
 
-        Font headerFont = new Font("Old Standard TT", Font.BOLD, minFontSize);
-        Font textFont = new Font("Old Standard TT", Font.PLAIN, minFontSize);
+            Font headerFont = new Font("Old Standard TT", Font.BOLD, minFontSize);
+            Font textFont = new Font("Old Standard TT", Font.PLAIN, minFontSize);
 
-        Graphics graphics = image.getGraphics();
-        graphics.setFont(headerFont);
-        graphics.setColor(Color.BLACK);
-
-        FontMetrics metrics = graphics.getFontMetrics();
-
-        int curX = 0;
-
-
-        String header = description.getTittle().trim();
-        List<String> wordList = List.of(description.getBody().trim().split("\\s+"));
-
-        /* ------------------------------------------------------------------------------------------------------ */
-
-        int headerWidth = metrics.stringWidth(header);
-
-        int headerFontSize = minFontSize;
-        while (headerWidth < imageWidth - imageWidth / 4) {
-            headerFontSize = headerFontSize + 1;
-            headerFont = headerFont.deriveFont((float) headerFontSize);
+            Graphics graphics = image.getGraphics();
             graphics.setFont(headerFont);
-            metrics = graphics.getFontMetrics();
-            headerWidth = metrics.stringWidth(header);
-        }
+            graphics.setColor(Color.BLACK);
 
-        int headerY = headerFontSize;
+            int curX = 0;
 
-        graphics.drawString(header, curX, headerY);
+            String header = description.getTittle().trim();
+            List<String> wordList = List.of(description.getBody().trim().split("\\s+"));
 
-        /* ------------------------------------------------------------------------------------------------------ */
+            int headerFontSize = getFontSizeForHeader(graphics, headerFont, header, imageWidth);
+            graphics.drawString(header, curX, headerFontSize);
 
-        graphics.setFont(textFont);
-
-        metrics = graphics.getFontMetrics();
-
-        int textY = headerY + metrics.getHeight() * 3 / 2;
-
-        int textHeight = expectedTextHeight(graphics, wordList, curX, textY, imageWidth);
-
-        int fontSize = minFontSize;
-        while (textHeight < imageHeight && fontSize < headerFontSize - headerFontSize / 4) {
-            fontSize++;
+            graphics.setFont(textFont);
+            int fontSize = getFontSizeForBody(graphics, textFont, wordList, headerFontSize, imageHeight, imageWidth);
             textFont = textFont.deriveFont((float) fontSize);
             graphics.setFont(textFont);
-            metrics = graphics.getFontMetrics();
-            textY = headerY + metrics.getHeight() * 3 / 2;
-            textHeight = expectedTextHeight(graphics, wordList, curX, textY, imageWidth);
+
+            FontMetrics fontMetrics = graphics.getFontMetrics();
+            int textY = headerFontSize + fontMetrics.getHeight() * 3 / 2;
+
+            drawText(graphics, wordList, curX, textY, imageWidth);
+
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", os);
+
+            return os.toByteArray();
+        } catch (IOException | FontFormatException e) {
+            return null;
         }
-        fontSize--;
-        textFont = textFont.deriveFont((float) fontSize);
-        graphics.setFont(textFont);
-
-        drawText(graphics, wordList, curX, textY, imageWidth);
-
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        ImageIO.write(image, "png", os);
-
-        return os.toByteArray();
     }
 
     private void drawText(Graphics graphics, List<String> wordList, int x, int y, int imageWight) {
@@ -109,10 +79,28 @@ public class FormCreation {
         }
     }
 
-    private int expectedTextHeight(Graphics graphics, List<String> wordList, int x, int y, int imageWidth) {
+    private int getFontSizeForBody(Graphics graphics, Font font, List<String> wordList, int headerFontSize, int imageHeight, int imageWidth) {
+        FontMetrics fontMetrics = graphics.getFontMetrics();
+        Font textFont = font;
+        int textY = headerFontSize + fontMetrics.getHeight() * 3 / 2;
+        int textHeight = expectedTextHeight(graphics, wordList, textY, imageWidth);
+        int fontSize = 0;
+        while (textHeight < imageHeight && fontSize < headerFontSize * 3 / 4) {
+            fontSize++;
+            textFont = textFont.deriveFont((float) fontSize);
+            graphics.setFont(textFont);
+            fontMetrics = graphics.getFontMetrics();
+            textY = headerFontSize + fontMetrics.getHeight() * 3 / 2;
+            textHeight = expectedTextHeight(graphics, wordList, textY, imageWidth);
+        }
+        fontSize--;
+        return fontSize;
+    }
+
+    private int expectedTextHeight(Graphics graphics, List<String> wordList, int y, int imageWidth) {
         FontMetrics metrics = graphics.getFontMetrics();
         int lineHeight = metrics.getHeight();
-        int curX = x;
+        int curX = 0;
         int curY = y;
         for (String word : wordList) {
             int wordWidth = metrics.stringWidth(word + " ");
@@ -123,5 +111,20 @@ public class FormCreation {
             curX += wordWidth;
         }
         return curY;
+    }
+
+    private int getFontSizeForHeader(Graphics graphics, Font font, String text, int imageWidth) {
+        FontMetrics fontMetrics = graphics.getFontMetrics();
+        Font textFont = font;
+        int textWidth = fontMetrics.stringWidth(text);
+        int textFontSize = 0;
+        while (textWidth < imageWidth * 3 / 4) {
+            textFontSize = textFontSize + 1;
+            textFont = textFont.deriveFont((float) textFontSize);
+            graphics.setFont(textFont);
+            fontMetrics = graphics.getFontMetrics();
+            textWidth = fontMetrics.stringWidth(text);
+        }
+        return textFontSize;
     }
 }

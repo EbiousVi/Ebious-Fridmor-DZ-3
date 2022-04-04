@@ -7,7 +7,6 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.liga.botapi.TelegramFacade;
@@ -35,19 +34,17 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    private Message executeMethod(PartialBotApiMethod<?> method) {
+    private void executeMethod(PartialBotApiMethod<?> method) {
         try {
             if (method == null) {
-                return null;
             } else if (method instanceof SendPhoto) {
-                return execute((SendPhoto) method);
+                execute((SendPhoto) method);
             } else if (method instanceof SendMessage) {
-                return execute((SendMessage) method);
+                execute((SendMessage) method);
             }
         } catch (TelegramApiException e) {
             log.info(e.getMessage());
         }
-        return null;
     }
 }
 
