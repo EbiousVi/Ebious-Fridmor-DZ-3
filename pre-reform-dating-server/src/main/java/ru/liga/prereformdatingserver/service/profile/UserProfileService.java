@@ -1,5 +1,6 @@
 package ru.liga.prereformdatingserver.service.profile;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -14,15 +15,11 @@ import ru.liga.prereformdatingserver.service.repository.UserProfileRepository;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 @Slf4j
 public class UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
-
-    @Autowired
-    public UserProfileService(UserProfileRepository userProfileRepository) {
-        this.userProfileRepository = userProfileRepository;
-    }
 
     public UserProfile getUserProfileByChatId(Long chatId) {
         return userProfileRepository.findById(chatId)
@@ -68,7 +65,7 @@ public class UserProfileService {
         return userProfileRepository.save(profile);
     }
 
-    public void deleteProfile(Long chatId) {
+    public void deleteUserProfile(Long chatId) {
         userProfileRepository.deleteById(chatId);
     }
 }

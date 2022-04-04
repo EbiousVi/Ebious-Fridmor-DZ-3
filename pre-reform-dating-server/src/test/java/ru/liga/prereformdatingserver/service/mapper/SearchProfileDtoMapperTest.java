@@ -4,17 +4,18 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.liga.prereformdatingserver.PostgresContainer;
-import ru.liga.prereformdatingserver.domain.dto.profile.resp.SearchProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.resp.ProfileDto;
 import ru.liga.prereformdatingserver.domain.entity.Preferences;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
+import ru.liga.prereformdatingserver.domain.enums.Favourites;
 import ru.liga.prereformdatingserver.domain.enums.Sex;
 
 import java.util.Set;
 
-class SearchProfileDtoMapperTest extends PostgresContainer {
+class ProfileDtoMapperTest extends PostgresContainer {
 
     @Autowired
-    SearchProfileDtoMapper searchProfileDtoMapper;
+    ProfileDtoMapper profileDtoMapper;
 
     @Test
     void searchProfileDtoMapper() {
@@ -25,7 +26,7 @@ class SearchProfileDtoMapperTest extends PostgresContainer {
                 .description("U_100_description")
                 .avatar("1.jpg")
                 .preferences(Set.of(new Preferences(100L, Sex.FEMALE.name))).build();
-        SearchProfileDto searchProfileDto = searchProfileDtoMapper.map(expected, false);
+        ProfileDto searchProfileDto = profileDtoMapper.map(expected, Favourites.MATCHES, false);
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(searchProfileDto.getChatId()).isEqualTo(expected.getChatId());
         assertions.assertThat(searchProfileDto.getName()).isEqualTo(expected.getName());

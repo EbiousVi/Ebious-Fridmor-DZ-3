@@ -1,39 +1,32 @@
 package ru.liga.prereformdatingserver.service.search;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.liga.prereformdatingserver.domain.dto.profile.resp.SearchProfileDto;
+import ru.liga.prereformdatingserver.domain.dto.profile.resp.ProfileDto;
+import ru.liga.prereformdatingserver.domain.enums.Favourites;
 import ru.liga.prereformdatingserver.service.favourites.FavouritesService;
+import ru.liga.prereformdatingserver.service.mapper.ProfileDtoMapper;
 import ru.liga.prereformdatingserver.service.repository.UserProfileRepository;
-import ru.liga.prereformdatingserver.service.mapper.SearchProfileDtoMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class SearchService {
 
     private final UserProfileRepository userProfileService;
-    private final SearchProfileDtoMapper searchProfileDtoMapper;
     private final FavouritesService favouritesService;
+    private final ProfileDtoMapper profileDtoMapper;
 
-    @Autowired
-    public SearchService(UserProfileRepository userProfileService,
-                         SearchProfileDtoMapper searchProfileDtoMapper,
-                         FavouritesService favouritesService) {
-        this.userProfileService = userProfileService;
-        this.searchProfileDtoMapper = searchProfileDtoMapper;
-        this.favouritesService = favouritesService;
-    }
-
-    public List<SearchProfileDto> searchProfiles(Long chatId) {
+    public List<ProfileDto> searchProfiles(Long chatId) {
         return userProfileService.searchProfiles(chatId)
                 .stream()
                 .map(profile -> {
                     if (favouritesService.checkPotentialMatches(profile.getChatId(), chatId)) {
-                        return searchProfileDtoMapper.map(profile, true);
+                        return profileDtoMapper.map(profile, Favourites.MATCHES, true);
                     } else {
-                        return searchProfileDtoMapper.map(profile, false);
+                        return profileDtoMapper.map(profile, Favourites.MATCHES, false);
                     }
                 })
                 .collect(Collectors.toList());

@@ -10,12 +10,10 @@ public enum Sex {
         this.name = name;
     }
 
-    public static Sex getByValue(String sex) {
-        for (Sex value : values()) {
-            if (value.name.equals(sex)) {
-                return value;
-            }
+    public static Sex getByValue(String value) {
+        for (Sex sex : values()) {
+            if (sex.name.equals(value)) return sex;
         }
-        throw new RuntimeException("enum expcetion sex");
+        throw new IllegalArgumentException("Unsupported sex type!");
     }
 }

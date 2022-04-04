@@ -16,5 +16,3 @@ public class UserProfileDto {
     private List<Sex> preferences;
     private byte[] avatar;
 }
-//после регистрации
-//или запроса на проверку существования

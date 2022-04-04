@@ -6,7 +6,7 @@ import ru.liga.Dto.SearchProfileDto;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class UserProfileList {
+public class  UserProfileList {
 
     private final List<?> userProfileList;
     private int idx = 0;

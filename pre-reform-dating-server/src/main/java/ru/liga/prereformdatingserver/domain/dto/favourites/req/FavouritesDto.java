@@ -1,4 +1,4 @@
-package ru.liga.prereformdatingserver.domain.dto.favourites;
+package ru.liga.prereformdatingserver.domain.dto.favourites.req;
 
 import lombok.Data;
 
