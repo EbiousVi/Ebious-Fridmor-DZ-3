@@ -1,7 +1,6 @@
 package ru.liga.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -9,10 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import ru.liga.Dto.FavouritesDto;
 import ru.liga.Dto.ProfileDto;
 import ru.liga.Dto.UserProfileDto;
-import ru.liga.cache.UserDataCache;
 import ru.liga.model.UserProfileData;
 
 import java.util.Collections;

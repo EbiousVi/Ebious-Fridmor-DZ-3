@@ -15,10 +15,12 @@ import ru.liga.model.UserProfileData;
 import ru.liga.model.UserProfileGender;
 import ru.liga.model.UserProfileState;
 import ru.liga.service.LocaleMessageService;
+import ru.liga.service.OpenCsvService;
 import ru.liga.service.ReplyMessageService;
 import ru.liga.service.RestTemplateService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -30,6 +32,7 @@ public class FillingProfileHandler implements UserInputHandler {
     private final RestTemplateService restTemplateService;
     private final ReplyMessageService replyMessageService;
     private final KeyboardService keyboardService;
+    private final OpenCsvService openCsvService;
     private final UserDataCache userDataCache;
 
     @Override
@@ -96,7 +99,11 @@ public class FillingProfileHandler implements UserInputHandler {
                 profileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
                 UserProfileDto userProfile = restTemplateService.createUserProfile(profileData);
                 profileData.setAvatar(userProfile.getAvatar());
-                profileData.setTokens(userProfile.getTokens());
+
+                Map<String, String> tokens = userProfile.getTokens();
+                openCsvService.writeData(userId, tokens.get("accessToken"), tokens.get("refreshToken"));
+                profileData.setTokens(tokens);
+
                 userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
 
                 return List.of(replyMessageService.getSendMessage(
