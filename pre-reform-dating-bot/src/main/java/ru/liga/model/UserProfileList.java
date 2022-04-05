@@ -7,7 +7,7 @@ import java.util.List;
 
 public class  UserProfileList {
 
-    private List<ProfileDto> userProfileList;
+    private final List<ProfileDto> userProfileList;
     private int idx = 0;
 
     public UserProfileList(LinkedList<ProfileDto> userProfileList) {

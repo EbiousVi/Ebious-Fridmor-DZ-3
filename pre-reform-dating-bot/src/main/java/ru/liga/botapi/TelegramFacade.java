@@ -22,9 +22,8 @@ public class TelegramFacade {
     public List<PartialBotApiMethod<?>> handleUpdate(Update update) {
         List<PartialBotApiMethod<?>> replyMessage = null;
 
-        Message message = update.getMessage();
-
-        if (message != null && message.hasText()) {
+        if (update.hasMessage()) {
+            Message message = update.getMessage();
             log.info("New message from User:{}, chatId: {},  with text: {}",
                     message.getFrom().getUserName(), message.getChatId(), message.getText());
             replyMessage = handleInputMessage(message);
@@ -34,8 +33,8 @@ public class TelegramFacade {
     }
 
     private List<PartialBotApiMethod<?>> handleInputMessage(Message message) {
-        long userId = message.getFrom().getId();
-        BotState botState = userDataCache.getUserCurrentBotState(userId);
+        userDataCache.fillUserDataCacheForUser(message.getFrom().getId());
+        BotState botState = userDataCache.getUserCurrentBotState(message.getFrom().getId());
         return botStateContext.processInputMessage(botState, message);
     }
 }

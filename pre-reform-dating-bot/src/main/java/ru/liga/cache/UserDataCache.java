@@ -2,13 +2,13 @@ package ru.liga.cache;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.liga.Dto.NewProfileDto;
+import ru.liga.Dto.UserProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.model.UserProfileData;
 import ru.liga.model.UserProfileList;
+import ru.liga.model.UserProfileState;
 import ru.liga.service.RestTemplateService;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -23,24 +23,7 @@ public class UserDataCache {
 
     public BotState getUserCurrentBotState(long userId) {
         BotState botState = userBotStateMap.get(userId);
-        if (botState == null) {
-            NewProfileDto newProfileDto = restTemplateService.getUserProfile(userId);
-            if (newProfileDto == null) {
-                userBotStateMap.put(userId, BotState.FILLING_PROFILE);
-                return BotState.FILLING_PROFILE;
-            } else {
-                UserProfileData userProfileData = new UserProfileData();
-                userProfileData.setChatId(newProfileDto.getChatId());
-                userProfileData.setName(newProfileDto.getName());
-                userProfileData.setSex(newProfileDto.getSex());
-                userProfileData.setDescription(newProfileDto.getDescription());
-                userProfileData.setPreferences(newProfileDto.getPreferences());
-                userProfileDataMap.put(userId, userProfileData);
-                return BotState.MAIN_MENU;
-            }
-        } else {
-            return botState;
-        }
+        return botState != null ? botState : BotState.FILLING_PROFILE;
     }
 
     public void setUserCurrentBotState(long userId, BotState botState) {
@@ -63,5 +46,22 @@ public class UserDataCache {
 
     public void setUserProfileList(long userId, UserProfileList userProfileList) {
         userProfileListMap.put(userId, userProfileList);
+    }
+
+    public void fillUserDataCacheForUser(long userId) {
+        if (userProfileDataMap.get(userId) == null) {
+            UserProfileDto userProfileDto = restTemplateService.getUserProfile(userId);
+            if (userProfileDto != null) {
+                userBotStateMap.put(userId, BotState.MAIN_MENU);
+                userProfileDataMap.put(userId, UserProfileData.builder()
+                        .chatId(userProfileDto.getChatId())
+                        .name(userProfileDto.getName())
+                        .sex(userProfileDto.getSex())
+                        .description(userProfileDto.getDescription())
+                        .avatar(userProfileDto.getAvatar())
+                        .profileState(UserProfileState.COMPLETED_PROFILE)
+                        .build());
+            }
+        }
     }
 }
