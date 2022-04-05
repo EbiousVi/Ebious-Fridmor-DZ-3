@@ -80,9 +80,9 @@ VALUES (7000, 'U_7000', 'U_7000_INFO', 'Сударыня', '7.jpg');
 INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
 VALUES (8000, 'U_8000', 'U_8000_INFO', 'Сударыня', '8.jpg');
 INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (9000, 'U_9000', 'U_9000_INFO', 'Сударыня', '9.jpg');
+VALUES (9000, 'U_9000', 'U_9000_INFO', 'Сударыня', '1.jpg');
 INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (10000, 'U_10000', 'U_10000_INFO', 'Сударыня', '10.jpg');
+VALUES (10000, 'U_10000', 'U_10000_INFO', 'Сударыня', '2.jpg');
 -------------------------------------------------------------------------------------
 INSERT INTO dating.preferences (chat_id, sex)
 VALUES (1000, 'Сударъ');

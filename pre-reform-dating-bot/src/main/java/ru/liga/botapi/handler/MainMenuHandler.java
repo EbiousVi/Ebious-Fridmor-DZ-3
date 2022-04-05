@@ -2,30 +2,23 @@ package ru.liga.botapi.handler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import ru.liga.Dto.FavouritesProfileDto;
 import ru.liga.Dto.ProfileDto;
-import ru.liga.Dto.SearchProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
 import ru.liga.keyboard.KeyboardName;
 import ru.liga.keyboard.KeyboardService;
+import ru.liga.model.UserProfileData;
 import ru.liga.model.UserProfileList;
 import ru.liga.service.LocaleMessageService;
+import ru.liga.service.ProfileImageService;
 import ru.liga.service.RestTemplateService;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +28,7 @@ import java.util.List;
 public class MainMenuHandler implements UserInputHandler {
     private final LocaleMessageService localeMessageService;
     private final RestTemplateService restTemplateService;
+    private final ProfileImageService profileImageService;
     private final KeyboardService keyboardService;
     private final UserDataCache userDataCache;
 
@@ -49,57 +43,62 @@ public class MainMenuHandler implements UserInputHandler {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(String.valueOf(chatId));
 
+        SendPhoto sendPhoto = new SendPhoto();
+        sendPhoto.setChatId(String.valueOf(chatId));
+
+        UserProfileData userProfileData = userDataCache.getUserProfileData(userId);
+
         if (text.equals(localeMessageService.getMessage("button.main.search"))) {
             UserProfileList userProfileList = new UserProfileList(restTemplateService.getSearchList(chatId));
-            userDataCache.setUserProfileList(userId, userProfileList);
-
-            ProfileDto currProf =  userProfileList.getCurrent();
-
-            sendMessage.setText(currProf.getChatId() + currProf.getName());
-            sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.SEARCH_MENU));
-            userDataCache.setUserCurrentBotState(userId, BotState.SEARCH_MENU);
-        } else if (text.equals(localeMessageService.getMessage("button.main.profile"))) {
-
-            try {
-                FileUtils.writeByteArrayToFile(new File("asd.jpg"), userDataCache.getUserProfileData(userId).getAvatar());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            File photo = new File("asd.jpg");
-
-            SendPhoto sendPhoto = new SendPhoto(String.valueOf(chatId), new InputFile(photo));
-            sendPhoto.setCaption(userDataCache.getUserProfileData(userId).getName() + " " + userDataCache.getUserProfileData(userId).getSex());
-            botApiMethodList.add(sendPhoto);
-            return botApiMethodList;
-
-//            sendMessage.setText(userDataCache.getUserProfileData(userId).toString());
-        } else if (text.equals(localeMessageService.getMessage("button.main.favorite"))) {
-            UserProfileList userProfileList = new UserProfileList(restTemplateService.getFavoriteList(chatId));
-
             if (userProfileList.isEmpty()) {
-                botApiMethodList.add(new SendMessage(String.valueOf(chatId), "Вы еще никого не выбрали"));
+                sendMessage.setText("В данный момент нет анкет, совпадающих по поисковому критерию.");
+                botApiMethodList.add(sendMessage);
                 return botApiMethodList;
             }
-
             userDataCache.setUserProfileList(userId, userProfileList);
 
-            ProfileDto currProf = userProfileList.getCurrent();
+            ProfileDto currentSuggestion = userProfileList.getCurrent();
+            setSendPhotoOptions(sendPhoto, currentSuggestion);
+            sendPhoto.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.SEARCH_MENU));
+            botApiMethodList.add(sendPhoto);
 
-            sendMessage.setText(currProf.getChatId() + "=" + currProf.getName() + ": " + currProf.getStatus());
-            sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.FAVORITE_MENU));
+            userDataCache.setUserCurrentBotState(userId, BotState.SEARCH_MENU);
+        } else if (text.equals(localeMessageService.getMessage("button.main.profile"))) {
+            sendPhoto.setPhoto(new InputFile(profileImageService.getProfileImageForUser(userId)));
+            sendPhoto.setCaption(userProfileData.getName() + ", " + userProfileData.getSex().getValue());
+            botApiMethodList.add(sendPhoto);
+        } else if (text.equals(localeMessageService.getMessage("button.main.favorite"))) {
+            UserProfileList userProfileList = new UserProfileList(restTemplateService.getFavoriteList(chatId));
+            if (userProfileList.isEmpty()) {
+                sendMessage.setText("Вы еще никого не выбрали.");
+                botApiMethodList.add(sendMessage);
+                return botApiMethodList;
+            }
+            userDataCache.setUserProfileList(userId, userProfileList);
+
+            ProfileDto currentSuggestion = userProfileList.getCurrent();
+            setSendPhotoOptions(sendPhoto, currentSuggestion);
+            sendPhoto.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.FAVORITE_MENU));
+            botApiMethodList.add(sendPhoto);
+
             userDataCache.setUserCurrentBotState(userId, BotState.FAVORITE_MENU);
         } else {
             sendMessage.setText(localeMessageService.getMessage("reply.error.invalidValue"));
             sendMessage.setReplyMarkup(keyboardService.getReplyKeyboard(KeyboardName.MAIN_MENU));
+            botApiMethodList.add(sendMessage);
+            return botApiMethodList;
         }
 
-        botApiMethodList.add(sendMessage);
         return botApiMethodList;
     }
 
     @Override
     public BotState getHandlerName() {
         return BotState.MAIN_MENU;
+    }
+
+    private void setSendPhotoOptions(SendPhoto sendPhoto, ProfileDto Suggestion) {
+        sendPhoto.setPhoto(new InputFile(profileImageService.getProfileImageForSuggestion(Suggestion)));
+        sendPhoto.setCaption(Suggestion.getName() + ", " + Suggestion.getSex());
     }
 }
