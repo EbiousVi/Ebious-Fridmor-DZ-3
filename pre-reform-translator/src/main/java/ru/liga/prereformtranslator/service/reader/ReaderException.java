@@ -1,4 +1,4 @@
-package ru.liga.prereformtranslator.service.dictionary;
+package ru.liga.prereformtranslator.service.reader;
 
 public class ReaderException extends RuntimeException{
 

@@ -3,6 +3,8 @@ package ru.liga.prereformtranslator.service.dictionary;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.liga.prereformtranslator.service.reader.CsvReader;
+import ru.liga.prereformtranslator.service.reader.ReaderException;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;

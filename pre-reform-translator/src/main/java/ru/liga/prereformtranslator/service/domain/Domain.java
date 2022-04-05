@@ -1,11 +1,9 @@
 package ru.liga.prereformtranslator.service.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class Domain {
-    private String tittle;
-    private String body;
+    private final String tittle;
+    private final String body;
 }
