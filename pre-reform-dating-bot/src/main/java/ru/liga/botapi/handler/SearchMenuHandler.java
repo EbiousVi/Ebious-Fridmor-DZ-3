@@ -54,11 +54,22 @@ public class SearchMenuHandler implements UserInputHandler {
             userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
             botApiMethodList.add(sendMessage);
         } else if (text.equals(localeMessageService.getMessage("button.search.left"))) {
+            if (userProfileList.isEmpty()) {
+                sendMessage.setText("Анкет не осталось, попробуйте позже.");
+                botApiMethodList.add(sendMessage);
+                return botApiMethodList;
+            }
             ProfileDto nextSuggestion = userProfileList.getNext();
             setSendPhotoOptions(sendPhoto, nextSuggestion);
             botApiMethodList.add(sendPhoto);
         } else if (text.equals(localeMessageService.getMessage("button.search.right"))) {
+            if (userProfileList.isEmpty()) {
+                sendMessage.setText("Анкет не осталось, попробуйте позже.");
+                botApiMethodList.add(sendMessage);
+                return botApiMethodList;
+            }
             ProfileDto currentSuggestion = userProfileList.getCurrent();
+            userProfileList.removeCurrent();
             restTemplateService.setFavoriteUser(chatId, currentSuggestion.getChatId());
             if (currentSuggestion.getIsMatch()) {
                 sendMessage.setText("Вы любимы ;)");
@@ -66,7 +77,7 @@ public class SearchMenuHandler implements UserInputHandler {
                 userDataCache.setUserCurrentBotState(userId, BotState.LIKE_MENU);
                 botApiMethodList.add(sendMessage);
             } else {
-                ProfileDto nextSuggestion =  userProfileList.getNext();
+                ProfileDto nextSuggestion = userProfileList.getNext();
                 setSendPhotoOptions(sendPhoto, nextSuggestion);
                 botApiMethodList.add(sendPhoto);
             }

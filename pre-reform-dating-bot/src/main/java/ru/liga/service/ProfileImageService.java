@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import ru.liga.Dto.ProfileDto;
-import ru.liga.botapi.handler.MainMenuHandler;
 import ru.liga.cache.UserDataCache;
 
 import java.io.File;

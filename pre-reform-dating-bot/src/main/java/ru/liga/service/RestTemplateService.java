@@ -12,7 +12,11 @@ import ru.liga.Dto.ProfileDto;
 import ru.liga.Dto.UserProfileDto;
 import ru.liga.model.UserProfileData;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +30,7 @@ public class RestTemplateService {
         if (resp.getStatusCode().is2xxSuccessful()) {
             return resp.getBody();
         } else {
-            throw new RuntimeException("asdasdausdjasd");
+            throw new RuntimeException("Create user profile request return bad response!");
         }
     }
 
@@ -36,33 +40,37 @@ public class RestTemplateService {
             if (resp.getStatusCode().is2xxSuccessful()) {
                 return resp.getBody();
             } else {
-                throw new RuntimeException("Pre reform translator return bad response!");
+                throw new RuntimeException("Get user profile request return bad response!");
             }
         } catch (RestClientException e) {
             return null;
         }
     }
 
-    public List<ProfileDto> getSearchList(long chatId) {
+    public LinkedList<ProfileDto> getSearchList(long chatId) {
         try {
             ResponseEntity<ProfileDto[]> resp = restTemplate.getForEntity("http://localhost:6064/dating-server/search/for/" + chatId, ProfileDto[].class);
             if (resp.getStatusCode().is2xxSuccessful()) {
-                return List.of(resp.getBody());
+                LinkedList<ProfileDto> linkedList = new LinkedList<>();
+                Collections.addAll(linkedList, resp.getBody());
+                return linkedList;
             } else {
-                throw new RuntimeException("Pre reform translator return bad response!");
+                throw new RuntimeException("Get search list request return bad response!");
             }
         } catch (RestClientException e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    public List<ProfileDto> getFavoriteList(long chatId) {
+    public LinkedList<ProfileDto> getFavoriteList(long chatId) {
         try {
             ResponseEntity<ProfileDto[]> resp = restTemplate.getForEntity("http://localhost:6064/dating-server/favourites/" + chatId, ProfileDto[].class);
             if (resp.getStatusCode().is2xxSuccessful()) {
-                return List.of(resp.getBody());
+                LinkedList<ProfileDto> linkedList = new LinkedList<>();
+                Collections.addAll(linkedList, resp.getBody());
+                return linkedList;
             } else {
-                throw new RuntimeException("Pre reform translator return bad response!");
+                throw new RuntimeException("Get favorites list request return bad response!");
             }
         } catch (RestClientException e) {
             throw new RuntimeException(e.getMessage());
@@ -74,7 +82,7 @@ public class RestTemplateService {
             HttpEntity<FavouritesDto> request = new HttpEntity<>(new FavouritesDto(fromChatId, toChatId));
             ResponseEntity<Void> resp = restTemplate.postForEntity("http://localhost:6064/dating-server/favourites/like", request, Void.class);
             if (!resp.getStatusCode().is2xxSuccessful()) {
-                throw new RuntimeException("Pre reform translator return bad response!");
+                throw new RuntimeException("Set favorite request return bad response!");
             }
         } catch (RestClientException e) {
             throw new RuntimeException(e.getMessage());

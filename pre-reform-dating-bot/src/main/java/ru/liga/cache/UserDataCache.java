@@ -10,6 +10,7 @@ import ru.liga.service.RestTemplateService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 @Component
@@ -57,7 +58,7 @@ public class UserDataCache {
 
     public UserProfileList getUserProfileList(long userId) {
         UserProfileList userProfileDataList = userProfileListMap.get(userId);
-        return userProfileDataList != null ? userProfileDataList : new UserProfileList(new ArrayList<>());
+        return userProfileDataList != null ? userProfileDataList : new UserProfileList(new LinkedList<>());
     }
 
     public void setUserProfileList(long userId, UserProfileList userProfileList) {
