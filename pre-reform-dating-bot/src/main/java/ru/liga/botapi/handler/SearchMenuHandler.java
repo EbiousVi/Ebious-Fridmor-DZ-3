@@ -56,7 +56,7 @@ public class SearchMenuHandler implements UserInputHandler {
             ProfileDto currentSuggestion = userProfileList.getCurrent();
             userProfileList.removeCurrent();
 
-            restTemplateService.setFavoriteUser(chatId, currentSuggestion.getChatId());
+            restTemplateService.setFavoriteUser(userDataCache.getUserProfileData(chatId), currentSuggestion.getChatId());
 
             if (currentSuggestion.getIsMatch()) {
                 userDataCache.setUserCurrentBotState(userId, BotState.LIKE_MENU);

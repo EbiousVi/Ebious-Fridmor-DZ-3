@@ -7,6 +7,7 @@ import ru.liga.prereformdatingserver.domain.dto.profile.resp.ProfileDto;
 import ru.liga.prereformdatingserver.service.favourites.FavouritesCollector;
 import ru.liga.prereformdatingserver.service.favourites.FavouritesService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -17,13 +18,13 @@ public class FavouritesController {
     private final FavouritesService favouritesService;
     private final FavouritesCollector favouritesCollector;
 
-    @PostMapping("/favourites/like")
-    public void chooseAFavorite(@RequestBody FavouritesDto favouritesDto) {
-        favouritesService.setAFavorite(favouritesDto.getFromChatId(), favouritesDto.getToChatId());
+    @GetMapping("/favourites/{toChatId}")
+    public void chooseAFavorite(@PathVariable("toChatId") Long chatId, Principal principal) {
+        favouritesService.setAFavorite(Long.parseLong(principal.getName()), chatId);
     }
 
-    @GetMapping("/favourites/{chatId}")
-    public List<ProfileDto> getAllFavourites(@PathVariable("chatId") Long chatId) {
-        return favouritesCollector.collectAllFavourites(chatId);
+    @GetMapping("/favourites")
+    public List<ProfileDto> getAllFavourites(Principal principal) {
+        return favouritesCollector.collectAllFavourites(Long.parseLong(principal.getName()));
     }
 }

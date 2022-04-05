@@ -15,6 +15,6 @@ public class UserProfileDto {
     private Sex sex;
     private String description;
     private List<Sex> preferences;
-    private Map<String, String> token;
+    private Map<String, String> tokens;
     private byte[] avatar;
 }

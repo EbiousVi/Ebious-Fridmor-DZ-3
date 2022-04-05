@@ -7,6 +7,7 @@ import ru.liga.prereformdatingserver.domain.dto.profile.req.NewProfileDto;
 import ru.liga.prereformdatingserver.domain.dto.profile.resp.UserProfileDto;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
 import ru.liga.prereformdatingserver.domain.enums.Sex;
+import ru.liga.prereformdatingserver.security.JwtTokenProvider;
 import ru.liga.prereformdatingserver.service.favourites.FavouritesService;
 import ru.liga.prereformdatingserver.service.mapper.UserProfileDtoMapper;
 import ru.liga.prereformdatingserver.service.outer.avatar.Domain;

@@ -50,7 +50,7 @@ public class UserDataCache {
 
     public void fillUserDataCacheForUser(long userId) {
         if (userProfileDataMap.get(userId) == null) {
-            UserProfileDto userProfileDto = restTemplateService.getUserProfile(userId);
+            UserProfileDto userProfileDto = null;//restTemplateService.getUserProfile(userProfileDataMap.get(userId));
             if (userProfileDto != null) {
                 userBotStateMap.put(userId, BotState.MAIN_MENU);
                 userProfileDataMap.put(userId, UserProfileData.builder()

@@ -22,7 +22,7 @@ public class UserProfileDtoMapper {
                 .sex(Sex.getByValue(userProfile.getSex()))
                 .description(userProfile.getDescription())
                 .avatar(storage.findAvatarAsByteArray(userProfile.getAvatar()))
-                .token(jwtTokenProvider.getTokens(userProfile))
+                .tokens(jwtTokenProvider.getTokens(userProfile))
                 .build();
     }
 }

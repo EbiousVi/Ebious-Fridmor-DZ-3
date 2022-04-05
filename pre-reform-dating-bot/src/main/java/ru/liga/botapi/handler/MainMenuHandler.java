@@ -39,7 +39,7 @@ public class MainMenuHandler implements UserInputHandler {
         UserProfileData userProfileData = userDataCache.getUserProfileData(userId);
 
         if (text.equals(localeMessageService.getMessage("button.main.search"))) {
-            UserProfileList userProfileList = new UserProfileList(restTemplateService.getSearchList(chatId));
+            UserProfileList userProfileList = new UserProfileList(restTemplateService.getSearchList(userProfileData));
 
             if (userProfileList.isEmpty()) {
                 return List.of(replyMessageService.getSendMessage(
@@ -59,7 +59,7 @@ public class MainMenuHandler implements UserInputHandler {
                     chatId, profileImageService.getProfileImageForUser(userId),
                     userProfileData.getName() + ", " + userProfileData.getSex().getValue(), null));
         } else if (text.equals(localeMessageService.getMessage("button.main.favorite"))) {
-            UserProfileList userProfileList = new UserProfileList(restTemplateService.getFavoriteList(chatId));
+            UserProfileList userProfileList = new UserProfileList(restTemplateService.getFavoriteList(userProfileData));
 
             if (userProfileList.isEmpty()) {
                 return List.of(replyMessageService.getSendMessage(

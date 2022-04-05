@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+import ru.liga.Dto.UserProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
 import ru.liga.keyboard.KeyboardName;
@@ -93,9 +94,9 @@ public class FillingProfileHandler implements UserInputHandler {
 
                 profileData.setPreferences(preferenceList);
                 profileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
-
-                profileData.setAvatar(restTemplateService.createUserProfile(profileData).getAvatar());
-
+                UserProfileDto userProfile = restTemplateService.createUserProfile(profileData);
+                profileData.setAvatar(userProfile.getAvatar());
+                profileData.setTokens(userProfile.getTokens());
                 userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
 
                 return List.of(replyMessageService.getSendMessage(
