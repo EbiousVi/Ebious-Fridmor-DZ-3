@@ -8,12 +8,15 @@ import org.springframework.data.relational.core.conversion.DbActionExecutionExce
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.liga.prereformdatingserver.domain.entity.Favourites;
+import ru.liga.prereformdatingserver.domain.entity.Preferences;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
 import ru.liga.prereformdatingserver.service.repository.FavouritesRepository;
 import ru.liga.prereformdatingserver.service.repository.UserProfileRepository;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -38,13 +41,11 @@ public class FavouritesService {
         }
     }
 
-    public Boolean checkPotentialMatches(Long fromChatId, Long toChatId) {
-        return favouritesRepository.checkMatches(fromChatId, toChatId);
-    }
-
+    // SET CORRECT PRFERENCES
     public void raisePopularity(Long chatId) {
         int raisePopularityScore = 3;
-        List<UserProfile> allProfiles = userProfileRepository.findAll(chatId);
+        Optional<UserProfile> byId = userProfileRepository.findById(chatId);
+        List<UserProfile> allProfiles = userProfileRepository.findAll();
         Collections.shuffle(allProfiles);
         allProfiles.stream()
                 .filter(profile -> !profile.getChatId().equals(chatId))

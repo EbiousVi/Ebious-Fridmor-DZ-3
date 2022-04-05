@@ -21,7 +21,7 @@ public class WhoFavouriteAmIService {
     public List<ProfileDto> getWhoseFavouriteAmI(Long chatId) {
         return userProfileRepository.findWhoseFavouriteAmI(chatId)
                 .stream()
-                .map(profile -> mapper.map(profile, ME, false))
+                .map(profile -> mapper.map(profile, ME))
                 .collect(Collectors.toList());
     }
 }

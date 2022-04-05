@@ -12,9 +12,8 @@ import ru.liga.prereformdatingserver.service.mapper.UserProfileDtoMapper;
 import ru.liga.prereformdatingserver.service.outer.avatar.Domain;
 import ru.liga.prereformdatingserver.service.outer.avatar.RestAvatarService;
 import ru.liga.prereformdatingserver.service.outer.translator.RestTranslatorService;
+import ru.liga.prereformdatingserver.service.storage.StorageService;
 
-import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,13 +25,13 @@ public class ProfileCreatorService {
     private final UserProfileService userProfileService;
     private final UserProfileDtoMapper userProfileDtoMapper;
     private final FavouritesService favouritesService;
+    private final StorageService storageService;
 
     @Transactional
     public UserProfileDto createProfile(NewProfileDto dto) {
         Domain domain = restTranslatorService.translateToObject(dto.getDescription());
         dto.setDescription(domain.getTittle() + domain.getBody());
         dto.setAvatar(restAvatarService.createAvatar(domain));
-        //dto.setAvatar(Path.of("1.jpg"));
         UserProfile userProfile = userProfileService.createUserProfile(dto);
         favouritesService.raisePopularity(userProfile.getChatId());
         return userProfileDtoMapper.map(userProfile);
@@ -61,6 +60,7 @@ public class ProfileCreatorService {
                 .preferences(userProfileByChatId.getPreferences().stream()
                         .map(pref -> Sex.getByValue(pref.getSex()))
                         .collect(Collectors.toList()))
+                .avatar(storageService.findAvatarAsByteArray(userProfileByChatId.getAvatar()))
                 .build();
     }
 }

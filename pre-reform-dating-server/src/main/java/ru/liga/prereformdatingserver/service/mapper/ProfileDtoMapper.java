@@ -13,13 +13,12 @@ public class ProfileDtoMapper {
 
     private final StorageService storage;
 
-    public ProfileDto map(UserProfile userProfile, Favourites favourites, Boolean isMatch) {
+    public ProfileDto map(UserProfile userProfile, Favourites favourites) {
         return ProfileDto.builder()
                 .chatId(userProfile.getChatId())
                 .name(userProfile.getName())
                 .sex(userProfile.getSex())
                 .status(favourites.value)
-                .isMatch(isMatch)
                 .avatar(storage.findAvatarAsByteArray(userProfile.getAvatar()))
                 .build();
     }

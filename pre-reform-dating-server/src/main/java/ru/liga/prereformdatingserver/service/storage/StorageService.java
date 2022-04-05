@@ -18,8 +18,7 @@ import java.util.UUID;
 @Slf4j
 public class StorageService {
 
-    private static final Path AVATAR_STORAGE = Paths.get("pre-reform-dating-server","src", "main", "resources", "storage", "avatar");
-;
+    private static final Path AVATAR_STORAGE = Paths.get("src", "main", "resources", "storage", "avatar");
     private static final String IMAGE_EXTENSION = ".jpg";
 
     public Path saveAvatar(byte[] bytes) {
@@ -35,10 +34,7 @@ public class StorageService {
     }
 
     public byte[] findAvatarAsByteArray(String filename) {
-        String path = "storage/avatar/" + filename;
-        //InputStream inputStream = this.getClass().getResourceAsStream(path);
         try {
-            //if (inputStream == null) throw new StorageException("Can not find resource!");
             return IOUtils.toByteArray(AVATAR_STORAGE.resolve(filename).toUri());
         } catch (IOException e) {
             log.error("Can not write avatar to byte array!", e);

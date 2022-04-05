@@ -11,8 +11,7 @@ import java.util.List;
 @Repository
 public interface UserProfileRepository extends CrudRepository<UserProfile, Long> {
 
-    @Query("SELECT * FROM DATING.USER_PROFILE WHERE CHAT_ID != :chatId")
-    List<UserProfile> findAll(@Param("chatId") Long chatId);
+    List<UserProfile> findAll();
 
     @Query("SELECT * FROM DATING.USER_PROFILE " +
             "WHERE CHAT_ID IN " +
@@ -25,13 +24,6 @@ public interface UserProfileRepository extends CrudRepository<UserProfile, Long>
             "(SELECT FROM_CHAT_ID FROM DATING.FAVOURITES " +
             "WHERE TO_CHAT_ID = :chatId)")
     List<UserProfile> findWhoseFavouriteAmI(@Param("chatId") Long chatId);
-
-/*    @Query("SELECT * FROM DATING.USER_PROFILE " +
-            "WHERE CHAT_ID IN " +
-            "(SELECT FROM_CHAT_ID FROM DATING.FAVOURITES " +
-            "WHERE FROM_CHAT_ID IN " +
-            "(SELECT FROM_CHAT_ID FROM DATING.FAVOURITES WHERE TO_CHAT_ID = :chatId))")
-    List<UserProfile> findMatches(@Param("chatId") Long chatId);*/
 
     @Query("SELECT * FROM DATING.USER_PROFILE " +
             "WHERE CHAT_ID IN " +

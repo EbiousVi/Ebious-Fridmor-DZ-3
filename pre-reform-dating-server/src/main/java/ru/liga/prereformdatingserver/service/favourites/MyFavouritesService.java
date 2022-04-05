@@ -21,7 +21,7 @@ public class MyFavouritesService {
     public List<ProfileDto> getMyFavourites(Long chatId) {
         return userProfileRepository.findMyFavourites(chatId)
                 .stream()
-                .map(profile -> mapper.map(profile, MY, false))
+                .map(profile -> mapper.map(profile, MY))
                 .collect(Collectors.toList());
     }
 }

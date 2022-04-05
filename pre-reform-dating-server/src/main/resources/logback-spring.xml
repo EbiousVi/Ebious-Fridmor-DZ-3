@@ -1,5 +1,4 @@
 <configuration debug="false">
-    <!-- use Spring default values -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -25,9 +24,9 @@
         <appender-ref ref="FILE"/>
     </root>
     <springProfile name="dev">
-        <logger name="ru.liga.pre-reform-dating-server" level="INFO"/>
+        <logger name="ru.liga.pre-reform-dating-server" level="DEBUG"/>
     </springProfile>
     <springProfile name="test">
-        <logger name="ru.liga.pre-reform-dating-server" level="INFO"/>
+        <logger name="ru.liga.pre-reform-dating-server" level="DEBUG"/>
     </springProfile>
 </configuration>

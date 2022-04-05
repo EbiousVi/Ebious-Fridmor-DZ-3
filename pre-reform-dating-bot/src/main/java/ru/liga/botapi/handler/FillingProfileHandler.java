@@ -19,6 +19,7 @@ import ru.liga.service.RestTemplateService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @Slf4j

@@ -22,7 +22,7 @@ class StorageServiceTest {
 
     @Before
     public void setUp() {
-        ReflectionTestUtils.setField(storage, "storage", temp);
+//        ReflectionTestUtils.setField(storage, "storage", temp);
     }
 
     @Test

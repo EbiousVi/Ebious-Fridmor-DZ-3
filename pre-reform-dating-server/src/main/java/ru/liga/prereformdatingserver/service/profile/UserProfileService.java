@@ -5,13 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.liga.prereformdatingserver.domain.dto.profile.req.NewProfileDto;
 import ru.liga.prereformdatingserver.domain.entity.Preferences;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
+import ru.liga.prereformdatingserver.domain.enums.Sex;
 import ru.liga.prereformdatingserver.exception.UserProfileException;
 import ru.liga.prereformdatingserver.service.repository.UserProfileRepository;
 
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,6 +24,11 @@ import java.util.stream.Collectors;
 public class UserProfileService {
 
     private final UserProfileRepository userProfileRepository;
+
+    public UserProfile getAuthUserProfile() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return getUserProfileByChatId(Long.parseLong(auth.getName()));
+    }
 
     public UserProfile getUserProfileByChatId(Long chatId) {
         return userProfileRepository.findById(chatId)
@@ -46,6 +55,7 @@ public class UserProfileService {
                 throw new UserProfileException("User profile = " + dto.getChatId() + " already register!");
             }
             log.error("Can not save user profile = {}", dto.getChatId(), e);
+            e.printStackTrace();
             throw new UserProfileException("Can not save user profile!");
         }
     }

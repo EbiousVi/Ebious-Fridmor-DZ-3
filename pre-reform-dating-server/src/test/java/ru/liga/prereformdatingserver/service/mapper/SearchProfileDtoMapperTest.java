@@ -26,7 +26,7 @@ class ProfileDtoMapperTest extends PostgresContainer {
                 .description("U_100_description")
                 .avatar("1.jpg")
                 .preferences(Set.of(new Preferences(100L, Sex.FEMALE.name))).build();
-        ProfileDto searchProfileDto = profileDtoMapper.map(expected, Favourites.MATCHES, false);
+        ProfileDto searchProfileDto = profileDtoMapper.map(expected, Favourites.MATCHES);
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(searchProfileDto.getChatId()).isEqualTo(expected.getChatId());
         assertions.assertThat(searchProfileDto.getName()).isEqualTo(expected.getName());

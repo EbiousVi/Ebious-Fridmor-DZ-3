@@ -4,12 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import ru.liga.prereformdatingserver.exception.RestOuterServiceException;
 import ru.liga.prereformdatingserver.service.outer.avatar.Domain;
+
+import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +25,8 @@ public class RestTranslatorService {
     private String translatorURL;
 
     public String translateToString(String text) {
+ /*       HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + token);*/
         try {
             HttpEntity<String> request = new HttpEntity<>(text);
             ResponseEntity<String> response =
