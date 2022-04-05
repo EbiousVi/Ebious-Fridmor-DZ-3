@@ -7,16 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import ru.liga.Dto.FavouritesDto;
-import ru.liga.Dto.NewProfileDto;
 import ru.liga.Dto.ProfileDto;
 import ru.liga.Dto.UserProfileDto;
 import ru.liga.model.UserProfileData;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,9 +30,9 @@ public class RestTemplateService {
         }
     }
 
-    public NewProfileDto getUserProfile(long chatId) {
+    public UserProfileDto getUserProfile(long chatId) {
         try {
-            ResponseEntity<NewProfileDto> resp = restTemplate.getForEntity("http://localhost:6064/dating-server/profiles/" + chatId, NewProfileDto.class);
+            ResponseEntity<UserProfileDto> resp = restTemplate.getForEntity("http://localhost:6064/dating-server/profiles/" + chatId, UserProfileDto.class);
             if (resp.getStatusCode().is2xxSuccessful()) {
                 return resp.getBody();
             } else {
