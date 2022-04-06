@@ -73,7 +73,7 @@ public class MainMenuHandler implements UserInputHandler {
 
             return List.of(replyMessageService.getSendPhoto(
                     chatId, profileImageService.getProfileImageForSuggestion(currentSuggestion),
-                    currentSuggestion.getName() + ", " + currentSuggestion.getSex(),
+                    currentSuggestion.getName() + ", " + currentSuggestion.getSex() + ", " + currentSuggestion.getStatus(),
                     keyboardService.getReplyKeyboard(KeyboardName.FAVORITE_MENU)));
         } else {
             return List.of(replyMessageService.getSendMessage(

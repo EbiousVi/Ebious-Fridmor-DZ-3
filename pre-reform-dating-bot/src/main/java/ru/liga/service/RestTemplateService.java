@@ -40,7 +40,7 @@ public class RestTemplateService {
             if (usersResponse.getStatusCode().is2xxSuccessful()) {
                 return usersResponse.getBody();
             } else {
-                throw new RuntimeException("Get user profile request return bad response!");
+                return null;
             }
         } catch (RestClientException e) {
             e.printStackTrace();

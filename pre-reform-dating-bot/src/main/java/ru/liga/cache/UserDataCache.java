@@ -69,18 +69,21 @@ public class UserDataCache {
     }
 
     public void fillUserDataCacheForUser(long userId) {
-        if (userProfileDataMap.get(userId) == null) {
-            UserProfileDto userProfileDto = restTemplateService.getUserProfile(userProfileDataMap.get(userId));
-            if (userProfileDto != null) {
-                userBotStateMap.put(userId, BotState.MAIN_MENU);
-                userProfileDataMap.put(userId, UserProfileData.builder()
-                        .chatId(userProfileDto.getChatId())
-                        .name(userProfileDto.getName())
-                        .sex(userProfileDto.getSex())
-                        .description(userProfileDto.getDescription())
-                        .avatar(userProfileDto.getAvatar())
-                        .profileState(UserProfileState.COMPLETED_PROFILE)
-                        .build());
+        if (userProfileDataMap.get(userId) != null) {
+            if (userProfileDataMap.get(userId).getProfileState() == UserProfileState.EMPTY_PROFILE) {
+                UserProfileDto userProfileDto = restTemplateService.getUserProfile(userProfileDataMap.get(userId));
+                if (userProfileDto != null) {
+                    userBotStateMap.put(userId, BotState.MAIN_MENU);
+                    userProfileDataMap.put(userId, UserProfileData.builder()
+                            .chatId(userProfileDto.getChatId())
+                            .name(userProfileDto.getName())
+                            .sex(userProfileDto.getSex())
+                            .description(userProfileDto.getDescription())
+                            .avatar(userProfileDto.getAvatar())
+                            .profileState(UserProfileState.COMPLETED_PROFILE)
+                            .tokens(userProfileDataMap.get(userId).getTokens())
+                            .build());
+                }
             }
         }
     }
