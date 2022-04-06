@@ -35,12 +35,18 @@ public class LikeMenuHandler implements UserInputHandler {
         if (text.equals(localeMessageService.getMessage("button.like.next"))) {
             userDataCache.setUserCurrentBotState(userId, BotState.SEARCH_MENU);
 
-            ProfileDto nextSuggestion = userDataCache.getUserProfileList(userId).getNext();
+            if (userDataCache.getUserProfileList(userId).isEmpty()) {
+                return List.of(replyMessageService.getSendMessage(
+                        chatId, localeMessageService.getMessage("reply.list.suggestionIsOver"),
+                        keyboardService.getReplyKeyboard(KeyboardName.SEARCH_MENU)));
+            } else {
+                ProfileDto nextSuggestion = userDataCache.getUserProfileList(userId).getNext();
 
-            return List.of(replyMessageService.getSendPhoto(
-                    chatId, profileImageService.getProfileImageForSuggestion(nextSuggestion),
-                    nextSuggestion.getName() + ", " + nextSuggestion.getSex(),
-                    keyboardService.getReplyKeyboard(KeyboardName.SEARCH_MENU)));
+                return List.of(replyMessageService.getSendPhoto(
+                        chatId, profileImageService.getProfileImageForSuggestion(nextSuggestion),
+                        nextSuggestion.getName() + ", " + nextSuggestion.getSex(),
+                        keyboardService.getReplyKeyboard(KeyboardName.SEARCH_MENU)));
+            }
         } else if (text.equals(localeMessageService.getMessage("button.like.chat"))) {
             return List.of(replyMessageService.getSendMessage(
                     chatId, localeMessageService.getMessage("reply.like.inDevelopment"), null));

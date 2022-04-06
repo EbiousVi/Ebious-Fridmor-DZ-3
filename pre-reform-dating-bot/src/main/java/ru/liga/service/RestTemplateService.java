@@ -1,6 +1,7 @@
 package ru.liga.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -15,6 +16,7 @@ import ru.liga.model.UserProfileData;
 import java.util.Collections;
 import java.util.LinkedList;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RestTemplateService {
@@ -43,7 +45,7 @@ public class RestTemplateService {
                 return null;
             }
         } catch (RestClientException e) {
-            e.printStackTrace();
+            log.error("server is not available");
             return null;
         }
     }
@@ -60,7 +62,8 @@ public class RestTemplateService {
                 throw new RuntimeException("Get search list request return bad response!");
             }
         } catch (RestClientException e) {
-            throw new RuntimeException(e.getMessage());
+            log.error("server is not available");
+            return null;
         }
     }
 
@@ -76,7 +79,8 @@ public class RestTemplateService {
                 throw new RuntimeException("Get favorites list request return bad response!");
             }
         } catch (RestClientException e) {
-            throw new RuntimeException(e.getMessage());
+            log.error("server is not available");
+            return null;
         }
     }
 
@@ -88,7 +92,7 @@ public class RestTemplateService {
                 throw new RuntimeException("Set favorite request return bad response!");
             }
         } catch (RestClientException e) {
-            throw new RuntimeException(e.getMessage());
+            log.error("server is not available");
         }
     }
 
