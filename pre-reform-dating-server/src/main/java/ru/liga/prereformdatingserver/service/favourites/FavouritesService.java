@@ -1,6 +1,6 @@
 package ru.liga.prereformdatingserver.service.favourites;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
@@ -8,19 +8,16 @@ import org.springframework.data.relational.core.conversion.DbActionExecutionExce
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.liga.prereformdatingserver.domain.entity.Favourites;
-import ru.liga.prereformdatingserver.domain.entity.Preferences;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
 import ru.liga.prereformdatingserver.service.repository.FavouritesRepository;
 import ru.liga.prereformdatingserver.service.repository.UserProfileRepository;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
-@AllArgsConstructor
 public class FavouritesService {
 
     private final FavouritesRepository favouritesRepository;
@@ -41,15 +38,15 @@ public class FavouritesService {
         }
     }
 
-    // SET CORRECT PRFERENCES
-    public void raisePopularity(Long chatId) {
-        int raisePopularityScore = 3;
-        Optional<UserProfile> byId = userProfileRepository.findById(chatId);
+    @Transactional
+    public void raisePopularityForNewbie(UserProfile userProfile) {
         List<UserProfile> allProfiles = userProfileRepository.findAll();
         Collections.shuffle(allProfiles);
+        int raisePopularityScore = 3;
         allProfiles.stream()
-                .filter(profile -> !profile.getChatId().equals(chatId))
+                .filter(profile -> !profile.getChatId().equals(userProfile.getChatId()))
+                .filter(profile -> profile.getPreferences().stream().anyMatch(pref -> pref.getSex().equals(userProfile.getSex())))
                 .limit(raisePopularityScore)
-                .forEach(profile -> setAFavorite(profile.getChatId(), chatId));
+                .forEach(profile -> setAFavorite(profile.getChatId(), userProfile.getChatId()));
     }
 }

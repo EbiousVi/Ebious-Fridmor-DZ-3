@@ -2,10 +2,15 @@ package ru.liga.prereformdatingserver.service.profile;
 
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.IncorrectUpdateSemanticsDataAccessException;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import ru.liga.prereformdatingserver.PostgresContainer;
 import ru.liga.prereformdatingserver.domain.dto.profile.req.NewProfileDto;
 import ru.liga.prereformdatingserver.domain.entity.Preferences;
@@ -18,11 +23,27 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 class UserProfileServiceTest extends PostgresContainer {
 
     @Autowired
     UserProfileService userProfileService;
+
+    @MockBean
+    private Authentication auth;
+
+    @BeforeEach
+    public void initSecurityContext() {
+        String authUserProfile = "100";
+        when(auth.getName()).thenReturn(authUserProfile);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    @AfterEach
+    public void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
+    }
 
     @Test
     void getUserProfileByChatId() {
@@ -70,6 +91,7 @@ class UserProfileServiceTest extends PostgresContainer {
         assertions.assertThat(userProfile.getName()).isEqualTo(dto.getName());
         assertions.assertThat(userProfile.getDescription()).isEqualTo(dto.getDescription());
         assertions.assertThat(userProfile.getSex()).isEqualTo(dto.getSex().name);
+        assertions.assertThat(userProfile.getAvatar()).isEqualTo(dto.getAvatar().toString());
         assertions.assertAll();
     }
 
@@ -88,8 +110,7 @@ class UserProfileServiceTest extends PostgresContainer {
     }
 
     @Test
-    void createUserProfileDto() {
-        Long incorrectChatId = 123123123L;
+    void updateUserProfile() {
         NewProfileDto dto = NewProfileDto.builder()
                 .chatId(100L)
                 .name("UPDATE U_100")
@@ -98,8 +119,12 @@ class UserProfileServiceTest extends PostgresContainer {
                 .avatar(Path.of("100.jpg"))
                 .preferences(List.of(Sex.MALE))
                 .build();
-        Assertions.assertThatThrownBy(() -> userProfileService.updateUserProfile(incorrectChatId, dto))
-                .isInstanceOf(DbActionExecutionException.class)
-                .getCause().isInstanceOf(IncorrectUpdateSemanticsDataAccessException.class);
+        UserProfile profile = userProfileService.updateUserProfile(dto);
+        SoftAssertions assertions = new SoftAssertions();
+        assertions.assertThat(profile.getName()).isEqualTo(dto.getName());
+        assertions.assertThat(profile.getSex()).isEqualTo(dto.getSex().name);
+        assertions.assertThat(profile.getDescription()).isEqualTo(dto.getDescription());
+        assertions.assertThat(profile.getAvatar()).isEqualTo(dto.getAvatar().toString());
+        assertions.assertAll();
     }
 }

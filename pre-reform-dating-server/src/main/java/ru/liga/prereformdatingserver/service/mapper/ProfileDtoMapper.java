@@ -1,6 +1,6 @@
 package ru.liga.prereformdatingserver.service.mapper;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.liga.prereformdatingserver.domain.dto.profile.resp.ProfileDto;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
@@ -8,7 +8,7 @@ import ru.liga.prereformdatingserver.domain.enums.Favourites;
 import ru.liga.prereformdatingserver.service.storage.StorageService;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProfileDtoMapper {
 
     private final StorageService storage;

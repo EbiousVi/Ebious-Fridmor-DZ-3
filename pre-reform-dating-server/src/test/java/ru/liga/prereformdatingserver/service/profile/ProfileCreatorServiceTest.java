@@ -1,10 +1,14 @@
 package ru.liga.prereformdatingserver.service.profile;
 
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import ru.liga.prereformdatingserver.PostgresContainer;
 import ru.liga.prereformdatingserver.domain.dto.profile.req.NewProfileDto;
 import ru.liga.prereformdatingserver.domain.dto.profile.resp.UserProfileDto;
@@ -13,6 +17,7 @@ import ru.liga.prereformdatingserver.domain.enums.Sex;
 import ru.liga.prereformdatingserver.service.outer.avatar.Domain;
 import ru.liga.prereformdatingserver.service.outer.avatar.RestAvatarService;
 import ru.liga.prereformdatingserver.service.outer.translator.RestTranslatorService;
+import ru.liga.prereformdatingserver.service.storage.StorageService;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,8 +34,27 @@ class ProfileCreatorServiceTest extends PostgresContainer {
 
     @MockBean
     RestAvatarService restAvatarService;
+
     @MockBean
     RestTranslatorService restTranslatorService;
+
+    @MockBean
+    StorageService storage;
+
+    @MockBean
+    private Authentication auth;
+
+    @BeforeEach
+    public void initSecurityContext() {
+        String authUserProfile = "100";
+        when(auth.getName()).thenReturn(authUserProfile);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    @AfterEach
+    public void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
+    }
 
     @Test
     void createProfile() {
@@ -43,9 +67,9 @@ class ProfileCreatorServiceTest extends PostgresContainer {
                 .preferences(List.of(Sex.MALE))
                 .build();
         when(restTranslatorService.translateToObject(dto.getDescription())).thenReturn(new Domain("", ""));
-        when(restAvatarService.createAvatar(new Domain("", ""))).thenReturn(Paths.get("1.jpg"));
+        when(restAvatarService.createAvatar(new Domain("", ""))).thenReturn(dto.getAvatar());
+        when(storage.findAvatarAsByteArray(dto.getAvatar().toString())).thenReturn(new byte[1]);
         UserProfileDto profileDto = profileCreatorService.createProfile(dto);
-        System.out.println(profileCreatorService.getProfileDtoByChatId(dto.getChatId()).getDescription());
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(profileDto.getChatId()).isEqualTo(dto.getChatId());
         assertions.assertThat(profileDto.getName()).isEqualTo(dto.getName());
@@ -57,7 +81,7 @@ class ProfileCreatorServiceTest extends PostgresContainer {
     @Test
     void getProfileDto() {
         Long expectedChatId = 100L;
-        UserProfileDto profileDtoByChatId = profileCreatorService.getProfileDtoByChatId(expectedChatId);
+        UserProfileDto profileDtoByChatId = profileCreatorService.getProfileDtoByChatId();
         assertThat(profileDtoByChatId.getChatId()).isEqualTo(expectedChatId);
     }
 
@@ -72,7 +96,13 @@ class ProfileCreatorServiceTest extends PostgresContainer {
                 .preferences(List.of(Sex.MALE))
                 .build();
         when(restTranslatorService.translateToObject(dto.getDescription())).thenReturn(new Domain("", ""));
-        when(restAvatarService.createAvatar(new Domain("", ""))).thenReturn(Paths.get("1.jpg"));
-        profileCreatorService.updateProfile(100L, dto);
+        when(restAvatarService.createAvatar(new Domain("", ""))).thenReturn(dto.getAvatar());
+        when(storage.findAvatarAsByteArray(dto.getAvatar().toString())).thenReturn(new byte[1]);
+        UserProfileDto userProfileDto = profileCreatorService.updateProfile(dto);
+        SoftAssertions assertions = new SoftAssertions();
+        assertions.assertThat(userProfileDto.getChatId()).isEqualTo(dto.getChatId());
+        assertions.assertThat(userProfileDto.getName()).isEqualTo(dto.getName());
+        assertions.assertThat(userProfileDto.getSex()).isEqualTo(dto.getSex());
+        assertions.assertAll();
     }
 }

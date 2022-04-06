@@ -38,27 +38,6 @@ INSERT INTO dating.user_profile (chat_id, name, sex, description, avatar)
 VALUES (10, 'Ѳеоѳанычъ', 'Сударъ',
         'Ѳеоѳанычъ Великiй обѣдъ Ѳеоѳана былъ ѣдой бѣдной Аѳины чьё сiянiе прiехало въ домъ бѣдой надѣяться лѣсничего медвѣди не ели ',
         '10.jpg');
-------------------------------------------------------------------------------------------------------------------------------------------------
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (100, 'U_100', 'U_100_INFO', 'Сударъ', '1.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (200, 'U_200', 'U_200_INFO', 'Сударъ', '2.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (300, 'U_300', 'U_300_INFO', 'Сударъ', '3.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (400, 'U_400', 'U_400_INFO', 'Сударъ', '4.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (500, 'U_500', 'U_500_INFO', 'Сударъ', '5.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (600, 'U_600', 'U_600_INFO', 'Сударыня', '6.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (700, 'U_700', 'U_700_INFO', 'Сударыня', '7.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (800, 'U_800', 'U_800_INFO', 'Сударыня', '8.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (900, 'U_900', 'U_900_INFO', 'Сударыня', '9.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (1000, 'U_1000', 'U_1000_INFO', 'Сударыня', '10.jpg');
 
 INSERT INTO dating.preferences (chat_id, sex)
 VALUES (1, 'Сударъ');
@@ -100,24 +79,4 @@ INSERT INTO dating.preferences (chat_id, sex)
 VALUES (10, 'Сударъ');
 INSERT INTO dating.preferences (chat_id, sex)
 VALUES (10, 'Сударыня');
--------------------------------------------------------------------------------------------------
-INSERT INTO dating.preferences (chat_id, sex)
-VALUES (100, 'Сударыня');
-INSERT INTO dating.preferences (chat_id, sex)
-VALUES (200, 'Сударыня');
-INSERT INTO dating.preferences (chat_id, sex)
-VALUES (300, 'Сударыня');
-INSERT INTO dating.preferences (chat_id, sex)
-VALUES (400, 'Сударыня');
-INSERT INTO dating.preferences (chat_id, sex)
-VALUES (500, 'Сударыня');
-INSERT INTO dating.preferences (chat_id, sex)
-VALUES (600, 'Сударъ');
-INSERT INTO dating.preferences (chat_id, sex)
-VALUES (700, 'Сударъ');
-INSERT INTO dating.preferences (chat_id, sex)
-VALUES (800, 'Сударъ');
-INSERT INTO dating.preferences (chat_id, sex)
-VALUES (900, 'Сударъ');
-INSERT INTO dating.preferences (chat_id, sex)
-VALUES (1000, 'Сударъ');
+

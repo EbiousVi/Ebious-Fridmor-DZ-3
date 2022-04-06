@@ -4,6 +4,7 @@ import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import ru.liga.prereformdatingserver.domain.projection.SearchProfileProjection;
+import ru.liga.prereformdatingserver.service.search.SearchProfileRowMapper;
 
 import java.util.List;
 
@@ -15,17 +16,23 @@ public interface SearchProfileRepository extends Repository<SearchProfileProject
             "SEARCHED_PROFILE.SEX, " +
             "SEARCHED_PROFILE.AVATAR, " +
             "CASE " +
-            "WHEN EXISTS (SELECT * FROM DATING.FAVOURITES WHERE FROM_CHAT_ID = SEARCHED_PROFILE.CHAT_ID AND TO_CHAT_ID = :chatId) THEN TRUE " +
+            "WHEN EXISTS (SELECT * FROM DATING.FAVOURITES " +
+            "             WHERE FROM_CHAT_ID = SEARCHED_PROFILE.CHAT_ID " +
+            "             AND TO_CHAT_ID = :chatId) " +
+            "THEN TRUE " +
             "ELSE FALSE " +
             "END AS POTENTIAL_MATCH " +
             "FROM DATING.USER_PROFILE AS SEARCHED_PROFILE " +
-            "JOIN DATING.PREFERENCES AS SEARCHED_PREF USING(CHAT_ID) " +
-            "WHERE SEARCHED_PROFILE.SEX IN (SELECT SEX FROM DATING.PREFERENCES AS USER_PREF WHERE USER_PREF.CHAT_ID = :chatId) " +
+            "JOIN DATING.PREFERENCES AS SEARCHED_PREFERENCES USING(CHAT_ID) " +
+            "WHERE SEARCHED_PROFILE.SEX IN (SELECT SEX FROM DATING.PREFERENCES AS USER_PREF " +
+            "                               WHERE USER_PREF.CHAT_ID = :chatId) " +
             "AND SEARCHED_PROFILE.CHAT_ID != :chatId " +
-            "AND SEARCHED_PREF.SEX = (SELECT SEX FROM DATING.USER_PROFILE AS USER_PROF WHERE USER_PROF.CHAT_ID = :chatId) " +
+            "AND SEARCHED_PREFERENCES.SEX = CAST(:sex AS DATING.SEX) " +
             "AND NOT EXISTS " +
-            "(SELECT * FROM DATING.FAVOURITES AS USER_FAV " +
-            "WHERE USER_FAV.FROM_CHAT_ID = :chatId " +
-            "AND USER_FAV.TO_CHAT_ID = SEARCHED_PROFILE.CHAT_ID)", rowMapperClass = SearchProfileRowMapper.class)
-    List<SearchProfileProjection> searchProfiles(@Param("chatId") Long chatId);
+            "               (SELECT * FROM DATING.FAVOURITES AS USER_FAV " +
+            "                WHERE USER_FAV.FROM_CHAT_ID = :chatId " +
+            "                AND USER_FAV.TO_CHAT_ID = SEARCHED_PROFILE.CHAT_ID)",
+            rowMapperClass = SearchProfileRowMapper.class)
+    List<SearchProfileProjection> searchProfiles(@Param("chatId") Long chatId,
+                                                 @Param("sex") String sex);
 }

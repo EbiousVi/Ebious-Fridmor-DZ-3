@@ -1,4 +1,4 @@
-package ru.liga.prereformdatingserver.service.repository;
+package ru.liga.prereformdatingserver.service.search;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;

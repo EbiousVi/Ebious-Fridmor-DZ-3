@@ -80,6 +80,9 @@ public class UserProfile implements Persistable<Long>, UserDetails {
         return new ArrayList<>();
     }
 
+    /**
+     * Feature coming soon
+     */
     @Override
     public String getPassword() {
         return "password";

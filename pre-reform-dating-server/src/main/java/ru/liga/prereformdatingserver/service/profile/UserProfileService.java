@@ -1,8 +1,7 @@
 package ru.liga.prereformdatingserver.service.profile;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
 import org.springframework.security.core.Authentication;
@@ -11,30 +10,31 @@ import org.springframework.stereotype.Service;
 import ru.liga.prereformdatingserver.domain.dto.profile.req.NewProfileDto;
 import ru.liga.prereformdatingserver.domain.entity.Preferences;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
-import ru.liga.prereformdatingserver.domain.enums.Sex;
 import ru.liga.prereformdatingserver.exception.UserProfileException;
 import ru.liga.prereformdatingserver.service.repository.UserProfileRepository;
 
-import java.util.HashSet;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
-public class UserProfileService {
+public class UserProfileService implements UserProfileServiceI {
 
     private final UserProfileRepository userProfileRepository;
 
+    @Override
     public UserProfile getAuthUserProfile() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return getUserProfileByChatId(Long.parseLong(auth.getName()));
     }
 
+    @Override
     public UserProfile getUserProfileByChatId(Long chatId) {
         return userProfileRepository.findById(chatId)
                 .orElseThrow(() -> new UserProfileException("User profile not found by chatId = " + chatId));
     }
 
+    @Override
     public UserProfile createUserProfile(NewProfileDto dto) {
         UserProfile profile = UserProfile.builder()
                 .chatId(dto.getChatId())
@@ -60,9 +60,11 @@ public class UserProfileService {
         }
     }
 
-    public UserProfile updateUserProfile(Long chatId, NewProfileDto dto) {
-        UserProfile profile = UserProfile.builder()
-                .chatId(chatId)
+    @Override
+    public UserProfile updateUserProfile(NewProfileDto dto) {
+        UserProfile authUserProfile = getAuthUserProfile();
+        UserProfile update = UserProfile.builder()
+                .chatId(authUserProfile.getChatId())
                 .name(dto.getName())
                 .sex(dto.getSex().name)
                 .description(dto.getDescription())
@@ -72,10 +74,12 @@ public class UserProfileService {
                         .map(pref -> new Preferences(dto.getChatId(), pref.name))
                         .collect(Collectors.toSet()))
                 .build();
-        return userProfileRepository.save(profile);
+        return userProfileRepository.save(update);
     }
 
-    public void deleteUserProfile(Long chatId) {
-        userProfileRepository.deleteById(chatId);
+    @Override
+    public void deleteUserProfile() {
+        UserProfile authUserProfile = getAuthUserProfile();
+        userProfileRepository.deleteById(authUserProfile.getChatId());
     }
 }

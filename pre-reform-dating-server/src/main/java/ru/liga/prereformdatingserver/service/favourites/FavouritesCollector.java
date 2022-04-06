@@ -1,16 +1,19 @@
 package ru.liga.prereformdatingserver.service.favourites;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.liga.prereformdatingserver.domain.dto.profile.resp.ProfileDto;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FavouritesCollector {
 
     private final WhoFavouriteAmIService whoFavouriteAmIService;

@@ -11,7 +11,6 @@ import org.springframework.web.client.RestTemplate;
 import ru.liga.prereformdatingserver.exception.RestOuterServiceException;
 import ru.liga.prereformdatingserver.service.storage.StorageService;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 @Service
@@ -27,12 +26,13 @@ public class RestAvatarService {
 
     public Path createAvatar(Domain domain) {
         try {
+            String apiPath = "/getImage/";
             HttpEntity<Domain> request = new HttpEntity<>(domain);
-            ResponseEntity<byte[]> response = restTemplate.postForEntity(avatarURL + "/getImage/", request, byte[].class);
+            ResponseEntity<byte[]> response = restTemplate.postForEntity(avatarURL + apiPath, request, byte[].class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 return storage.saveAvatar(response.getBody());
             } else {
-                log.info("Avatar service return {}", response);
+                log.info("Avatar service bad response = {}", response);
                 throw new RestOuterServiceException("Avatar service return bad response!");
             }
         } catch (RestClientException e) {

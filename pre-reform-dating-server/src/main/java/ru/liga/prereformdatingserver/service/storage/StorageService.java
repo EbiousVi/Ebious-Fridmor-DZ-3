@@ -18,8 +18,8 @@ import java.util.UUID;
 @Slf4j
 public class StorageService {
 
-    private static final Path AVATAR_STORAGE = Paths.get("pre-reform-dating-server","src", "main", "resources", "storage", "avatar");
-    private static final String IMAGE_EXTENSION = ".jpg";
+    private final Path AVATAR_STORAGE = Paths.get("pre-reform-dating-server", "src", "main", "resources", "storage", "avatar");
+    private final String IMAGE_EXTENSION = ".jpg";
 
     public Path saveAvatar(byte[] bytes) {
         try {
