@@ -1,8 +1,6 @@
 package ru.liga.prereformdatingserver.controller;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.liga.prereformdatingserver.domain.dto.profile.req.NewProfileDto;
 import ru.liga.prereformdatingserver.domain.dto.profile.resp.UserProfileDto;
@@ -12,14 +10,14 @@ import java.security.Principal;
 
 @RestController
 @RequestMapping("/dating-server")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserProfileController {
 
     private final ProfileCreatorService profileCreatorService;
 
     @GetMapping("/profile")
-    public UserProfileDto getProfile() {
-        return profileCreatorService.getProfileDtoByChatId();
+    public UserProfileDto getProfile(Principal principal) {
+        return profileCreatorService.getProfileDtoByChatId();//change
     }
 
     @PostMapping("/profiles")

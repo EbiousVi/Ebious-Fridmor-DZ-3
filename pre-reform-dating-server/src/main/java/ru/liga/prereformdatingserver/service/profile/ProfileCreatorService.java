@@ -50,7 +50,7 @@ public class ProfileCreatorService implements ProfileCreatorServiceI {
     public void deleteUserProfile() {
         userProfileService.deleteUserProfile();
     }
-
+    //asdasdasdsaadsads
     private void workWithOuterService(NewProfileDto dto) {
         Domain domain = restTranslatorService.translateToObject(dto.getDescription());
         dto.setDescription(domain.getTittle() + domain.getBody());

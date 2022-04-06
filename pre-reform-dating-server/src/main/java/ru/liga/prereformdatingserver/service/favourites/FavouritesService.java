@@ -23,7 +23,7 @@ public class FavouritesService {
     private final FavouritesRepository favouritesRepository;
     private final UserProfileRepository userProfileRepository;
 
-    @Transactional
+    @Transactional(noRollbackFor = DuplicateKeyException.class)
     public void setAFavorite(Long fromChatId, Long toChatId) {
         try {
             favouritesRepository.save(new Favourites(fromChatId, toChatId));
