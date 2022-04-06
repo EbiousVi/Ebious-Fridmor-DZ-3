@@ -14,25 +14,28 @@ public class Parser {
     private static final String LINE_SEPARATOR = "\n";
     private static final String HORIZONTAL_WHITESPACES = "\\h+";
     private static final String ALL_WHITESPACE = "\\s+";
-    private static final String FIRST_WORD = "^[а-яА-Яa-zA-Z]{1,24}";
+    private static final String FIRST_WORD = "^[а-яА-Яa-zA-Z]{1,32}";
     private static final String TITLE = "TITLE";
 
     public Domain parse(String text) {
         String replace = text.replaceAll(HORIZONTAL_WHITESPACES, WHITESPACE).trim();
         int firstLineSeparatorIdx = replace.indexOf(LINE_SEPARATOR);
         if (firstLineSeparatorIdx >= 1 && firstLineSeparatorIdx <= TITTLE_LENGTH_LIMIT) {
-            return new Domain(replace.substring(0, firstLineSeparatorIdx), replace.substring(firstLineSeparatorIdx));
+            return new Domain(
+                    replace.substring(0, firstLineSeparatorIdx).trim(),
+                    replace.substring(firstLineSeparatorIdx).trim()
+            );
         }
-        return getDomainFirstWordTittle(replace);
+        return getDomainFirstWordTitle(replace);
     }
 
-    private Domain getDomainFirstWordTittle(String text) {
+    private Domain getDomainFirstWordTitle(String text) {
         String replace = text.replaceAll(ALL_WHITESPACE, WHITESPACE).trim();
         Pattern compile = Pattern.compile(FIRST_WORD);
         Matcher matcher = compile.matcher(replace);
         if (matcher.find()) {
             String group = matcher.group();
-            return new Domain(matcher.group().trim(), replace.substring(group.length()));
+            return new Domain(matcher.group().trim(), replace.substring(group.length()).trim());
         } else {
             return new Domain(TITLE, replace);
         }

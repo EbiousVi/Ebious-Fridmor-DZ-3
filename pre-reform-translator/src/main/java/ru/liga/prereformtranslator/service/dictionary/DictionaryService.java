@@ -1,7 +1,7 @@
 package ru.liga.prereformtranslator.service.dictionary;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.liga.prereformtranslator.service.reader.CsvReader;
 import ru.liga.prereformtranslator.service.reader.ReaderException;
@@ -12,16 +12,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class DictionaryService {
 
     private final CsvReader csvReader;
-    private Map<String, String> dictionary ;
-
-    @Autowired
-    public DictionaryService(CsvReader csvReader) {
-        this.csvReader = csvReader;
-    }
+    private Map<String, String> dictionary;
 
     @PostConstruct
     public void initDictionary() {
@@ -31,7 +27,7 @@ public class DictionaryService {
                     .collect(Collectors.toMap(Dictionary::getKey, Dictionary::getValue));
             dictionary = Collections.unmodifiableMap(init);
         } catch (ReaderException e) {
-            log.error("Can not init translator!", e);
+            log.error("App init failed! Can not init translator!", e);
             System.exit(-1);
         }
     }

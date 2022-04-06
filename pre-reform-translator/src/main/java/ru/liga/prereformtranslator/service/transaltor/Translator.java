@@ -10,18 +10,20 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class Translator {
+public class Translator implements TranslatorI {
 
     private static final String WHITESPACE = " ";
     private static final String SEPARATOR = "\\s+";
     private final List<Handler> handlers;
     private final Parser parser;
 
+    @Override
     public Domain translateToObject(String text) {
         Domain foo = parser.parse(text);
         return new Domain(translate(foo.getTittle()), translate(foo.getBody()));
     }
 
+    @Override
     public String translateToString(String text) {
         return translate(text);
     }
