@@ -7,6 +7,7 @@ CREATE CAST (VARCHAR AS dating.sex) WITH INOUT AS IMPLICIT;
 CREATE TABLE dating.user_profile
 (
     chat_id     BIGINT       NOT NULL,
+    password    VARCHAR(255) NOT NULL,
     name        VARCHAR(127) NOT NULL,
     sex         dating.sex   NOT NULL,
     description TEXT         NOT NULL,

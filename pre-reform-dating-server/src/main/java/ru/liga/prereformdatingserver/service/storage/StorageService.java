@@ -3,13 +3,12 @@ package ru.liga.prereformdatingserver.service.storage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 import ru.liga.prereformdatingserver.exception.StorageException;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -18,14 +17,14 @@ import java.util.UUID;
 @Slf4j
 public class StorageService {
 
-    private final Path AVATAR_STORAGE = Paths.get("pre-reform-dating-server", "src", "main", "resources", "storage", "avatar");
-    private final String IMAGE_EXTENSION = ".jpg";
+    private static final String IMAGE_EXTENSION = ".jpg";
+    private final Path AVATAR_STORAGE = Paths.get("pre-reform-dating-server","avatars");
 
     public Path saveAvatar(byte[] bytes) {
         try {
             String filename = UUID.randomUUID() + IMAGE_EXTENSION;
             Path save = AVATAR_STORAGE.resolve(filename);
-            FileUtils.writeByteArrayToFile(new File(save.toString()), bytes);
+            FileUtils.writeByteArrayToFile(save.toFile(), bytes);
             return save;
         } catch (IOException e) {
             log.error("Can not save avatar image", e);

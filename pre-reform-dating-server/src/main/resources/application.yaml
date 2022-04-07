@@ -6,6 +6,8 @@ outer-service:
   avatar: http://localhost:6016
 signature:
   secret: victor
+credentials:
+  user: foo-bar-bazz
 
 spring:
   datasource:

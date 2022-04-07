@@ -2,12 +2,13 @@ package ru.liga.prereformdatingserver.service.search;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.liga.prereformdatingserver.domain.projection.SearchProfileProjection;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@Component
+@Service
 public class SearchProfileRowMapper implements RowMapper<SearchProfileProjection> {
 
     private static final int CHAT_ID = 1;

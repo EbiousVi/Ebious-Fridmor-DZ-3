@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.liga.prereformdatingserver.domain.dto.profile.resp.ProfileDto;
 import ru.liga.prereformdatingserver.domain.enums.Favourites;
 import ru.liga.prereformdatingserver.service.mapper.ProfileDtoMapper;
-import ru.liga.prereformdatingserver.service.repository.UserProfileRepository;
+import ru.liga.prereformdatingserver.repository.UserProfileRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

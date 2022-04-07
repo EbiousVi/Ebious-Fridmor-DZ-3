@@ -1,14 +1,12 @@
 package ru.liga.prereformdatingserver.domain.projection;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class SearchProfileProjection {
-    private Long chatId;
-    private String name;
-    private String sex;
-    private String avatar;
-    private Boolean isPotentialMatch;
+    private final Long chatId;
+    private final String name;
+    private final String sex;
+    private final String avatar;
+    private final Boolean isPotentialMatch;
 }

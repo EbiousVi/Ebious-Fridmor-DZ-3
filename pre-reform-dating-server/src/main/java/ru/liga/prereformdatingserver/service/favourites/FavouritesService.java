@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.liga.prereformdatingserver.domain.entity.Favourites;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
-import ru.liga.prereformdatingserver.service.repository.FavouritesRepository;
-import ru.liga.prereformdatingserver.service.repository.UserProfileRepository;
+import ru.liga.prereformdatingserver.repository.FavouritesRepository;
+import ru.liga.prereformdatingserver.repository.UserProfileRepository;
 
 import java.util.Collections;
 import java.util.List;

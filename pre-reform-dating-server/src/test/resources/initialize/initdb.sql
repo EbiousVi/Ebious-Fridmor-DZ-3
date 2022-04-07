@@ -8,6 +8,7 @@ CREATE TABLE dating.user_profile
 (
     chat_id     BIGINT       NOT NULL,
     name        VARCHAR(127) NOT NULL,
+    password    VARCHAR(255) NOT NULL,
     sex         dating.sex   NOT NULL,
     description TEXT         NOT NULL,
     avatar      VARCHAR(255),
@@ -41,24 +42,24 @@ CREATE TABLE dating.credentials
 );
 --MALE
 -------------------------------------------------------------------------------------
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (100, 'U_100', 'U_100_DESCRIPTION', 'Сударъ', '1.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (200, 'U_200', 'U_200_DESCRIPTION', 'Сударъ', '2.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (300, 'U_300', 'U_300_DESCRIPTION', 'Сударъ', '3.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (400, 'U_400', 'U_400_DESCRIPTION', 'Сударъ', '4.jpg');
+INSERT INTO dating.user_profile (chat_id, password, name, description, sex, avatar)
+VALUES (100, 'password', 'U_100', 'U_100_DESCRIPTION', 'Сударъ', '1.jpg');
+INSERT INTO dating.user_profile (chat_id, password, name, description, sex, avatar)
+VALUES (200, 'password', 'U_200', 'U_200_DESCRIPTION', 'Сударъ', '2.jpg');
+INSERT INTO dating.user_profile (chat_id, password, name, description, sex, avatar)
+VALUES (300, 'password', 'U_300', 'U_300_DESCRIPTION', 'Сударъ', '3.jpg');
+INSERT INTO dating.user_profile (chat_id, password, name, description, sex, avatar)
+VALUES (400, 'password', 'U_400', 'U_400_DESCRIPTION', 'Сударъ', '4.jpg');
 --FEMALE
 -------------------------------------------------------------------------------------
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (500, 'U_500', 'U_500_DESCRIPTION', 'Сударыня', '5.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (600, 'U_600', 'U_600_DESCRIPTION', 'Сударыня', '6.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (700, 'U_700', 'U_700_DESCRIPTION', 'Сударыня', '7.jpg');
-INSERT INTO dating.user_profile (chat_id, name, description, sex, avatar)
-VALUES (800, 'U_800', 'U_800_DESCRIPTION', 'Сударыня', '8.jpg');
+INSERT INTO dating.user_profile (chat_id, password, name, description, sex, avatar)
+VALUES (500, 'password', 'U_500', 'U_500_DESCRIPTION', 'Сударыня', '5.jpg');
+INSERT INTO dating.user_profile (chat_id, password, name, description, sex, avatar)
+VALUES (600, 'password', 'U_600', 'U_600_DESCRIPTION', 'Сударыня', '6.jpg');
+INSERT INTO dating.user_profile (chat_id, password, name, description, sex, avatar)
+VALUES (700, 'password', 'U_700', 'U_700_DESCRIPTION', 'Сударыня', '7.jpg');
+INSERT INTO dating.user_profile (chat_id, password, name, description, sex, avatar)
+VALUES (800, 'password', 'U_800', 'U_800_DESCRIPTION', 'Сударыня', '8.jpg');
 -------------------------------------------------------------------------------------
 INSERT INTO dating.preferences (chat_id, sex)
 VALUES (100, 'Сударыня');

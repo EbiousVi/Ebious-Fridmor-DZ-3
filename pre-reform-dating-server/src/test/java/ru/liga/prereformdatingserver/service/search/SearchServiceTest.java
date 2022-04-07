@@ -9,22 +9,17 @@ import ru.liga.prereformdatingserver.domain.dto.profile.resp.ProfileDto;
 import ru.liga.prereformdatingserver.domain.entity.Preferences;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
 import ru.liga.prereformdatingserver.domain.enums.Sex;
-import ru.liga.prereformdatingserver.service.profile.UserProfileService;
 import ru.liga.prereformdatingserver.service.storage.StorageService;
 
 import java.util.List;
 import java.util.Set;
 
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class SearchServiceTest extends PostgresContainer {
 
     @Autowired
     SearchService searchService;
-
-    @MockBean
-    UserProfileService userProfileService;
 
     @MockBean
     StorageService storage;
@@ -44,10 +39,8 @@ class SearchServiceTest extends PostgresContainer {
                 .isNew(true)
                 .preferences(Set.of(new Preferences(100L, Sex.FEMALE.name)))
                 .build();
-        when(userProfileService.getAuthUserProfile()).thenReturn(userProfile);
         when(storage.findAvatarAsByteArray(userProfile.getAvatar())).thenReturn(new byte[1]);
-        List<ProfileDto> searchList = searchService.searchProfiles();
-        verify(userProfileService).getAuthUserProfile();
+        List<ProfileDto> searchList = searchService.searchProfiles(userProfile.getChatId());
         Assertions.assertThat(searchList)
                 .hasSize(expected.size())
                 .anyMatch(profile -> expected.contains(profile.getChatId()));

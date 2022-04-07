@@ -21,7 +21,7 @@ public class FavouritesController {
     private final FavouritesCollector favouritesCollector;
 
     @GetMapping("/favourites/{toChatId}")
-    public void chooseAFavorite(@PathVariable("toChatId") Long toChatId, Principal principal) {
+    public void chooseAFavorite(Principal principal, @PathVariable("toChatId") Long toChatId) {
         favouritesService.setAFavorite(Long.parseLong(principal.getName()), toChatId);
     }
 

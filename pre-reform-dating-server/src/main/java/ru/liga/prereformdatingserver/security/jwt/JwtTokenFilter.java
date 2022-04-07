@@ -35,7 +35,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             log.info("Authentication failed, token = {}", token, e);
             SecurityContextHolder.clearContext();
-            httpServletResponse.sendError(401);
+            httpServletResponse.sendError(401, "Authentication failed!");
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }

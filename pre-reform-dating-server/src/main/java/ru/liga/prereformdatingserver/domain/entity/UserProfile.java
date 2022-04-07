@@ -17,17 +17,24 @@ import java.util.Set;
 
 @Table("user_profile")
 @Data
-public class UserProfile implements Persistable<Long>, UserDetails {
+public class UserProfile implements Persistable<Long> {
 
     @Id
     @Column("chat_id")
     private Long chatId;
+
+    @Column("password")
+    private String password;
+
     @Column("name")
     private String name;
+
     @Column("sex")
     private String sex;
+
     @Column("description")
     private String description;
+
     @Column("avatar")
     private String avatar;
 
@@ -39,10 +46,11 @@ public class UserProfile implements Persistable<Long>, UserDetails {
     private Set<Preferences> preferences;
 
     @Builder
-    public UserProfile(Long chatId, String name, String sex,
+    public UserProfile(Long chatId, String password, String name, String sex,
                        String description, String avatar, Boolean isNew,
                        Set<Preferences> preferences) {
         this.chatId = chatId;
+        this.password = password;
         this.name = name;
         this.sex = sex;
         this.description = description;
@@ -73,43 +81,5 @@ public class UserProfile implements Persistable<Long>, UserDetails {
     @Override
     public boolean isNew() {
         return isNew;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return new ArrayList<>();
-    }
-
-    /**
-     * Feature coming soon
-     */
-    @Override
-    public String getPassword() {
-        return "password";
-    }
-
-    @Override
-    public String getUsername() {
-        return String.valueOf(chatId);
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 }

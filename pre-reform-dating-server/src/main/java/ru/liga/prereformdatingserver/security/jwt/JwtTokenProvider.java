@@ -28,9 +28,9 @@ public class JwtTokenProvider {
     private static final String REFRESH_TOKEN = "refreshToken";
     private static final long ACCESS_TOKEN_EXPIRATION = 86_400_000;
     private static final long REFRESH_TOKEN_EXPIRATION = 86_400_000;
-    private final UserDetailsServiceImpl userDetailsService;
-    //@Value("${signature.secret}")
-    private String signature = "SECRET";
+    private final UserDetailsServiceImpl principalUserService;
+    @Value("${signature.secret}")
+    private String signature;
 
     public String generateAccessToken(String chatId) {
         return generateToken(chatId, ACCESS_TOKEN_EXPIRATION, false);
@@ -78,7 +78,7 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(getChatIdFromToken(token));
+        UserDetails userDetails = principalUserService.loadUserByUsername(getChatIdFromToken(token));
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 

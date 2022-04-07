@@ -19,6 +19,7 @@ public class ProfileDtoMapper {
                 .name(userProfile.getName())
                 .sex(userProfile.getSex())
                 .status(favourites.value)
+                .isMatch(false)
                 .avatar(storage.findAvatarAsByteArray(userProfile.getAvatar()))
                 .build();
     }

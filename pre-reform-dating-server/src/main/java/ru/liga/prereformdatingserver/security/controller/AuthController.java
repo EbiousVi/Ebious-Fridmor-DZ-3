@@ -29,8 +29,8 @@ public class AuthController {
     public Map<String, String> login(@RequestBody LoginDto loginDto) throws AuthException {
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginDto.getChatId(), "password"));
-            UserProfile authUserProfile = userProfileService.getAuthUserProfile();
+                    new UsernamePasswordAuthenticationToken(loginDto.getChatId(), loginDto.getPassword()));
+            UserProfile authUserProfile = userProfileService.getUserProfileById(Long.valueOf(loginDto.getChatId()));
             return jwtTokenProvider.getTokens(authUserProfile);
         } catch (BadCredentialsException e) {
             log.info("Login attempt with invalid credentials {}", loginDto, e);

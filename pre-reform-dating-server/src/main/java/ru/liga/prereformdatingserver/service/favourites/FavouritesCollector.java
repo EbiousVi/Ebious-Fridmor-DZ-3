@@ -26,10 +26,8 @@ public class FavouritesCollector {
                         myFavouritesService.getMyFavourites(chatId),
                         whoFavouriteAmIService.getWhoseFavouriteAmI(chatId))
                 .flatMap(Collection::stream).collect(Collectors
-                        .collectingAndThen(
-                                Collectors.toMap(dto -> List.of(dto.getChatId()),
-                                        dto -> dto,
-                                        BinaryOperator.minBy(Comparator.comparing(ProfileDto::getStatus))),
+                        .collectingAndThen(Collectors.toMap(dto -> List.of(dto.getChatId()),
+                                        dto -> dto, BinaryOperator.minBy(Comparator.comparing(ProfileDto::getStatus))),
                                 map -> new ArrayList<>(map.values())));
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import ru.liga.prereformdatingserver.exception.RestOuterServiceException;
+import ru.liga.prereformdatingserver.service.outer.dto.Description;
 import ru.liga.prereformdatingserver.service.storage.StorageService;
 
 import java.nio.file.Path;
@@ -18,26 +19,25 @@ import java.nio.file.Path;
 @Slf4j
 public class RestAvatarService {
 
+    private static final String AVATAR_PATH = "/avatar";
     private final RestTemplate restTemplate;
     private final StorageService storage;
-
     @Value("${outer-service.avatar}")
     private String avatarURL;
 
-    public Path createAvatar(Domain domain) {
+    public Path createAvatar(Description description) {
         try {
-            String apiPath = "/getImage/";
-            HttpEntity<Domain> request = new HttpEntity<>(domain);
-            ResponseEntity<byte[]> response = restTemplate.postForEntity(avatarURL + apiPath, request, byte[].class);
+            HttpEntity<Description> request = new HttpEntity<>(description);
+            ResponseEntity<byte[]> response = restTemplate.postForEntity(avatarURL + AVATAR_PATH, request, byte[].class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 return storage.saveAvatar(response.getBody());
             } else {
-                log.info("Avatar service bad response = {}", response);
-                throw new RestOuterServiceException("Avatar service return bad response!");
+                log.error("Pre reform avatar service bad response = {}", response);
+                throw new RestOuterServiceException("Pre reform avatar service return bad response!");
             }
         } catch (RestClientException e) {
-            log.warn("Avatar service unavailable now!", e);
-            throw new RestOuterServiceException("Avatar service!");
+            log.error("Pre reform avatar service unavailable now!", e);
+            throw new RestOuterServiceException("Pre reform avatar service unavailable now!");
         }
     }
 }

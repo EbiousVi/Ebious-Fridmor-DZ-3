@@ -17,7 +17,7 @@ public class UserProfileController {
 
     @GetMapping("/profile")
     public UserProfileDto getProfile(Principal principal) {
-        return profileCreatorService.getProfileDtoByChatId();//change
+        return profileCreatorService.getProfile(Long.parseLong(principal.getName()));
     }
 
     @PostMapping("/profiles")
@@ -26,8 +26,8 @@ public class UserProfileController {
     }
 
     @PutMapping("/profile")
-    public UserProfileDto updateProfile(@RequestBody NewProfileDto profileDto) {
-        return profileCreatorService.updateProfile(profileDto);
+    public UserProfileDto updateProfile(Principal principal,
+                                        @RequestBody NewProfileDto newProfileDto) {
+        return profileCreatorService.updateProfile(Long.parseLong(principal.getName()), newProfileDto);
     }
 }
-

@@ -5,11 +5,11 @@ import ru.liga.prereformdatingserver.domain.dto.profile.resp.UserProfileDto;
 
 public interface ProfileCreatorServiceI {
 
-    UserProfileDto getProfileDtoByChatId();
+    UserProfileDto getProfile(Long chatId);
 
     UserProfileDto createProfile(NewProfileDto dto);
 
-    UserProfileDto updateProfile(NewProfileDto dto);
+    UserProfileDto updateProfile(Long chatId, NewProfileDto dto);
 
-    void deleteUserProfile();
+    void deleteUserProfile(Long chatId);
 }

@@ -8,7 +8,7 @@ import ru.liga.prereformdatingserver.domain.dto.profile.resp.UserProfileDto;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
 import ru.liga.prereformdatingserver.service.favourites.FavouritesService;
 import ru.liga.prereformdatingserver.service.mapper.UserProfileDtoMapper;
-import ru.liga.prereformdatingserver.service.outer.avatar.Domain;
+import ru.liga.prereformdatingserver.service.outer.dto.Description;
 import ru.liga.prereformdatingserver.service.outer.avatar.RestAvatarService;
 import ru.liga.prereformdatingserver.service.outer.translator.RestTranslatorService;
 
@@ -23,15 +23,16 @@ public class ProfileCreatorService implements ProfileCreatorServiceI {
     private final FavouritesService favouritesService;
 
     @Override
-    public UserProfileDto getProfileDtoByChatId() {
-        UserProfile authProfile = userProfileService.getAuthUserProfile();
-        return userProfileDtoMapper.map(authProfile);
+    public UserProfileDto getProfile(Long id) {
+        return userProfileDtoMapper.map(userProfileService.getUserProfileById(id));
     }
 
     @Override
     @Transactional
     public UserProfileDto createProfile(NewProfileDto dto) {
-        workWithOuterService(dto);
+        Description description = restTranslatorService.translateDescription(dto.getDescription());
+        dto.setDescription(description.getTittle() + description.getBody());
+        dto.setAvatar(restAvatarService.createAvatar(description));
         UserProfile userProfile = userProfileService.createUserProfile(dto);
         favouritesService.raisePopularityForNewbie(userProfile);
         return userProfileDtoMapper.map(userProfile);
@@ -39,21 +40,17 @@ public class ProfileCreatorService implements ProfileCreatorServiceI {
 
     @Override
     @Transactional
-    public UserProfileDto updateProfile(NewProfileDto dto) {
-        workWithOuterService(dto);
-        UserProfile update = userProfileService.updateUserProfile(dto);
-        return userProfileDtoMapper.map(update);
+    public UserProfileDto updateProfile(Long chatId, NewProfileDto dto) {
+        Description description = restTranslatorService.translateDescription(dto.getDescription());
+        dto.setDescription(description.getTittle() + description.getBody());
+        dto.setAvatar(restAvatarService.createAvatar(description));
+        UserProfile userProfile = userProfileService.updateUserProfile(chatId, dto);
+        return userProfileDtoMapper.map(userProfile);
     }
 
     @Override
     @Transactional
-    public void deleteUserProfile() {
-        userProfileService.deleteUserProfile();
-    }
-    //asdasdasdsaadsads
-    private void workWithOuterService(NewProfileDto dto) {
-        Domain domain = restTranslatorService.translateToObject(dto.getDescription());
-        dto.setDescription(domain.getTittle() + domain.getBody());
-        dto.setAvatar(restAvatarService.createAvatar(domain));
+    public void deleteUserProfile(Long chatId) {
+        userProfileService.deleteUserProfile(chatId);
     }
 }

@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.liga.prereformdatingserver.domain.dto.profile.resp.ProfileDto;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
+import ru.liga.prereformdatingserver.repository.SearchProfileRepository;
 import ru.liga.prereformdatingserver.service.mapper.SearchProjectionMapper;
 import ru.liga.prereformdatingserver.service.profile.UserProfileService;
-import ru.liga.prereformdatingserver.service.repository.SearchProfileRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,9 +19,9 @@ public class SearchService {
     private final SearchProjectionMapper projectionMapper;
     private final UserProfileService userProfileService;
 
-    public List<ProfileDto> searchProfiles() {
-        UserProfile authUser = userProfileService.getAuthUserProfile();
-        return searchProfileRepository.searchProfiles(authUser.getChatId(), authUser.getSex()).stream()
+    public List<ProfileDto> searchProfiles(Long chatId) {
+        UserProfile userProfile = userProfileService.getUserProfileById(chatId);
+        return searchProfileRepository.searchProfiles(userProfile.getChatId(), userProfile.getSex()).stream()
                 .map(projectionMapper::map)
                 .collect(Collectors.toList());
     }

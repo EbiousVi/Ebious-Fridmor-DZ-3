@@ -1,4 +1,4 @@
-package ru.liga.prereformdatingserver.service.repository;
+package ru.liga.prereformdatingserver.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import ru.liga.prereformdatingserver.domain.entity.Favourites;
