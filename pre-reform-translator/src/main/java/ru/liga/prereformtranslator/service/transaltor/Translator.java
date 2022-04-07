@@ -2,7 +2,7 @@ package ru.liga.prereformtranslator.service.transaltor;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.liga.prereformtranslator.service.domain.Domain;
+import ru.liga.prereformtranslator.service.domain.Description;
 import ru.liga.prereformtranslator.service.handler.Handler;
 import ru.liga.prereformtranslator.service.parser.Parser;
 
@@ -18,20 +18,20 @@ public class Translator implements TranslatorI {
     private final Parser parser;
 
     @Override
-    public Domain translateToObject(String text) {
-        Domain foo = parser.parse(text);
-        return new Domain(translate(foo.getTittle()), translate(foo.getBody()));
+    public Description translateDescription(String text) {
+        Description description = parser.parseDescription(text);
+        return new Description(translate(description.getTittle()), translate(description.getBody()));
     }
 
     @Override
-    public String translateToString(String text) {
-        return translate(text);
+    public String translateText(String description) {
+        return translate(description);
     }
 
     private String translate(String text) {
-        List<String> strings = splitByWords(text);
+        List<String> words = splitByWords(text);
         StringBuilder sb = new StringBuilder();
-        for (String token : strings) {
+        for (String token : words) {
             for (Handler handler : handlers) {
                 token = handler.handle(token);
             }

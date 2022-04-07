@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import ru.liga.prereformtranslator.service.dictionary.Dictionary;
+import ru.liga.prereformtranslator.service.dictionary.Entry;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -23,7 +23,7 @@ public class CsvReader {
     @Value("classpath:/dictionary/dictionary.csv")
     Resource dictionary;
 
-    public List<Dictionary> readDataSetFromCsv() {
+    public List<Entry> readDataSetFromCsv() {
         try {
             return new BufferedReader(new InputStreamReader(dictionary.getInputStream(), StandardCharsets.UTF_8))
                     .lines()
@@ -36,9 +36,9 @@ public class CsvReader {
         }
     }
 
-    private Dictionary parseLine(String line) {
+    private Entry parseLine(String line) {
         String[] split = line.split(CSV_SEPARATOR);
-        return new Dictionary(split[KEY_INDEX], split[VALUE_INDEX]);
+        return new Entry(split[KEY_INDEX], split[VALUE_INDEX]);
     }
 }
 

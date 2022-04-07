@@ -24,7 +24,7 @@ public class DictionaryService {
         try {
             Map<String, String> init = csvReader.readDataSetFromCsv()
                     .stream()
-                    .collect(Collectors.toMap(Dictionary::getKey, Dictionary::getValue));
+                    .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
             dictionary = Collections.unmodifiableMap(init);
         } catch (ReaderException e) {
             log.error("App init failed! Can not init translator!", e);

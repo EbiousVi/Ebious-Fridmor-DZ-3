@@ -1,10 +1,10 @@
 package ru.liga.prereformtranslator.service.transaltor;
 
-import ru.liga.prereformtranslator.service.domain.Domain;
+import ru.liga.prereformtranslator.service.domain.Description;
 
 public interface TranslatorI {
 
-    Domain translateToObject(String text);
+    String translateText(String description);
 
-    String translateToString(String text);
+    Description translateDescription(String text);
 }
