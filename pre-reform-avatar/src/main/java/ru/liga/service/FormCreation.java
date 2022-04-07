@@ -1,7 +1,7 @@
 package ru.liga.service;
 
 import org.springframework.stereotype.Service;
-import ru.liga.domain.Domain;
+import ru.liga.domain.Description;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -15,7 +15,7 @@ import java.util.Objects;
 @Service
 public class FormCreation {
 
-    public byte[] execute(Domain description) {
+    public byte[] execute(Description description) {
         try {
             InputStream imageStream = getClass().getClassLoader().getResourceAsStream("prerev-background.jpg");
             InputStream fontStream = getClass().getClassLoader().getResourceAsStream("OldStandardTT-Regular.ttf");
