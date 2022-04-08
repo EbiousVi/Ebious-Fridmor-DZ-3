@@ -1,11 +1,13 @@
 package ru.liga.prereformdatingserver.service.favourites;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.liga.prereformdatingserver.PostgresContainer;
 import ru.liga.prereformdatingserver.domain.dto.profile.resp.ProfileDto;
+import ru.liga.prereformdatingserver.domain.enums.Relation;
 import ru.liga.prereformdatingserver.service.storage.StorageService;
 
 import java.util.List;
@@ -20,6 +22,14 @@ class FavouriteCollectorTest extends PostgresContainer {
 
     @MockBean
     StorageService storage;
+
+    byte[] avatarMock = new byte[1];
+
+    @BeforeEach
+    void setUp() {
+        when(storage.findAvatarAsByteArray(Mockito.any())).thenReturn(avatarMock);
+    }
+
     /**
      * В тестовых данных пользователь с chatId = 100L
      * Любим вами - к пользователю 500L, 700L
@@ -29,13 +39,10 @@ class FavouriteCollectorTest extends PostgresContainer {
      */
     @Test
     void collectAllFavourites() {
-        byte[] bytes = new byte[1];
-        when(storage.findAvatarAsByteArray(Mockito.any())).thenReturn(bytes);
-
         List<ProfileDto> foo = favouritesCollector.collectAllFavourites(100L);
         assertThat(foo)
-                .anyMatch(dto -> dto.getChatId().equals(500L) && dto.getStatus().equals("Взаимность"))
-                .anyMatch(dto -> dto.getChatId().equals(600L) && dto.getStatus().equals("Вы любимы"))
-                .anyMatch(dto -> dto.getChatId().equals(700L) && dto.getStatus().equals("Любим вами"));
+                .anyMatch(dto -> dto.getChatId().equals(500L) && dto.getStatus().equals(Relation.MATCHES.value))
+                .anyMatch(dto -> dto.getChatId().equals(600L) && dto.getStatus().equals(Relation.ME.value))
+                .anyMatch(dto -> dto.getChatId().equals(700L) && dto.getStatus().equals(Relation.MY.value));
     }
 }

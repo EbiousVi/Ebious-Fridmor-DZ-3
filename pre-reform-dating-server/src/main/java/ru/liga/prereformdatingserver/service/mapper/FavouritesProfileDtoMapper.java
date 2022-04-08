@@ -4,21 +4,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.liga.prereformdatingserver.domain.dto.profile.resp.ProfileDto;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
-import ru.liga.prereformdatingserver.domain.enums.Favourites;
+import ru.liga.prereformdatingserver.domain.enums.Relation;
 import ru.liga.prereformdatingserver.service.storage.StorageService;
 
 @Service
 @RequiredArgsConstructor
-public class ProfileDtoMapper {
+public class FavouritesProfileDtoMapper {
 
     private final StorageService storage;
 
-    public ProfileDto map(UserProfile userProfile, Favourites favourites) {
+    public ProfileDto map(UserProfile userProfile, Relation relation) {
         return ProfileDto.builder()
                 .chatId(userProfile.getChatId())
                 .name(userProfile.getName())
                 .sex(userProfile.getSex())
-                .status(favourites.value)
+                .status(relation.value)
                 .isMatch(false)
                 .avatar(storage.findAvatarAsByteArray(userProfile.getAvatar()))
                 .build();

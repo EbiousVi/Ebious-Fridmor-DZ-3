@@ -8,11 +8,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.data.annotation.Transient;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Set;
 
 @Table("user_profile")
@@ -81,5 +77,9 @@ public class UserProfile implements Persistable<Long> {
     @Override
     public boolean isNew() {
         return isNew;
+    }
+
+    public void addPreferences(Set<Preferences> preferences) {
+        this.preferences.addAll(preferences);
     }
 }

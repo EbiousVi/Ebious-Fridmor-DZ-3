@@ -23,18 +23,17 @@ public class FavouritesService {
     private final FavouritesRepository favouritesRepository;
     private final UserProfileRepository userProfileRepository;
 
-    @Transactional(noRollbackFor = DuplicateKeyException.class)
     public void setAFavorite(Long fromChatId, Long toChatId) {
         try {
             favouritesRepository.save(new Favourites(fromChatId, toChatId));
         } catch (DbActionExecutionException e) {
             if (e.getCause() instanceof DuplicateKeyException) {
-                log.info("Duplicate like from {} to {}", fromChatId, toChatId);
-            } else if (e.getCause() instanceof DataIntegrityViolationException) {
-                log.warn("Chat id to {} not found at system", toChatId, e);
-            } else {
-                log.error("What's gonna happen?", e);
+                log.info("Duplicate like from {} to {}", fromChatId, toChatId, e);
             }
+            if (e.getCause() instanceof DataIntegrityViolationException) {
+                log.info("Someone chat id not found, from = {}, to {}", fromChatId, toChatId, e);
+            }
+            log.error("Unexpected exception case", e);
         }
     }
 
@@ -45,8 +44,21 @@ public class FavouritesService {
         int raisePopularityScore = 3;
         allProfiles.stream()
                 .filter(profile -> !profile.getChatId().equals(userProfile.getChatId()))
+                .filter(profile -> userProfile.getPreferences().stream().anyMatch(pref -> pref.getSex().equals(profile.getSex())))
                 .filter(profile -> profile.getPreferences().stream().anyMatch(pref -> pref.getSex().equals(userProfile.getSex())))
                 .limit(raisePopularityScore)
                 .forEach(profile -> setAFavorite(profile.getChatId(), userProfile.getChatId()));
+    }
+
+    public List<UserProfile> getWhoseFavouriteAmI(Long chatId) {
+        return userProfileRepository.findWhoseFavouriteAmI(chatId);
+    }
+
+    public List<UserProfile> getMyFavourites(Long chatId) {
+        return userProfileRepository.findMyFavourites(chatId);
+    }
+
+    public List<UserProfile> getMatchesFavourites(Long chatId) {
+        return userProfileRepository.findMatches(chatId);
     }
 }

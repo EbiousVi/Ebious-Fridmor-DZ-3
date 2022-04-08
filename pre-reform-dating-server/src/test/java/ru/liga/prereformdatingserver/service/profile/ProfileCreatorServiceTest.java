@@ -69,7 +69,7 @@ class ProfileCreatorServiceTest extends PostgresContainer {
     @Test
     void updateProfile() {
         NewProfileDto dto = NewProfileDto.builder()
-                .chatId(1L)
+                .chatId(100L)
                 .name("NOT 100 NOW")
                 .sex(Sex.FEMALE)
                 .description("Врач-терапевт возрасте 48 лет уравновешенная, доброжелательная, обаятельная женщина")

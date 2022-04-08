@@ -39,7 +39,7 @@ class UserProfileServiceTest extends PostgresContainer {
                 .description("U_100_DESCRIPTION")
                 .avatar("1.jpg")
                 .isNew(true)
-                .preferences(Set.of(new Preferences(1L, 100L, Sex.FEMALE.name)))
+                .preferences(Set.of(new Preferences(100L, Sex.FEMALE.name)))
                 .build();
         UserProfile profile = userProfileService.getUserProfileById(expected.getChatId());
         assertThat(profile).isEqualTo(expected);
@@ -55,7 +55,7 @@ class UserProfileServiceTest extends PostgresContainer {
     @Test
     void getUserProfilePreferences() {
         Long chatId = 100L;
-        Preferences expected = new Preferences(1L, chatId, Sex.FEMALE.name);
+        Preferences expected = new Preferences( chatId, Sex.FEMALE.name);
         UserProfile profile = userProfileService.getUserProfileById(100L);
         assertThat(profile.getPreferences()).hasSize(1).containsOnly(expected);
     }
@@ -107,7 +107,7 @@ class UserProfileServiceTest extends PostgresContainer {
                 .preferences(List.of(Sex.MALE))
                 .build();
 
-        UserProfile profile = userProfileService.updateUserProfile(dto.getChatId(),dto);
+        UserProfile profile = userProfileService.updateUserProfile(dto.getChatId(), dto);
 
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(profile.getName()).isEqualTo(dto.getName());
@@ -115,5 +115,20 @@ class UserProfileServiceTest extends PostgresContainer {
         assertions.assertThat(profile.getDescription()).isEqualTo(dto.getDescription());
         assertions.assertThat(profile.getAvatar()).isEqualTo(dto.getAvatar().toString());
         assertions.assertAll();
+    }
+
+    @Test
+    void updateUserProfile2() {
+        NewProfileDto dto = NewProfileDto.builder()
+                .chatId(100L)
+                .name("UPDATE U_100")
+                .sex(Sex.FEMALE)
+                .description("UPDATE U_100 DESCRIPTION")
+                .avatar(Path.of("100.jpg"))
+                .preferences(List.of(Sex.FEMALE))
+                .build();
+
+        UserProfile userProfile = userProfileService.updateUserProfile(dto.getChatId(), dto);
+        System.out.println(userProfile.getPreferences());
     }
 }

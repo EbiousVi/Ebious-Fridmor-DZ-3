@@ -4,10 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 import ru.liga.prereformdatingserver.exception.StorageException;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,7 +16,7 @@ import java.util.UUID;
 public class StorageService {
 
     private static final String IMAGE_EXTENSION = ".jpg";
-    private final Path AVATAR_STORAGE = Paths.get("pre-reform-dating-server","avatars");
+    private final Path AVATAR_STORAGE = Paths.get("storage", "pre-reform-dating-server", "avatars");
 
     public Path saveAvatar(byte[] bytes) {
         try {

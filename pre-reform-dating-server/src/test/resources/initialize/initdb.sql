@@ -7,8 +7,8 @@ CREATE CAST (VARCHAR AS dating.sex) WITH INOUT AS IMPLICIT;
 CREATE TABLE dating.user_profile
 (
     chat_id     BIGINT       NOT NULL,
-    name        VARCHAR(127) NOT NULL,
     password    VARCHAR(255) NOT NULL,
+    name        VARCHAR(127) NOT NULL,
     sex         dating.sex   NOT NULL,
     description TEXT         NOT NULL,
     avatar      VARCHAR(255),
@@ -31,14 +31,6 @@ CREATE TABLE dating.favourites
     to_chat_id   BIGINT REFERENCES dating.user_profile (chat_id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PK_favourites PRIMARY KEY (id),
     CONSTRAINT UQ_from_chat_id_to_chat_id UNIQUE (from_chat_id, to_chat_id)
-);
-
-CREATE TABLE dating.credentials
-(
-    id            BIGINT GENERATED ALWAYS AS IDENTITY,
-    chat_id       BIGINT REFERENCES dating.user_profile (chat_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    refresh_token BIGINT REFERENCES dating.user_profile (chat_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT PK_credentials PRIMARY KEY (id)
 );
 --MALE
 -------------------------------------------------------------------------------------

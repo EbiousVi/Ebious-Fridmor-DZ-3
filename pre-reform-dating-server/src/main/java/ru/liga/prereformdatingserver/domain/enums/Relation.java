@@ -1,13 +1,13 @@
 package ru.liga.prereformdatingserver.domain.enums;
 
-public enum Favourites {
+public enum Relation {
     MY("Любим вами"),
     ME("Вы любимы"),
     MATCHES("Взаимность");
 
     public final String value;
 
-    Favourites(String value) {
+    Relation(String value) {
         this.value = value;
     }
 }

@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.relational.core.conversion.DbActionExecutionException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.liga.prereformdatingserver.domain.dto.profile.req.NewProfileDto;
@@ -70,18 +68,15 @@ public class UserProfileService implements UserProfileServiceI {
 
     @Override
     public UserProfile updateUserProfile(Long chatId, NewProfileDto dto) {
-        UserProfile update = UserProfile.builder()
-                .chatId(chatId)
-                .name(dto.getName())
-                .sex(dto.getSex().name)
-                .description(dto.getDescription())
-                .avatar(dto.getAvatar().getFileName().toString())
-                .isNew(false)
-                .preferences(dto.getPreferences().stream()
-                        .map(pref -> new Preferences(dto.getChatId(), pref.name))
-                        .collect(Collectors.toSet()))
-                .build();
-        return userProfileRepository.save(update);
+        UserProfile userProfileById = getUserProfileById(chatId);
+        userProfileById.setName(dto.getName());
+        userProfileById.setSex(dto.getSex().name);
+        userProfileById.setDescription(dto.getDescription());
+        userProfileById.setAvatar(dto.getAvatar().getFileName().toString());
+        userProfileById.addPreferences(dto.getPreferences().stream()
+                .map(pref -> new Preferences(chatId, pref.name))
+                .collect(Collectors.toSet()));
+        return userProfileRepository.save(userProfileById);
     }
 
     @Override

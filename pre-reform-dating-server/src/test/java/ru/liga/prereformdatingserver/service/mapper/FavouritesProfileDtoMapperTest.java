@@ -8,7 +8,7 @@ import ru.liga.prereformdatingserver.PostgresContainer;
 import ru.liga.prereformdatingserver.domain.dto.profile.resp.ProfileDto;
 import ru.liga.prereformdatingserver.domain.entity.Preferences;
 import ru.liga.prereformdatingserver.domain.entity.UserProfile;
-import ru.liga.prereformdatingserver.domain.enums.Favourites;
+import ru.liga.prereformdatingserver.domain.enums.Relation;
 import ru.liga.prereformdatingserver.domain.enums.Sex;
 import ru.liga.prereformdatingserver.service.storage.StorageService;
 
@@ -16,10 +16,10 @@ import java.util.Set;
 
 import static org.mockito.Mockito.when;
 
-class ProfileDtoMapperTest extends PostgresContainer {
+class FavouritesProfileDtoMapperTest extends PostgresContainer {
 
     @Autowired
-    ProfileDtoMapper profileDtoMapper;
+    FavouritesProfileDtoMapper favouritesProfileDtoMapper;
 
     @MockBean
     StorageService storage;
@@ -34,12 +34,12 @@ class ProfileDtoMapperTest extends PostgresContainer {
                 .avatar("1.jpg")
                 .preferences(Set.of(new Preferences(100L, Sex.FEMALE.name))).build();
         when(storage.findAvatarAsByteArray(expected.getAvatar())).thenReturn(new byte[2]);
-        ProfileDto searchProfileDto = profileDtoMapper.map(expected, Favourites.MATCHES);
+        ProfileDto searchProfileDto = favouritesProfileDtoMapper.map(expected, Relation.MATCHES);
         SoftAssertions assertions = new SoftAssertions();
         assertions.assertThat(searchProfileDto.getChatId()).isEqualTo(expected.getChatId());
         assertions.assertThat(searchProfileDto.getName()).isEqualTo(expected.getName());
         assertions.assertThat(searchProfileDto.getSex()).isEqualTo(expected.getSex());
-        assertions.assertThat(searchProfileDto.getStatus()).isEqualTo(Favourites.MATCHES.value);
+        assertions.assertThat(searchProfileDto.getStatus()).isEqualTo(Relation.MATCHES.value);
         assertions.assertAll();
     }
 }

@@ -15,7 +15,7 @@ import java.util.Set;
 
 import static org.mockito.Mockito.when;
 
-class UserProfileDtoMapperTest extends PostgresContainer {
+class UserFavouritesProfileDtoMapperTest extends PostgresContainer {
 
     @Autowired
     UserProfileDtoMapper userProfileDtoMapper;
