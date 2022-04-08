@@ -1,6 +1,6 @@
 package ru.liga.model;
 
-import ru.liga.Dto.ProfileDto;
+import ru.liga.dto.ProfileDto;
 
 import java.util.LinkedList;
 import java.util.List;

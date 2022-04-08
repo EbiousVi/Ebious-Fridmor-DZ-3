@@ -5,11 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
-import ru.liga.Dto.UserProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
-import ru.liga.keyboard.KeyboardName;
+import ru.liga.dto.UserProfileDto;
+import ru.liga.keyboard.Button;
+import ru.liga.keyboard.Keyboard;
 import ru.liga.keyboard.KeyboardService;
 import ru.liga.model.UserProfileData;
 import ru.liga.model.UserProfileGender;
@@ -21,7 +21,6 @@ import ru.liga.service.RestTemplateService;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -41,79 +40,71 @@ public class FillingProfileHandler implements UserInputHandler {
         long chatId = message.getChatId();
         String text = message.getText();
 
-        UserProfileData profileData = userDataCache.getUserProfileData(userId);
-        UserProfileState profileState = profileData.getProfileState();
+        UserProfileData userProfileData = userDataCache.getUserProfileData(userId);
+        UserProfileState userProfileState = userProfileData.getProfileState();
 
-        switch (profileState) {
+        switch (userProfileState) {
             case EMPTY_PROFILE:
-                profileData.setChatId(chatId);
-                userDataCache.setUserProfileData(userId, profileData);
-                profileData.setProfileState(UserProfileState.SET_GENDER);
-
-                return List.of(replyMessageService.getSendMessage(
-                        chatId, localeMessageService.getMessage("reply.fill.askGender"),
-                        keyboardService.getReplyKeyboard(KeyboardName.GENDER_SELECT)));
+                userProfileData.setChatId(chatId);
+                userDataCache.setUserProfileData(userId, userProfileData);
+                userProfileData.setProfileState(UserProfileState.SET_GENDER);
+                return sendMessage(chatId, "reply.fill.askGender", Keyboard.GENDER_SELECT);
             case SET_GENDER:
-                if (Stream.of(UserProfileGender.values()).noneMatch(g -> g.getValue().equals(text))) {
-                    return List.of(replyMessageService.getSendMessage(
-                            chatId, localeMessageService.getMessage("reply.error.invalidValue"),
-                            keyboardService.getReplyKeyboard(KeyboardName.GENDER_SELECT)));
+                if (!genderIsValid(text)) {
+                    return sendMessage(chatId, "reply.error.invalidValue", Keyboard.GENDER_SELECT);
                 }
-
-                profileData.setSex(UserProfileGender.getByValue(text));
-                profileData.setProfileState(UserProfileState.SET_NAME);
-
-                return List.of(replyMessageService.getSendMessage(
-                        chatId, localeMessageService.getMessage("reply.fill.askName"),
-                        new ReplyKeyboardRemove(true, true)));
+                userProfileData.setSex(UserProfileGender.getByValue(text));
+                userProfileData.setProfileState(UserProfileState.SET_NAME);
+                return sendMessage(chatId, "reply.fill.askName", Keyboard.REMOVE);
             case SET_NAME:
-                profileData.setName(text);
-                profileData.setProfileState(UserProfileState.SET_DESCRIPTION);
-
-                return List.of(replyMessageService.getSendMessage(
-                        chatId, localeMessageService.getMessage("reply.fill.askDescription"),
-                        new ReplyKeyboardRemove(true, true)));
+                userProfileData.setName(text);
+                userProfileData.setProfileState(UserProfileState.SET_DESCRIPTION);
+                return sendMessage(chatId, "reply.fill.askDescription", Keyboard.REMOVE);
             case SET_DESCRIPTION:
-                profileData.setDescription(text);
-                profileData.setProfileState(UserProfileState.SET_PREFERENCE);
-
-                return List.of(replyMessageService.getSendMessage(
-                        chatId, localeMessageService.getMessage("reply.fill.askPreference"),
-                        keyboardService.getReplyKeyboard(KeyboardName.PREFERENCE_SELECT)));
+                userProfileData.setDescription(text);
+                userProfileData.setProfileState(UserProfileState.SET_PREFERENCE);
+                return sendMessage(chatId, "reply.fill.askPreference", Keyboard.PREFERENCE_SELECT);
             case SET_PREFERENCE:
-                if (Stream.of(UserProfileGender.values()).noneMatch(g -> g.getValue().equals(text)) &&
-                        !text.equals(localeMessageService.getMessage("button.preference.all"))) {
-                    return List.of(replyMessageService.getSendMessage(
-                            chatId, localeMessageService.getMessage("reply.error.invalidValue"),
-                            keyboardService.getReplyKeyboard(KeyboardName.PREFERENCE_SELECT)));
+                if (!preferenceIsValid(text)) {
+                    return sendMessage(chatId, "reply.error.invalidValue", Keyboard.PREFERENCE_SELECT);
                 }
 
-                List<UserProfileGender> preferenceList;
-                if (text.equals(localeMessageService.getMessage("button.preference.all"))) {
-                    preferenceList = List.of(UserProfileGender.MALE, UserProfileGender.FEMALE);
-                } else {
-                    preferenceList = List.of(UserProfileGender.getByValue(text));
-                }
+                List<UserProfileGender> preferenceList = text.equals(Button.ALL.getValue()) ?
+                        List.of(UserProfileGender.MALE, UserProfileGender.FEMALE) :
+                        List.of(UserProfileGender.getByValue(text));
 
-                profileData.setPreferences(preferenceList);
-                profileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
-                UserProfileDto userProfile = restTemplateService.createUserProfile(profileData);
-                profileData.setAvatar(userProfile.getAvatar());
+                userProfileData.setPreferences(preferenceList);
+                userProfileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
 
-                Map<String, String> tokens = userProfile.getTokens();
+                UserProfileDto processedUserProfileData = restTemplateService.createUserProfile(userProfileData);
+                userProfileData.setName(processedUserProfileData.getName());
+                userProfileData.setDescription(processedUserProfileData.getDescription());
+                userProfileData.setAvatar(processedUserProfileData.getAvatar());
+                Map<String, String> tokens = processedUserProfileData.getTokens();
                 openCsvService.writeData(userId, tokens.get("accessToken"), tokens.get("refreshToken"));
-                profileData.setTokens(tokens);
+                userProfileData.setTokens(tokens);
 
                 userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
 
-                return List.of(replyMessageService.getSendMessage(
-                        chatId, localeMessageService.getMessage("reply.main.info"),
-                        keyboardService.getReplyKeyboard(KeyboardName.MAIN_MENU)));
+                return sendMessage(chatId, "reply.main.info", Keyboard.MAIN_MENU);
             default:
                 log.error("Filling profile error in {} class", FillingProfileHandler.class.getSimpleName());
                 return List.of(replyMessageService.getSendMessage(
                         chatId, "Ошибка на стороне сервера: filling profile error", null));
         }
+    }
+
+    private List<PartialBotApiMethod<?>> sendMessage(long chatId, String message, Keyboard keyboardName) {
+        return List.of(replyMessageService.getSendMessage(
+                chatId, localeMessageService.getMessage(message), keyboardService.getReplyKeyboard(keyboardName)));
+    }
+
+    private boolean genderIsValid(String text) {
+        return Stream.of(UserProfileGender.values()).anyMatch(g -> g.getValue().equals(text));
+    }
+
+    private boolean preferenceIsValid(String text) {
+        return genderIsValid(text) || text.equals(Button.ALL.getValue());
     }
 
     @Override

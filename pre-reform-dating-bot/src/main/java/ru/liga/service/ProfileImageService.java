@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
-import ru.liga.Dto.ProfileDto;
+import ru.liga.dto.ProfileDto;
 import ru.liga.cache.UserDataCache;
 
 import java.io.File;
