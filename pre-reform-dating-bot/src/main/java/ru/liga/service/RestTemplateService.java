@@ -50,10 +50,12 @@ public class RestTemplateService {
         }
     }
 
-    public UserProfileDto updateUserProfile(UserProfileData userProfileData) {
+    public UserProfileDto updateUserProfile(UserProfileData userProfile) {
         String url = "http://localhost:6064/dating-server/profile";
+        HttpHeaders headers = getAuthorizationHeader(userProfile).getHeaders();
+        HttpEntity<UserProfileData> request = new HttpEntity<>(userProfile, headers);
         try {
-            ResponseEntity<UserProfileDto> usersResponse = restTemplate.exchange(url, HttpMethod.PUT, getAuthorizationHeader(userProfileData), UserProfileDto.class);
+            ResponseEntity<UserProfileDto> usersResponse = restTemplate.exchange(url, HttpMethod.PUT, request, UserProfileDto.class);
             if (usersResponse.getStatusCode().is2xxSuccessful()) {
                 return usersResponse.getBody();
             } else {

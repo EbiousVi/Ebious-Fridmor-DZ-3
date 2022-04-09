@@ -45,7 +45,8 @@ public class ProfileMenuHandler implements UserInputHandler {
         switch (userProfileState) {
             case COMPLETED_PROFILE:
                 if (text.equals(Button.PROFILE.getValue())) {
-                    userProfileData.setProfileState(UserProfileState.SET_NAME);
+//                    userProfileData.setProfileState(UserProfileState.SET_NAME);
+                    userProfileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
                     return sendUserPhoto(chatId, userProfileData, Keyboard.PROFILE_MENU);
                 }
                 if (text.equals(Button.CHANGE_NAME.getValue())) {
