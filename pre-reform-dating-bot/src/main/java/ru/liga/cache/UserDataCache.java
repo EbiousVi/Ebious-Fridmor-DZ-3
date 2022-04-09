@@ -2,7 +2,7 @@ package ru.liga.cache;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.liga.Dto.UserProfileDto;
+import ru.liga.dto.UserProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.model.UserProfileData;
 import ru.liga.model.UserProfileList;

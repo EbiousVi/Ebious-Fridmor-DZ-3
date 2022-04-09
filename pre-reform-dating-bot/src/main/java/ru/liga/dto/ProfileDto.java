@@ -1,4 +1,4 @@
-package ru.liga.Dto;
+package ru.liga.dto;
 
 import lombok.Builder;
 import lombok.Data;

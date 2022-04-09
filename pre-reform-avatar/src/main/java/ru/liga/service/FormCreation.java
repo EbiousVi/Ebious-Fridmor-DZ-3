@@ -1,5 +1,6 @@
 package ru.liga.service;
 
+import lombok.Cleanup;
 import org.springframework.stereotype.Service;
 import ru.liga.domain.Description;
 
@@ -17,8 +18,12 @@ public class FormCreation {
 
     public byte[] execute(Description description) {
         try {
-            InputStream imageStream = getClass().getClassLoader().getResourceAsStream("prerev-background.jpg");
-            InputStream fontStream = getClass().getClassLoader().getResourceAsStream("OldStandardTT-Regular.ttf");
+            @Cleanup InputStream imageStream = getClass()
+                    .getClassLoader()
+                    .getResourceAsStream("prerev-background.jpg");
+            @Cleanup InputStream fontStream = getClass()
+                    .getClassLoader()
+                    .getResourceAsStream("OldStandardTT-Regular.ttf");
             int minFontSize = 10;
 
             BufferedImage image = ImageIO.read(Objects.requireNonNull(imageStream));
@@ -54,8 +59,8 @@ public class FormCreation {
 
             drawText(graphics, wordList, curX, textY, imageWidth);
 
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", os);
+            @Cleanup ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(image, "jpg", os);
 
             return os.toByteArray();
         } catch (IOException | FontFormatException e) {
@@ -83,7 +88,7 @@ public class FormCreation {
         FontMetrics fontMetrics = graphics.getFontMetrics();
         Font textFont = font;
         int textY = headerFontSize + fontMetrics.getHeight() * 3 / 2;
-        int textHeight = expectedTextHeight(graphics, wordList, textY, imageWidth);
+        int textHeight = getExpectedTextHeight(graphics, wordList, textY, imageWidth);
         int fontSize = 0;
         while (textHeight < imageHeight && fontSize < headerFontSize * 3 / 4) {
             fontSize++;
@@ -91,13 +96,13 @@ public class FormCreation {
             graphics.setFont(textFont);
             fontMetrics = graphics.getFontMetrics();
             textY = headerFontSize + fontMetrics.getHeight() * 3 / 2;
-            textHeight = expectedTextHeight(graphics, wordList, textY, imageWidth);
+            textHeight = getExpectedTextHeight(graphics, wordList, textY, imageWidth);
         }
         fontSize--;
         return fontSize;
     }
 
-    private int expectedTextHeight(Graphics graphics, List<String> wordList, int y, int imageWidth) {
+    private int getExpectedTextHeight(Graphics graphics, List<String> wordList, int y, int imageWidth) {
         FontMetrics metrics = graphics.getFontMetrics();
         int lineHeight = metrics.getHeight();
         int curX = 0;

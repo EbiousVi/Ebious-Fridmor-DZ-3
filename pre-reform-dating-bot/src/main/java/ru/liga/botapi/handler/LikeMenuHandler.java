@@ -5,10 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import ru.liga.Dto.ProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
-import ru.liga.keyboard.KeyboardName;
+import ru.liga.dto.ProfileDto;
+import ru.liga.keyboard.Button;
+import ru.liga.keyboard.Keyboard;
 import ru.liga.keyboard.KeyboardService;
 import ru.liga.service.LocaleMessageService;
 import ru.liga.service.ProfileImageService;
@@ -32,32 +33,34 @@ public class LikeMenuHandler implements UserInputHandler {
         long chatId = message.getChatId();
         String text = message.getText();
 
-        if (text.equals(localeMessageService.getMessage("button.like.next"))) {
+        if (text.equals(Button.CONTINUE.getValue())) {
             userDataCache.setUserCurrentBotState(userId, BotState.SEARCH_MENU);
-
             if (userDataCache.getUserProfileList(userId).isEmpty()) {
-                return List.of(replyMessageService.getSendMessage(
-                        chatId, localeMessageService.getMessage("reply.list.suggestionIsOver"),
-                        keyboardService.getReplyKeyboard(KeyboardName.SEARCH_MENU)));
-            } else {
-                ProfileDto nextSuggestion = userDataCache.getUserProfileList(userId).getNext();
-
-                return List.of(replyMessageService.getSendPhoto(
-                        chatId, profileImageService.getProfileImageForSuggestion(nextSuggestion),
-                        nextSuggestion.getName() + ", " + nextSuggestion.getSex(),
-                        keyboardService.getReplyKeyboard(KeyboardName.SEARCH_MENU)));
+                return sendMessage(chatId, "reply.list.suggestionIsOver", Keyboard.SEARCH_MENU);
             }
-        } else if (text.equals(localeMessageService.getMessage("button.like.chat"))) {
-            return List.of(replyMessageService.getSendMessage(
-                    chatId, localeMessageService.getMessage("reply.like.inDevelopment"), null));
-        } else {
-            return List.of(replyMessageService.getSendMessage(
-                    chatId, localeMessageService.getMessage("reply.error.invalidValue"), null));
+            ProfileDto nextSuggestion = userDataCache.getUserProfileList(userId).getNext();
+            return sendPhoto(chatId, nextSuggestion);
         }
+        if (text.equals(Button.CHAT.getValue())) {
+            return sendMessage(chatId, "reply.like.inDevelopment", Keyboard.LIKE_MENU);
+        }
+        return sendMessage(chatId, "reply.error.invalidValue", Keyboard.LIKE_MENU);
     }
 
     @Override
     public BotState getHandlerName() {
         return BotState.LIKE_MENU;
+    }
+
+    private List<PartialBotApiMethod<?>> sendMessage(long chatId, String message, Keyboard keyboardName) {
+        return List.of(replyMessageService.getSendMessage(
+                chatId, localeMessageService.getMessage(message), keyboardService.getReplyKeyboard(keyboardName)));
+    }
+
+    private List<PartialBotApiMethod<?>> sendPhoto(long chatId, ProfileDto suggestion) {
+        String caption = suggestion.getName() + ", " + suggestion.getSex() + ", " + suggestion.getStatus();
+        return List.of(replyMessageService.getSendPhoto(
+                chatId, profileImageService.getProfileImageForSuggestion(suggestion),
+                caption, keyboardService.getReplyKeyboard(Keyboard.SEARCH_MENU)));
     }
 }

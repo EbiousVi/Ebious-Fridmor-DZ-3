@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import ru.liga.Dto.ProfileDto;
-import ru.liga.Dto.UserProfileDto;
+import ru.liga.dto.ProfileDto;
+import ru.liga.dto.UserProfileDto;
 import ru.liga.model.UserProfileData;
 
 import java.util.Collections;
@@ -43,6 +43,21 @@ public class RestTemplateService {
                 return usersResponse.getBody();
             } else {
                 return null;
+            }
+        } catch (RestClientException e) {
+            log.error("server is not available");
+            return null;
+        }
+    }
+
+    public UserProfileDto updateUserProfile(UserProfileData userProfileData) {
+        String url = "http://localhost:6064/dating-server/profile";
+        try {
+            ResponseEntity<UserProfileDto> usersResponse = restTemplate.exchange(url, HttpMethod.PUT, getAuthorizationHeader(userProfileData), UserProfileDto.class);
+            if (usersResponse.getStatusCode().is2xxSuccessful()) {
+                return usersResponse.getBody();
+            } else {
+                throw new RuntimeException("Update user profile request return bad response!");
             }
         } catch (RestClientException e) {
             log.error("server is not available");

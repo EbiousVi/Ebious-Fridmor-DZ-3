@@ -3,21 +3,18 @@ package ru.liga.botapi.handler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import ru.liga.Dto.ProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
-import ru.liga.keyboard.KeyboardName;
+import ru.liga.dto.ProfileDto;
+import ru.liga.keyboard.Button;
+import ru.liga.keyboard.Keyboard;
 import ru.liga.keyboard.KeyboardService;
 import ru.liga.model.UserProfileList;
 import ru.liga.service.LocaleMessageService;
 import ru.liga.service.ProfileImageService;
 import ru.liga.service.ReplyMessageService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -37,26 +34,30 @@ public class FavoriteMenuHandler implements UserInputHandler {
 
         UserProfileList userProfileList = userDataCache.getUserProfileList(userId);
 
-        if (text.equals(localeMessageService.getMessage("button.search.left"))) {
-            ProfileDto previous = userProfileList.getPrevious();
-            return List.of(replyMessageService.getSendPhoto(
-                    chatId, profileImageService.getProfileImageForSuggestion(previous),
-                    previous.getName() + ", " + previous.getSex() + ", " + previous.getStatus(), null));
-        } else if (text.equals(localeMessageService.getMessage("button.search.right"))) {
-            ProfileDto next = userProfileList.getNext();
-            return List.of(replyMessageService.getSendPhoto(
-                    chatId, profileImageService.getProfileImageForSuggestion(next),
-                    next.getName() + ", " + next.getSex() + ", " + next.getStatus(), null));
-        } else if (text.equals(localeMessageService.getMessage("button.favorite.menu"))) {
-            userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
-
-            return List.of(replyMessageService.getSendMessage(
-                    chatId, localeMessageService.getMessage("reply.main.info"),
-                    keyboardService.getReplyKeyboard(KeyboardName.MAIN_MENU)));
-        } else {
-            return List.of(replyMessageService.getSendMessage(
-                    chatId, localeMessageService.getMessage("reply.error.invalidValue"), null));
+        if (text.equals(Button.LEFT.getValue())) {
+            ProfileDto previousSuggestion = userProfileList.getPrevious();
+            return sendPhoto(chatId, previousSuggestion);
         }
+        if (text.equals(Button.RIGHT.getValue())) {
+            ProfileDto nextSuggestion = userProfileList.getNext();
+            return sendPhoto(chatId, nextSuggestion);
+        }
+        if (text.equals(Button.MAIN.getValue())) {
+            userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
+            return sendMessage(chatId, "reply.main.info", Keyboard.MAIN_MENU);
+        }
+        return sendMessage(chatId, "reply.error.invalidValue", Keyboard.FAVORITE_MENU);
+    }
+
+    private List<PartialBotApiMethod<?>> sendMessage(long chatId, String message, Keyboard keyboardName) {
+        return List.of(replyMessageService.getSendMessage(
+                chatId, localeMessageService.getMessage(message), keyboardService.getReplyKeyboard(keyboardName)));
+    }
+
+    private List<PartialBotApiMethod<?>> sendPhoto(long chatId, ProfileDto suggestion) {
+        String caption = suggestion.getName() + ", " + suggestion.getSex() + ", " + suggestion.getStatus();
+        return List.of(replyMessageService.getSendPhoto(
+                chatId, profileImageService.getProfileImageForSuggestion(suggestion), caption, null));
     }
 
     @Override

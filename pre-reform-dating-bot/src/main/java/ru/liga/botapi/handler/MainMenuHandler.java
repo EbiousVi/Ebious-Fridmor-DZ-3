@@ -5,10 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import ru.liga.Dto.ProfileDto;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
-import ru.liga.keyboard.KeyboardName;
+import ru.liga.dto.ProfileDto;
+import ru.liga.keyboard.Button;
+import ru.liga.keyboard.Keyboard;
 import ru.liga.keyboard.KeyboardService;
 import ru.liga.model.UserProfileData;
 import ru.liga.model.UserProfileList;
@@ -38,48 +39,53 @@ public class MainMenuHandler implements UserInputHandler {
 
         UserProfileData userProfileData = userDataCache.getUserProfileData(userId);
 
-        if (text.equals(localeMessageService.getMessage("button.main.search"))) {
+        if (text.equals(Button.SEARCH.getValue())) {
             UserProfileList userProfileList = new UserProfileList(restTemplateService.getSearchList(userProfileData));
-
             if (userProfileList.isEmpty()) {
-                return List.of(replyMessageService.getSendMessage(
-                        chatId, localeMessageService.getMessage("reply.list.emptySuggestion"), null));
+                return sendMessage(chatId, "reply.list.emptySuggestion", Keyboard.MAIN_MENU);
             }
-
             userDataCache.setUserProfileList(userId, userProfileList);
             userDataCache.setUserCurrentBotState(userId, BotState.SEARCH_MENU);
-
             ProfileDto currentSuggestion = userProfileList.getCurrent();
-            return List.of(replyMessageService.getSendPhoto(
-                    chatId, profileImageService.getProfileImageForSuggestion(currentSuggestion),
-                    currentSuggestion.getName() + ", " + currentSuggestion.getSex(),
-                    keyboardService.getReplyKeyboard(KeyboardName.SEARCH_MENU)));
-        } else if (text.equals(localeMessageService.getMessage("button.main.profile"))) {
-            return List.of(replyMessageService.getSendPhoto(
-                    chatId, profileImageService.getProfileImageForUser(userId),
-                    userProfileData.getName() + ", " + userProfileData.getSex().getValue(), null));
-        } else if (text.equals(localeMessageService.getMessage("button.main.favorite"))) {
+            return sendSuggestionPhoto(chatId, currentSuggestion, Keyboard.SEARCH_MENU);
+        }
+
+        if (text.equals(Button.PROFILE.getValue())) {
+            userDataCache.setUserCurrentBotState(userId, BotState.PROFILE_MENU);
+            return sendUserPhoto(chatId, userProfileData, Keyboard.PROFILE_MENU);
+        }
+
+        if (text.equals(Button.FAVORITE.getValue())) {
             UserProfileList userProfileList = new UserProfileList(restTemplateService.getFavoriteList(userProfileData));
-
             if (userProfileList.isEmpty()) {
-                return List.of(replyMessageService.getSendMessage(
-                        chatId, localeMessageService.getMessage("reply.list.emptyFavorites"), null));
+                return sendMessage(chatId, "reply.list.emptyFavorites", Keyboard.MAIN_MENU);
             }
-
             userDataCache.setUserProfileList(userId, userProfileList);
             userDataCache.setUserCurrentBotState(userId, BotState.FAVORITE_MENU);
-
             ProfileDto currentSuggestion = userProfileList.getCurrent();
-
-            return List.of(replyMessageService.getSendPhoto(
-                    chatId, profileImageService.getProfileImageForSuggestion(currentSuggestion),
-                    currentSuggestion.getName() + ", " + currentSuggestion.getSex() + ", " + currentSuggestion.getStatus(),
-                    keyboardService.getReplyKeyboard(KeyboardName.FAVORITE_MENU)));
-        } else {
-            return List.of(replyMessageService.getSendMessage(
-                    chatId, localeMessageService.getMessage("reply.error.invalidValue"),
-                    keyboardService.getReplyKeyboard(KeyboardName.MAIN_MENU)));
+            return sendSuggestionPhoto(chatId, currentSuggestion, Keyboard.FAVORITE_MENU);
         }
+
+        return sendMessage(chatId, "reply.error.invalidValue", Keyboard.MAIN_MENU);
+    }
+
+    private List<PartialBotApiMethod<?>> sendMessage(long chatId, String message, Keyboard keyboardName) {
+        return List.of(replyMessageService.getSendMessage(
+                chatId, localeMessageService.getMessage(message), keyboardService.getReplyKeyboard(keyboardName)));
+    }
+
+    private List<PartialBotApiMethod<?>> sendSuggestionPhoto(long chatId, ProfileDto suggestion, Keyboard keyboardName) {
+        String caption = suggestion.getName() + ", " + suggestion.getSex() + ", " + suggestion.getStatus();
+        return List.of(replyMessageService.getSendPhoto(
+                chatId, profileImageService.getProfileImageForSuggestion(suggestion),
+                caption, keyboardService.getReplyKeyboard(keyboardName)));
+    }
+
+    private List<PartialBotApiMethod<?>> sendUserPhoto(long chatId, UserProfileData userProfileData, Keyboard keyboardName) {
+        String caption = userProfileData.getName() + ", " + userProfileData.getSex().getValue();
+        return List.of(replyMessageService.getSendPhoto(
+                chatId, profileImageService.getProfileImageForUser(chatId),
+                caption, keyboardService.getReplyKeyboard(keyboardName)));
     }
 
     @Override

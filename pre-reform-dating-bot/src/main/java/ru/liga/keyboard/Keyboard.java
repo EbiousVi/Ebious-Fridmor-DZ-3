@@ -1,11 +1,13 @@
 package ru.liga.keyboard;
 
-public enum KeyboardName {
+public enum Keyboard {
     MAIN_MENU,
     SEARCH_MENU,
     LIKE_MENU,
     PROFILE_MENU,
     FAVORITE_MENU,
+    UPDATE_MENU,
     GENDER_SELECT,
-    PREFERENCE_SELECT
+    PREFERENCE_SELECT,
+    REMOVE,
 }
