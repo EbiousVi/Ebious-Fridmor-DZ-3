@@ -7,10 +7,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class YatBlyatHandlerTest {
+class YatReplaceHandlerTest {
 
     @Autowired
-    YatBlyatHandler yatHandler;
+    YatReplaceHandler yatHandler;
 
     @Test
     void yatHandlerCase1() {

@@ -6,22 +6,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.liga.prereformtranslator.service.domain.Description;
-import ru.liga.prereformtranslator.service.transaltor.Translator;
+import ru.liga.prereformtranslator.service.transaltor.TranslatorImpl;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/translator")
 public class Controller {
 
-    private final Translator translator;
+    private final TranslatorImpl translatorImpl;
 
     @PostMapping("/text")
     public String translateText(@RequestBody String text) {
-        return translator.translateText(text);
+        return translatorImpl.translateText(text);
     }
 
     @PostMapping("/description")
     public Description translateDescription(@RequestBody String text) {
-        return translator.translateDescription(text);
+        return translatorImpl.translateDescription(text);
     }
 }

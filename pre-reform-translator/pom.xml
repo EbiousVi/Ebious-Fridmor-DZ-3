@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>pre-reform-translator</artifactId>
-    <version>0.9.0-SNAPSHOT</version>
+    <version>0.9.1-SNAPSHOT</version>
     <name>pre-reform-translator</name>
     <description>Pre-reform-translator</description>
 

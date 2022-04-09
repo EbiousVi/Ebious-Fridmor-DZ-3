@@ -9,10 +9,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class FitaAtProperNameHandlerTest {
+class FitaReplaceHandlerTest {
 
     @InjectMocks
-    FitaAtProperNameHandler fitaName;
+    FitaReplaceHandler fitaName;
 
     @Test
     @DisplayName("< ѳ > в середине слова, 1 замена")

@@ -6,20 +6,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.liga.prereformtranslator.service.domain.Description;
 
 @SpringBootTest
-class TranslatorTest {
+class TranslatorImplTest {
 
     @Autowired
-    Translator translator;
+    TranslatorImpl translatorImpl;
 
     @Test
     void translateToString() {
         String test1 = "Великий обед Феофана был едой бедной Афины чьё сияние приехало в дом бедой надеяться лесничего медведи не ели";
-        String translateTest1 = translator.translateText(test1);
+        String translateTest1 = translatorImpl.translateText(test1);
         System.out.println(test1);
         System.out.println(translateTest1);
 
         String test2 = "«Хотел бы найти совершенно не закомплексованную, разумную, адекватную во взглядах на жизнь, свободолюбивую девушку, без тараканов в голове и каких-либо заморочек. Реалистку и оптимистку. Веселую и общительную, которая «живет здесь и сейчас».";
-        String translateTest2 = translator.translateText(test2);
+        String translateTest2 = translatorImpl.translateText(test2);
         System.out.println(test2);
         System.out.println(translateTest2);
     }
@@ -27,7 +27,7 @@ class TranslatorTest {
     @Test
     void translateToObject() {
         String test1 = "Великий обед Феофана был едой бедной Афины чьё сияние приехало в дом бедой надеяться лесничего медведи не ели";
-        Description description1 = translator.translateDescription(test1);
+        Description description1 = translatorImpl.translateDescription(test1);
         System.out.println(test1);
         System.out.println(description1);
     }

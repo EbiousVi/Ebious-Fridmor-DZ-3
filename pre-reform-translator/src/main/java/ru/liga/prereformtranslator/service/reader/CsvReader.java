@@ -24,14 +24,14 @@ public class CsvReader {
     Resource dictionary;
 
     public List<Entry> readDataSetFromCsv() {
-        try {
-            return new BufferedReader(new InputStreamReader(dictionary.getInputStream(), StandardCharsets.UTF_8))
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(dictionary.getInputStream(), StandardCharsets.UTF_8))) {
+            return bufferedReader
                     .lines()
                     .skip(TITLE_ROW_INDEX)
                     .map(this::parseLine)
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            log.error("Can read dictionary", e);
+            log.error("Can not read dictionary", e);
             throw new ReaderException("Can not read csv file!");
         }
     }

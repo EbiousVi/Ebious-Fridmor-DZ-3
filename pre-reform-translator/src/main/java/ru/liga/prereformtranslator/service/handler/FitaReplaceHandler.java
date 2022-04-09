@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  */
 @Service
 @Order(4)
-public class FitaAtProperNameHandler implements Handler {
+public class FitaReplaceHandler implements Handler {
 
     private static final Pattern PATTERN = Pattern.compile("\\b[А-Я][а-я]+\\b");
     private static final String REPLACEABLE = "ф";
@@ -19,12 +19,12 @@ public class FitaAtProperNameHandler implements Handler {
     @Override
     public String handle(String token) {
         if (isProperName(token)) {
-            return replaceRuFToFita(token);
+            return replaceChar(token);
         }
         return token;
     }
 
-    private String replaceRuFToFita(String token) {
+    private String replaceChar(String token) {
         if (token.startsWith(REPLACEABLE.toUpperCase())) {
             token = token.replace(REPLACEABLE.toUpperCase(), REPLACEMENT.toUpperCase());
         }

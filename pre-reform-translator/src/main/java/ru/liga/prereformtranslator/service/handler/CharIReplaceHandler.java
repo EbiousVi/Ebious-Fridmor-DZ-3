@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  */
 @Service
 @Order(2)
-public class IBeforeVowelsHandler implements Handler {
+public class CharIReplaceHandler implements Handler {
 
     private static final Pattern PATTERN = Pattern.compile("[и][ауоыийэяюёе]");
     private static final String REPLACEABLE = "и";

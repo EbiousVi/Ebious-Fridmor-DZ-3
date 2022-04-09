@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SolidSignTest {
 
     @InjectMocks
-    SolidSignHandler solidSign;
+    SolidSignReplaceHandler solidSign;
 
     @Test
     @DisplayName("< б > в конце, замена на < ъ >")

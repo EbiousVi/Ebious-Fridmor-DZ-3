@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  */
 @Service
 @Order(3)
-public class SolidSignHandler implements Handler {
+public class SolidSignReplaceHandler implements Handler {
 
     private static final Pattern CONSONANT_AT_THE_END = Pattern.compile("[бвгджзклмнпрстфхцчшщ]$");
     private static final String END_OF_WORD_PATTERN = "ь$";
@@ -23,10 +23,10 @@ public class SolidSignHandler implements Handler {
 
     @Override
     public String handle(String token) {
-        return addSolidSignAtTheEndAfterConsonant(replaceSoftSignAtTheEnd(token));
+        return addSolidSign(replaceSoftSign(token));
     }
 
-    private String addSolidSignAtTheEndAfterConsonant(String token) {
+    private String addSolidSign(String token) {
         Matcher matcher = CONSONANT_AT_THE_END.matcher(token);
         StringBuilder sb = new StringBuilder(token);
         while (matcher.find()) {
@@ -35,7 +35,7 @@ public class SolidSignHandler implements Handler {
         return sb.toString();
     }
 
-    private String replaceSoftSignAtTheEnd(String token) {
+    private String replaceSoftSign(String token) {
         if (token.endsWith(SOFT_SIGN)) {
             return token.replaceAll(END_OF_WORD_PATTERN, SOLID_SIGN);
         }

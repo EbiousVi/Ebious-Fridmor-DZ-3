@@ -7,7 +7,6 @@ import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.liga.prereformtranslator.service.domain.Description;
 
-
 @ExtendWith(MockitoExtension.class)
 class ParserTest {
 
@@ -30,5 +29,11 @@ class ParserTest {
     void parseDescriptionMultipleLineSeparatorAtStart() {
         Description description = parser.parseDescription("\n\n\n\n\nСпрингимеетсобственнуюMVCплатформувебприложенийкотораянебыла первоначальнозапланирована");
         Assertions.assertThat(description.getTittle().length()).isEqualTo(32);
+    }
+
+    @Test
+    void parseDescriptionFirstComma() {
+        Description description = parser.parseDescription("Заголовок, Первая строка, Вторая строка, Третья строка");
+        System.out.println(description);
     }
 }

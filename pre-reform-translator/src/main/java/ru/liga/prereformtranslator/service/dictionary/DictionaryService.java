@@ -32,7 +32,7 @@ public class DictionaryService {
         }
     }
 
-    public String getMask(String key) {
+    public String getPattern(String key) {
         return dictionary.getOrDefault(key, "");
     }
 
