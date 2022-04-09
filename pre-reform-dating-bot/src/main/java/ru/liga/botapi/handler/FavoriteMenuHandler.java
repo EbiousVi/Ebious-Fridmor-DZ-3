@@ -10,7 +10,7 @@ import ru.liga.dto.ProfileDto;
 import ru.liga.keyboard.Button;
 import ru.liga.keyboard.Keyboard;
 import ru.liga.keyboard.KeyboardService;
-import ru.liga.model.UserProfileList;
+import ru.liga.model.UserSuggestionList;
 import ru.liga.service.LocaleMessageService;
 import ru.liga.service.ProfileImageService;
 import ru.liga.service.ReplyMessageService;
@@ -32,21 +32,29 @@ public class FavoriteMenuHandler implements UserInputHandler {
         long chatId = message.getChatId();
         String text = message.getText();
 
-        UserProfileList userProfileList = userDataCache.getUserProfileList(userId);
+        UserSuggestionList userSuggestionList = userDataCache.getUserProfileList(userId);
 
         if (text.equals(Button.LEFT.getValue())) {
-            ProfileDto previousSuggestion = userProfileList.getPrevious();
+            ProfileDto previousSuggestion = userSuggestionList.getPrevious();
             return sendPhoto(chatId, previousSuggestion);
         }
+
         if (text.equals(Button.RIGHT.getValue())) {
-            ProfileDto nextSuggestion = userProfileList.getNext();
+            ProfileDto nextSuggestion = userSuggestionList.getNext();
             return sendPhoto(chatId, nextSuggestion);
         }
+
         if (text.equals(Button.MAIN.getValue())) {
             userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
             return sendMessage(chatId, "reply.main.info", Keyboard.MAIN_MENU);
         }
+
         return sendMessage(chatId, "reply.error.invalidValue", Keyboard.FAVORITE_MENU);
+    }
+
+    @Override
+    public BotState getHandlerName() {
+        return BotState.FAVORITE_MENU;
     }
 
     private List<PartialBotApiMethod<?>> sendMessage(long chatId, String message, Keyboard keyboardName) {
@@ -57,11 +65,6 @@ public class FavoriteMenuHandler implements UserInputHandler {
     private List<PartialBotApiMethod<?>> sendPhoto(long chatId, ProfileDto suggestion) {
         String caption = suggestion.getName() + ", " + suggestion.getSex() + ", " + suggestion.getStatus();
         return List.of(replyMessageService.getSendPhoto(
-                chatId, profileImageService.getProfileImageForSuggestion(suggestion), caption, null));
-    }
-
-    @Override
-    public BotState getHandlerName() {
-        return BotState.FAVORITE_MENU;
+                chatId, profileImageService.getProfileAvatarForSuggestion(suggestion), caption, null));
     }
 }

@@ -9,7 +9,6 @@ import java.time.Duration;
 
 @Configuration
 public class RestTemplateConfig {
-
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder.setConnectTimeout(Duration.ofMillis(300_000))

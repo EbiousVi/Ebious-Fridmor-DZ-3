@@ -18,7 +18,6 @@ public class TelegramFacade {
     private final BotStateContext botStateContext;
     private final UserDataCache userDataCache;
 
-
     public List<PartialBotApiMethod<?>> handleUpdate(Update update) {
         List<PartialBotApiMethod<?>> replyMessage = null;
 

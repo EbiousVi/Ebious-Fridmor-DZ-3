@@ -11,6 +11,7 @@ import ru.liga.dto.ProfileDto;
 import ru.liga.keyboard.Button;
 import ru.liga.keyboard.Keyboard;
 import ru.liga.keyboard.KeyboardService;
+import ru.liga.model.UserSuggestionList;
 import ru.liga.service.LocaleMessageService;
 import ru.liga.service.ProfileImageService;
 import ru.liga.service.ReplyMessageService;
@@ -35,15 +36,18 @@ public class LikeMenuHandler implements UserInputHandler {
 
         if (text.equals(Button.CONTINUE.getValue())) {
             userDataCache.setUserCurrentBotState(userId, BotState.SEARCH_MENU);
-            if (userDataCache.getUserProfileList(userId).isEmpty()) {
+            UserSuggestionList userSuggestionList = userDataCache.getUserProfileList(userId);
+            if (userSuggestionList.isEmpty()) {
                 return sendMessage(chatId, "reply.list.suggestionIsOver", Keyboard.SEARCH_MENU);
             }
-            ProfileDto nextSuggestion = userDataCache.getUserProfileList(userId).getNext();
+            ProfileDto nextSuggestion = userSuggestionList.getNext();
             return sendPhoto(chatId, nextSuggestion);
         }
+
         if (text.equals(Button.CHAT.getValue())) {
             return sendMessage(chatId, "reply.like.inDevelopment", Keyboard.LIKE_MENU);
         }
+
         return sendMessage(chatId, "reply.error.invalidValue", Keyboard.LIKE_MENU);
     }
 
@@ -60,7 +64,7 @@ public class LikeMenuHandler implements UserInputHandler {
     private List<PartialBotApiMethod<?>> sendPhoto(long chatId, ProfileDto suggestion) {
         String caption = suggestion.getName() + ", " + suggestion.getSex() + ", " + suggestion.getStatus();
         return List.of(replyMessageService.getSendPhoto(
-                chatId, profileImageService.getProfileImageForSuggestion(suggestion),
+                chatId, profileImageService.getProfileAvatarForSuggestion(suggestion),
                 caption, keyboardService.getReplyKeyboard(Keyboard.SEARCH_MENU)));
     }
 }

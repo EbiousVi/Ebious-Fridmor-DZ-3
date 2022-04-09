@@ -5,13 +5,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.liga.domain.Description;
-import ru.liga.service.FormCreation;
+import ru.liga.service.AvatarCreation;
 
 @RestController
 @RequiredArgsConstructor
-public class AppController {
+public class Controller {
 
-    private final FormCreation formCreation;
+    private final AvatarCreation formCreation;
 
     @PostMapping("/avatar")
     public byte[] getAvatar(@RequestBody Description description) {

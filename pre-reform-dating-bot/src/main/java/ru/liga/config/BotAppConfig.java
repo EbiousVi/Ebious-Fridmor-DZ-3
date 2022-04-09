@@ -7,7 +7,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import ru.liga.Bot;
+import ru.liga.DatingBot;
 import ru.liga.botapi.TelegramFacade;
 import ru.liga.cache.UserDataCache;
 
@@ -21,8 +21,8 @@ public class BotAppConfig {
     private String botToken;
 
     @Bean
-    public Bot Bot(TelegramFacade telegramFacade, UserDataCache userDataCache) {
-        Bot bot = new Bot(telegramFacade, userDataCache);
+    public DatingBot Bot(TelegramFacade telegramFacade, UserDataCache userDataCache) {
+        DatingBot bot = new DatingBot(telegramFacade, userDataCache);
         bot.setBotUsername(botUsername);
         bot.setBotToken(botToken);
         return bot;

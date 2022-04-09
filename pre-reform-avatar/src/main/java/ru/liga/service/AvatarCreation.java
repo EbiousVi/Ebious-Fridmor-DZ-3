@@ -1,6 +1,7 @@
 package ru.liga.service;
 
 import lombok.Cleanup;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.liga.domain.Description;
 
@@ -13,29 +14,30 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
-public class FormCreation {
+public class AvatarCreation {
+
+    private static final String BACKGROUNG_IMAGE_SOURCE = "prerev-background.jpg";
+    private static final String DEFAULT_FONT_SOURCE = "OldStandardTT-Regular.ttf";
+    private static final String DEFAULT_FONT_NAME = "Old Standard TT";
+    private static final int MIN_FONT_SIZE = 10;
 
     public byte[] execute(Description description) {
         try {
-            @Cleanup InputStream imageStream = getClass()
-                    .getClassLoader()
-                    .getResourceAsStream("prerev-background.jpg");
-            @Cleanup InputStream fontStream = getClass()
-                    .getClassLoader()
-                    .getResourceAsStream("OldStandardTT-Regular.ttf");
-            int minFontSize = 10;
+            @Cleanup InputStream imageStream = getClass().getClassLoader().getResourceAsStream(BACKGROUNG_IMAGE_SOURCE);
+            @Cleanup InputStream fontStream = getClass().getClassLoader().getResourceAsStream(DEFAULT_FONT_SOURCE);
 
             BufferedImage image = ImageIO.read(Objects.requireNonNull(imageStream));
             int imageHeight = image.getHeight();
             int imageWidth = image.getWidth();
 
             Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(fontStream));
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(font);
+            GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            graphicsEnvironment.registerFont(font);
 
-            Font headerFont = new Font("Old Standard TT", Font.BOLD, minFontSize);
-            Font textFont = new Font("Old Standard TT", Font.PLAIN, minFontSize);
+            Font headerFont = new Font(DEFAULT_FONT_NAME, Font.BOLD, MIN_FONT_SIZE);
+            Font textFont = new Font(DEFAULT_FONT_NAME, Font.PLAIN, MIN_FONT_SIZE);
 
             Graphics graphics = image.getGraphics();
             graphics.setFont(headerFont);
@@ -43,11 +45,11 @@ public class FormCreation {
 
             int curX = 0;
 
-            String header = description.getTittle().trim();
-            List<String> wordList = List.of(description.getBody().trim().split("\\s+"));
+            String tittle = description.getTittle();
+            List<String> wordList = List.of(description.getBody().split("\\s+"));
 
-            int headerFontSize = getFontSizeForHeader(graphics, headerFont, header, imageWidth);
-            graphics.drawString(header, curX, headerFontSize);
+            int headerFontSize = getFontSizeForTittle(graphics, headerFont, tittle, imageWidth);
+            graphics.drawString(tittle, curX, headerFontSize);
 
             graphics.setFont(textFont);
             int fontSize = getFontSizeForBody(graphics, textFont, wordList, headerFontSize, imageHeight, imageWidth);
@@ -64,7 +66,8 @@ public class FormCreation {
 
             return os.toByteArray();
         } catch (IOException | FontFormatException e) {
-            return null;
+            log.error("Avatar creation failed: wrong background/font file");
+            throw new RuntimeException("Avatar creation failed");
         }
     }
 
@@ -118,7 +121,7 @@ public class FormCreation {
         return curY;
     }
 
-    private int getFontSizeForHeader(Graphics graphics, Font font, String text, int imageWidth) {
+    private int getFontSizeForTittle(Graphics graphics, Font font, String text, int imageWidth) {
         FontMetrics fontMetrics = graphics.getFontMetrics();
         Font textFont = font;
         int textWidth = fontMetrics.stringWidth(text);

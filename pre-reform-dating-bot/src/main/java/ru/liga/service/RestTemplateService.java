@@ -21,12 +21,13 @@ import java.util.LinkedList;
 @RequiredArgsConstructor
 public class RestTemplateService {
     private static final String TOKEN_PREFIX = "Bearer ";
+    private static final String SERVER_URL = "http://localhost:6064/dating-server/";
     private static final String AUTHORIZATION = "Authorization";
     private final RestTemplate restTemplate;
 
     public UserProfileDto createUserProfile(UserProfileData userProfile) {
         HttpEntity<UserProfileData> request = new HttpEntity<>(userProfile);
-        String url = "http://localhost:6064/dating-server/profiles";
+        String url = SERVER_URL + "profiles";
         ResponseEntity<UserProfileDto> resp = restTemplate.postForEntity(url, request, UserProfileDto.class);
         if (resp.getStatusCode().is2xxSuccessful()) {
             return resp.getBody();
@@ -36,9 +37,10 @@ public class RestTemplateService {
     }
 
     public UserProfileDto getUserProfile(UserProfileData userProfileData) {
-        String url = "http://localhost:6064/dating-server/profile";
+        String url = SERVER_URL + "profile";
         try {
-            ResponseEntity<UserProfileDto> usersResponse = restTemplate.exchange(url, HttpMethod.GET, getAuthorizationHeader(userProfileData), UserProfileDto.class);
+            ResponseEntity<UserProfileDto> usersResponse = restTemplate.exchange(
+                    url, HttpMethod.GET, getAuthorizationHeader(userProfileData), UserProfileDto.class);
             if (usersResponse.getStatusCode().is2xxSuccessful()) {
                 return usersResponse.getBody();
             } else {
@@ -51,11 +53,12 @@ public class RestTemplateService {
     }
 
     public UserProfileDto updateUserProfile(UserProfileData userProfile) {
-        String url = "http://localhost:6064/dating-server/profile";
+        String url = SERVER_URL + "profile";
         HttpHeaders headers = getAuthorizationHeader(userProfile).getHeaders();
         HttpEntity<UserProfileData> request = new HttpEntity<>(userProfile, headers);
         try {
-            ResponseEntity<UserProfileDto> usersResponse = restTemplate.exchange(url, HttpMethod.PUT, request, UserProfileDto.class);
+            ResponseEntity<UserProfileDto> usersResponse = restTemplate.exchange(
+                    url, HttpMethod.PUT, request, UserProfileDto.class);
             if (usersResponse.getStatusCode().is2xxSuccessful()) {
                 return usersResponse.getBody();
             } else {
@@ -68,9 +71,10 @@ public class RestTemplateService {
     }
 
     public LinkedList<ProfileDto> getSearchList(UserProfileData userProfileData) {
-        String url = "http://localhost:6064/dating-server/search";
+        String url = SERVER_URL + "search";
         try {
-            ResponseEntity<ProfileDto[]> resp = restTemplate.exchange(url, HttpMethod.GET, getAuthorizationHeader(userProfileData), ProfileDto[].class);
+            ResponseEntity<ProfileDto[]> resp = restTemplate.exchange(
+                    url, HttpMethod.GET, getAuthorizationHeader(userProfileData), ProfileDto[].class);
             if (resp.getStatusCode().is2xxSuccessful()) {
                 LinkedList<ProfileDto> linkedList = new LinkedList<>();
                 Collections.addAll(linkedList, resp.getBody());
@@ -85,9 +89,10 @@ public class RestTemplateService {
     }
 
     public LinkedList<ProfileDto> getFavoriteList(UserProfileData userProfileData) {
-        String url = "http://localhost:6064/dating-server/favourites";
+        String url = SERVER_URL + "favourites";
         try {
-            ResponseEntity<ProfileDto[]> resp = restTemplate.exchange(url, HttpMethod.GET, getAuthorizationHeader(userProfileData), ProfileDto[].class);
+            ResponseEntity<ProfileDto[]> resp = restTemplate.exchange(
+                    url, HttpMethod.GET, getAuthorizationHeader(userProfileData), ProfileDto[].class);
             if (resp.getStatusCode().is2xxSuccessful()) {
                 LinkedList<ProfileDto> linkedList = new LinkedList<>();
                 Collections.addAll(linkedList, resp.getBody());
@@ -102,9 +107,10 @@ public class RestTemplateService {
     }
 
     public void setFavoriteUser(UserProfileData userProfileData, Long toChatId) {
-        String url = "http://localhost:6064/dating-server/favourites/" + toChatId;
+        String url = SERVER_URL + "favourites/" + toChatId;
         try {
-            ResponseEntity<ProfileDto[]> resp = restTemplate.exchange(url, HttpMethod.GET, getAuthorizationHeader(userProfileData), ProfileDto[].class);
+            ResponseEntity<ProfileDto[]> resp = restTemplate.exchange(
+                    url, HttpMethod.GET, getAuthorizationHeader(userProfileData), ProfileDto[].class);
             if (!resp.getStatusCode().is2xxSuccessful()) {
                 throw new RuntimeException("Set favorite request return bad response!");
             }

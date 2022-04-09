@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BotApp {
+public class AvatarApp {
     public static void main(String[] args) {
-        SpringApplication.run(BotApp.class, args);
+        SpringApplication.run(AvatarApp.class, args);
     }
 }

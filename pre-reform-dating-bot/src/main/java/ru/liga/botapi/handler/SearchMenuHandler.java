@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import ru.liga.botapi.BotState;
 import ru.liga.cache.UserDataCache;
@@ -12,7 +11,7 @@ import ru.liga.dto.ProfileDto;
 import ru.liga.keyboard.Button;
 import ru.liga.keyboard.Keyboard;
 import ru.liga.keyboard.KeyboardService;
-import ru.liga.model.UserProfileList;
+import ru.liga.model.UserSuggestionList;
 import ru.liga.service.LocaleMessageService;
 import ru.liga.service.ProfileImageService;
 import ru.liga.service.ReplyMessageService;
@@ -37,26 +36,27 @@ public class SearchMenuHandler implements UserInputHandler {
         long chatId = message.getChatId();
         String text = message.getText();
 
-        UserProfileList userProfileList = userDataCache.getUserProfileList(userId);
+        UserSuggestionList userSuggestionList = userDataCache.getUserProfileList(userId);
 
-        if (userProfileList.isEmpty()) {
+        if (userSuggestionList.isEmpty()) {
             return sendMessage(chatId, "reply.list.suggestionIsOver", Keyboard.SEARCH_MENU);
         }
 
         if (text.equals(Button.LEFT.getValue())) {
-            ProfileDto nextSuggestion = userProfileList.getNext();
+            ProfileDto nextSuggestion = userSuggestionList.getNext();
             return sendSuggestionPhoto(chatId, nextSuggestion, Keyboard.SEARCH_MENU);
         }
 
         if (text.equals(Button.RIGHT.getValue())) {
-            ProfileDto currentSuggestion = userProfileList.getCurrent();
-            userProfileList.removeCurrent();
-            restTemplateService.setFavoriteUser(userDataCache.getUserProfileData(chatId), currentSuggestion.getChatId());
+            ProfileDto currentSuggestion = userSuggestionList.getCurrent();
+            userSuggestionList.removeCurrent();
+            restTemplateService.setFavoriteUser(
+                    userDataCache.getUserProfileData(chatId), currentSuggestion.getChatId());
             if (currentSuggestion.getIsMatch()) {
                 userDataCache.setUserCurrentBotState(userId, BotState.LIKE_MENU);
                 return sendMessage(chatId, "reply.search.reciprocity", Keyboard.LIKE_MENU);
             }
-            ProfileDto nextSuggestion = userProfileList.getNext();
+            ProfileDto nextSuggestion = userSuggestionList.getNext();
             return sendSuggestionPhoto(chatId, nextSuggestion, Keyboard.SEARCH_MENU);
         }
 
@@ -81,12 +81,7 @@ public class SearchMenuHandler implements UserInputHandler {
     private List<PartialBotApiMethod<?>> sendSuggestionPhoto(long chatId, ProfileDto suggestion, Keyboard keyboardName) {
         String caption = suggestion.getName() + ", " + suggestion.getSex();
         return List.of(replyMessageService.getSendPhoto(
-                chatId, profileImageService.getProfileImageForSuggestion(suggestion),
+                chatId, profileImageService.getProfileAvatarForSuggestion(suggestion),
                 caption, keyboardService.getReplyKeyboard(keyboardName)));
-    }
-
-    private SendMessage listIsOver(long chatId) {
-        return replyMessageService.getSendMessage(
-                chatId, localeMessageService.getMessage("reply.list.suggestionIsOver"), null);
     }
 }

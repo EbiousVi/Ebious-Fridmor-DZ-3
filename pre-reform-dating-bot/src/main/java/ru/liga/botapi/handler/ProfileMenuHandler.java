@@ -45,8 +45,6 @@ public class ProfileMenuHandler implements UserInputHandler {
         switch (userProfileState) {
             case COMPLETED_PROFILE:
                 if (text.equals(Button.PROFILE.getValue())) {
-//                    userProfileData.setProfileState(UserProfileState.SET_NAME);
-                    userProfileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
                     return sendUserPhoto(chatId, userProfileData, Keyboard.PROFILE_MENU);
                 }
                 if (text.equals(Button.CHANGE_NAME.getValue())) {
@@ -72,24 +70,18 @@ public class ProfileMenuHandler implements UserInputHandler {
                 return sendMessage(chatId, "reply.error.invalidValue", Keyboard.PROFILE_MENU);
             case SET_NAME:
                 userProfileData.setName(text);
-                userProfileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
-                UserProfileDto updatedUserProfileName = restTemplateService.updateUserProfile(userProfileData);
-                userProfileData.setName(updatedUserProfileName.getName());
+                processUserProfileData(userProfileData);
                 return sendCustomMessage(chatId, "Имя обновлено", Keyboard.PROFILE_MENU);
             case SET_GENDER:
                 if (!genderIsValid(text)) {
                     return sendMessage(chatId, "reply.error.invalidValue", Keyboard.GENDER_SELECT);
                 }
                 userProfileData.setSex(UserProfileGender.getByValue(text));
-                userProfileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
-                restTemplateService.updateUserProfile(userProfileData);
+                processUserProfileData(userProfileData);
                 return sendCustomMessage(chatId, "Пол обновлен", Keyboard.PROFILE_MENU);
             case SET_DESCRIPTION:
                 userProfileData.setDescription(text);
-                userProfileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
-                UserProfileDto updatedUserProfileDescription = restTemplateService.updateUserProfile(userProfileData);
-                userProfileData.setDescription(updatedUserProfileDescription.getDescription());
-                userProfileData.setAvatar(updatedUserProfileDescription.getAvatar());
+                processUserProfileData(userProfileData);
                 return sendCustomMessage(chatId, "Описание обновлено", Keyboard.PROFILE_MENU);
             case SET_PREFERENCE:
                 if (!preferenceIsValid(text)) {
@@ -99,8 +91,7 @@ public class ProfileMenuHandler implements UserInputHandler {
                         List.of(UserProfileGender.MALE, UserProfileGender.FEMALE) :
                         List.of(UserProfileGender.getByValue(text));
                 userProfileData.setPreferences(preferenceList);
-                userProfileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
-                restTemplateService.updateUserProfile(userProfileData);
+                processUserProfileData(userProfileData);
                 return sendCustomMessage(chatId, "Предпочтения обновлены", Keyboard.PROFILE_MENU);
             default:
                 log.error("Updating profile error in {} class", ProfileMenuHandler.class.getSimpleName());
@@ -112,6 +103,18 @@ public class ProfileMenuHandler implements UserInputHandler {
     @Override
     public BotState getHandlerName() {
         return BotState.PROFILE_MENU;
+    }
+
+    private void processUserProfileData(UserProfileData userProfileData) {
+        UserProfileDto userProfileDto = restTemplateService.updateUserProfile(userProfileData);;
+        userProfileData.setChatId(userProfileDto.getChatId());
+        userProfileData.setName(userProfileDto.getName());
+        userProfileData.setSex(userProfileDto.getSex());
+        userProfileData.setDescription(userProfileDto.getDescription());
+        userProfileData.setAvatar(userProfileDto.getAvatar());
+        userProfileData.setPreferences(userProfileDto.getPreferences());
+        userProfileData.setTokens(userProfileDto.getTokens());
+        userProfileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
     }
 
     private List<PartialBotApiMethod<?>> sendMessage(long chatId, String message, Keyboard keyboardName) {
@@ -127,7 +130,7 @@ public class ProfileMenuHandler implements UserInputHandler {
     private List<PartialBotApiMethod<?>> sendUserPhoto(long chatId, UserProfileData userProfileData, Keyboard keyboardName) {
         String caption = userProfileData.getName() + ", " + userProfileData.getSex().getValue();
         return List.of(replyMessageService.getSendPhoto(
-                chatId, profileImageService.getProfileImageForUser(chatId),
+                chatId, profileImageService.getProfileAvatarForUser(chatId),
                 caption, keyboardService.getReplyKeyboard(keyboardName)));
     }
 

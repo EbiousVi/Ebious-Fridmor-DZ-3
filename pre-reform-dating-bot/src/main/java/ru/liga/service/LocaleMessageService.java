@@ -16,7 +16,6 @@ public class LocaleMessageService {
         this.locale = Locale.forLanguageTag(localeTag);
     }
 
-
     public String getMessage(String message) {
         return messageSource.getMessage(message, null, locale);
     }

@@ -12,7 +12,7 @@ import ru.liga.keyboard.Button;
 import ru.liga.keyboard.Keyboard;
 import ru.liga.keyboard.KeyboardService;
 import ru.liga.model.UserProfileData;
-import ru.liga.model.UserProfileList;
+import ru.liga.model.UserSuggestionList;
 import ru.liga.service.LocaleMessageService;
 import ru.liga.service.ProfileImageService;
 import ru.liga.service.ReplyMessageService;
@@ -40,13 +40,14 @@ public class MainMenuHandler implements UserInputHandler {
         UserProfileData userProfileData = userDataCache.getUserProfileData(userId);
 
         if (text.equals(Button.SEARCH.getValue())) {
-            UserProfileList userProfileList = new UserProfileList(restTemplateService.getSearchList(userProfileData));
-            if (userProfileList.isEmpty()) {
+            UserSuggestionList userSuggestionList = new UserSuggestionList(
+                    restTemplateService.getSearchList(userProfileData));
+            if (userSuggestionList.isEmpty()) {
                 return sendMessage(chatId, "reply.list.emptySuggestion", Keyboard.MAIN_MENU);
             }
-            userDataCache.setUserProfileList(userId, userProfileList);
+            userDataCache.setUserProfileList(userId, userSuggestionList);
             userDataCache.setUserCurrentBotState(userId, BotState.SEARCH_MENU);
-            ProfileDto currentSuggestion = userProfileList.getCurrent();
+            ProfileDto currentSuggestion = userSuggestionList.getCurrent();
             return sendSuggestionPhoto(chatId, currentSuggestion, Keyboard.SEARCH_MENU);
         }
 
@@ -56,17 +57,23 @@ public class MainMenuHandler implements UserInputHandler {
         }
 
         if (text.equals(Button.FAVORITE.getValue())) {
-            UserProfileList userProfileList = new UserProfileList(restTemplateService.getFavoriteList(userProfileData));
-            if (userProfileList.isEmpty()) {
+            UserSuggestionList userSuggestionList = new UserSuggestionList(
+                    restTemplateService.getFavoriteList(userProfileData));
+            if (userSuggestionList.isEmpty()) {
                 return sendMessage(chatId, "reply.list.emptyFavorites", Keyboard.MAIN_MENU);
             }
-            userDataCache.setUserProfileList(userId, userProfileList);
+            userDataCache.setUserProfileList(userId, userSuggestionList);
             userDataCache.setUserCurrentBotState(userId, BotState.FAVORITE_MENU);
-            ProfileDto currentSuggestion = userProfileList.getCurrent();
+            ProfileDto currentSuggestion = userSuggestionList.getCurrent();
             return sendSuggestionPhoto(chatId, currentSuggestion, Keyboard.FAVORITE_MENU);
         }
 
         return sendMessage(chatId, "reply.error.invalidValue", Keyboard.MAIN_MENU);
+    }
+
+    @Override
+    public BotState getHandlerName() {
+        return BotState.MAIN_MENU;
     }
 
     private List<PartialBotApiMethod<?>> sendMessage(long chatId, String message, Keyboard keyboardName) {
@@ -77,19 +84,14 @@ public class MainMenuHandler implements UserInputHandler {
     private List<PartialBotApiMethod<?>> sendSuggestionPhoto(long chatId, ProfileDto suggestion, Keyboard keyboardName) {
         String caption = suggestion.getName() + ", " + suggestion.getSex() + ", " + suggestion.getStatus();
         return List.of(replyMessageService.getSendPhoto(
-                chatId, profileImageService.getProfileImageForSuggestion(suggestion),
+                chatId, profileImageService.getProfileAvatarForSuggestion(suggestion),
                 caption, keyboardService.getReplyKeyboard(keyboardName)));
     }
 
     private List<PartialBotApiMethod<?>> sendUserPhoto(long chatId, UserProfileData userProfileData, Keyboard keyboardName) {
         String caption = userProfileData.getName() + ", " + userProfileData.getSex().getValue();
         return List.of(replyMessageService.getSendPhoto(
-                chatId, profileImageService.getProfileImageForUser(chatId),
+                chatId, profileImageService.getProfileAvatarForUser(chatId),
                 caption, keyboardService.getReplyKeyboard(keyboardName)));
-    }
-
-    @Override
-    public BotState getHandlerName() {
-        return BotState.MAIN_MENU;
     }
 }

@@ -19,9 +19,9 @@ import java.nio.file.Paths;
 public class ProfileImageService {
     private final UserDataCache userDataCache;
 
-    private static final Path PATH = Paths.get("pre-reform-dating-bot", "profile_image.jpg");
+    private static final Path PATH = Paths.get("storage", "pre-reform-dating-bot", "avatar", "profile_avatar.jpg");
 
-    public InputFile getProfileImageForUser(long userId) {
+    public InputFile getProfileAvatarForUser(long userId) {
         File profileImage = new File(String.valueOf(PATH));
         try {
             FileUtils.writeByteArrayToFile(profileImage, userDataCache.getUserProfileData(userId).getAvatar());
@@ -32,7 +32,7 @@ public class ProfileImageService {
         return new InputFile(profileImage);
     }
 
-    public InputFile getProfileImageForSuggestion(ProfileDto profileDto) {
+    public InputFile getProfileAvatarForSuggestion(ProfileDto profileDto) {
         File profileImage = new File(String.valueOf(PATH));
         try {
             FileUtils.writeByteArrayToFile(profileImage, profileDto.getAvatar());

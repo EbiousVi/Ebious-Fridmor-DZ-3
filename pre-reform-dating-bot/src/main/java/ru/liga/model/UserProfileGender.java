@@ -14,6 +14,9 @@ public enum UserProfileGender {
     private final String value;
 
     public static UserProfileGender getByValue(String value) {
-        return Stream.of(UserProfileGender.values()).filter(g -> g.getValue().equals(value)).findFirst().orElseThrow();
+        return Stream.of(UserProfileGender.values())
+                .filter(g -> g.getValue().equals(value))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No such gender value"));
     }
 }

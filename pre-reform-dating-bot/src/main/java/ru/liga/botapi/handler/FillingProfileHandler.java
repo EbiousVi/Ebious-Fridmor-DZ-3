@@ -19,8 +19,8 @@ import ru.liga.service.OpenCsvService;
 import ru.liga.service.ReplyMessageService;
 import ru.liga.service.RestTemplateService;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -68,35 +68,53 @@ public class FillingProfileHandler implements UserInputHandler {
                 if (!preferenceIsValid(text)) {
                     return sendMessage(chatId, "reply.error.invalidValue", Keyboard.PREFERENCE_SELECT);
                 }
-
                 List<UserProfileGender> preferenceList = text.equals(Button.ALL.getValue()) ?
                         List.of(UserProfileGender.MALE, UserProfileGender.FEMALE) :
                         List.of(UserProfileGender.getByValue(text));
-
                 userProfileData.setPreferences(preferenceList);
+                try {
+                    processUserProfileData(userProfileData);
+                } catch (IOException e) {
+                    return sendError(chatId);
+                }
                 userProfileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
-
-                UserProfileDto processedUserProfileData = restTemplateService.createUserProfile(userProfileData);
-                userProfileData.setName(processedUserProfileData.getName());
-                userProfileData.setDescription(processedUserProfileData.getDescription());
-                userProfileData.setAvatar(processedUserProfileData.getAvatar());
-                Map<String, String> tokens = processedUserProfileData.getTokens();
-                openCsvService.writeData(userId, tokens.get("accessToken"), tokens.get("refreshToken"));
-                userProfileData.setTokens(tokens);
-
                 userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
-
                 return sendMessage(chatId, "reply.main.info", Keyboard.MAIN_MENU);
             default:
                 log.error("Filling profile error in {} class", FillingProfileHandler.class.getSimpleName());
-                return List.of(replyMessageService.getSendMessage(
-                        chatId, "Ошибка на стороне сервера: filling profile error", null));
+                return sendError(chatId);
+
         }
+    }
+
+    @Override
+    public BotState getHandlerName() {
+        return BotState.FILLING_PROFILE;
+    }
+
+    private void processUserProfileData(UserProfileData userProfileData) throws IOException {
+        UserProfileDto userProfileDto = restTemplateService.createUserProfile(userProfileData);
+        openCsvService.writeData(
+                userProfileDto.getChatId(),
+                userProfileDto.getTokens().get("accessToken"),
+                userProfileDto.getTokens().get("refreshToken"));
+        userProfileData.setChatId(userProfileDto.getChatId());
+        userProfileData.setName(userProfileDto.getName());
+        userProfileData.setSex(userProfileDto.getSex());
+        userProfileData.setDescription(userProfileDto.getDescription());
+        userProfileData.setAvatar(userProfileDto.getAvatar());
+        userProfileData.setPreferences(userProfileDto.getPreferences());
+        userProfileData.setTokens(userProfileDto.getTokens());
     }
 
     private List<PartialBotApiMethod<?>> sendMessage(long chatId, String message, Keyboard keyboardName) {
         return List.of(replyMessageService.getSendMessage(
                 chatId, localeMessageService.getMessage(message), keyboardService.getReplyKeyboard(keyboardName)));
+    }
+
+    private List<PartialBotApiMethod<?>> sendError(long chatId) {
+        return List.of(replyMessageService.getSendMessage(
+                chatId, "Ошибка на стороне сервера: filling profile error", null));
     }
 
     private boolean genderIsValid(String text) {
@@ -105,10 +123,5 @@ public class FillingProfileHandler implements UserInputHandler {
 
     private boolean preferenceIsValid(String text) {
         return genderIsValid(text) || text.equals(Button.ALL.getValue());
-    }
-
-    @Override
-    public BotState getHandlerName() {
-        return BotState.FILLING_PROFILE;
     }
 }

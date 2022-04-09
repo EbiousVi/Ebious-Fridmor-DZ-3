@@ -1,16 +1,18 @@
 package ru.liga.cache;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
-import ru.liga.dto.UserProfileDto;
 import ru.liga.botapi.BotState;
+import ru.liga.dto.UserProfileDto;
 import ru.liga.model.UserProfileData;
-import ru.liga.model.UserProfileList;
+import ru.liga.model.UserSuggestionList;
 import ru.liga.model.UserProfileState;
 import ru.liga.service.OpenCsvService;
 import ru.liga.service.RestTemplateService;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,12 +21,14 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class UserDataCache {
-    private final Map<Long, BotState> userBotStateMap = new HashMap<>();
-    private final Map<Long, UserProfileData> userProfileDataMap = new HashMap<>();
-    private final Map<Long, UserProfileList> userProfileListMap = new HashMap<>();
     private final RestTemplateService restTemplateService;
     private final OpenCsvService openCsvService;
 
+    private final Map<Long, BotState> userBotStateMap = new HashMap<>();
+    private final Map<Long, UserProfileData> userProfileDataMap = new HashMap<>();
+    private final Map<Long, UserSuggestionList> userSuggestionListMap = new HashMap<>();
+
+    @SneakyThrows
     @PostConstruct
     private void postConstruct() {
         List<String[]> data = openCsvService.readData();
@@ -59,13 +63,13 @@ public class UserDataCache {
         userProfileDataMap.put(userId, userProfileData);
     }
 
-    public UserProfileList getUserProfileList(long userId) {
-        UserProfileList userProfileDataList = userProfileListMap.get(userId);
-        return userProfileDataList != null ? userProfileDataList : new UserProfileList(new LinkedList<>());
+    public UserSuggestionList getUserProfileList(long userId) {
+        UserSuggestionList userProfileDataList = userSuggestionListMap.get(userId);
+        return userProfileDataList != null ? userProfileDataList : new UserSuggestionList(new LinkedList<>());
     }
 
-    public void setUserProfileList(long userId, UserProfileList userProfileList) {
-        userProfileListMap.put(userId, userProfileList);
+    public void setUserProfileList(long userId, UserSuggestionList userSuggestionList) {
+        userSuggestionListMap.put(userId, userSuggestionList);
     }
 
     public void fillUserDataCacheForUser(long userId) {
@@ -80,6 +84,7 @@ public class UserDataCache {
                             .sex(userProfileDto.getSex())
                             .description(userProfileDto.getDescription())
                             .avatar(userProfileDto.getAvatar())
+                            .preferences(userProfileDto.getPreferences())
                             .profileState(UserProfileState.COMPLETED_PROFILE)
                             .tokens(userProfileDataMap.get(userId).getTokens())
                             .build());

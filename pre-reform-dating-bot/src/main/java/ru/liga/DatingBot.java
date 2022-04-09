@@ -1,6 +1,7 @@
 package ru.liga;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -15,17 +16,13 @@ import ru.liga.cache.UserDataCache;
 @Slf4j
 @Getter
 @Setter
-public class Bot extends TelegramLongPollingBot {
+@RequiredArgsConstructor
+public class DatingBot extends TelegramLongPollingBot {
     private String botUsername;
     private String botToken;
 
-    private TelegramFacade telegramFacade;
-    private UserDataCache userDataCache;
-
-    public Bot(TelegramFacade telegramFacade, UserDataCache userDataCache) {
-        this.userDataCache = userDataCache;
-        this.telegramFacade = telegramFacade;
-    }
+    private final TelegramFacade telegramFacade;
+    private final UserDataCache userDataCache;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -36,10 +33,10 @@ public class Bot extends TelegramLongPollingBot {
 
     private void executeMethod(PartialBotApiMethod<?> method) {
         try {
-            if (method == null) {
-            } else if (method instanceof SendPhoto) {
+            if (method instanceof SendPhoto) {
                 execute((SendPhoto) method);
-            } else if (method instanceof SendMessage) {
+            }
+            if (method instanceof SendMessage) {
                 execute((SendMessage) method);
             }
         } catch (TelegramApiException e) {
