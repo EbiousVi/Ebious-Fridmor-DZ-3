@@ -28,9 +28,9 @@ public class RestTemplateService {
     public UserProfileDto createUserProfile(UserProfileData userProfile) {
         HttpEntity<UserProfileData> request = new HttpEntity<>(userProfile);
         String url = SERVER_URL + "profiles";
-        ResponseEntity<UserProfileDto> resp = restTemplate.postForEntity(url, request, UserProfileDto.class);
-        if (resp.getStatusCode().is2xxSuccessful()) {
-            return resp.getBody();
+        ResponseEntity<UserProfileDto> response = restTemplate.postForEntity(url, request, UserProfileDto.class);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();
         } else {
             throw new RuntimeException("Create user profile request return bad response!");
         }
@@ -39,16 +39,16 @@ public class RestTemplateService {
     public UserProfileDto getUserProfile(UserProfileData userProfileData) {
         String url = SERVER_URL + "profile";
         try {
-            ResponseEntity<UserProfileDto> usersResponse = restTemplate.exchange(
+            ResponseEntity<UserProfileDto> response = restTemplate.exchange(
                     url, HttpMethod.GET, getAuthorizationHeader(userProfileData), UserProfileDto.class);
-            if (usersResponse.getStatusCode().is2xxSuccessful()) {
-                return usersResponse.getBody();
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return response.getBody();
             } else {
-                return null;
+                throw new RuntimeException("get user profile request return bad response!");
             }
         } catch (RestClientException e) {
             log.error("server is not available");
-            return null;
+            throw new RestClientException("server is not available");
         }
     }
 
@@ -66,56 +66,57 @@ public class RestTemplateService {
             }
         } catch (RestClientException e) {
             log.error("server is not available");
-            return null;
+            throw new RestClientException("server is not available");
         }
     }
 
     public LinkedList<ProfileDto> getSearchList(UserProfileData userProfileData) {
         String url = SERVER_URL + "search";
         try {
-            ResponseEntity<ProfileDto[]> resp = restTemplate.exchange(
+            ResponseEntity<ProfileDto[]> response = restTemplate.exchange(
                     url, HttpMethod.GET, getAuthorizationHeader(userProfileData), ProfileDto[].class);
-            if (resp.getStatusCode().is2xxSuccessful()) {
+            if (response.getStatusCode().is2xxSuccessful()) {
                 LinkedList<ProfileDto> linkedList = new LinkedList<>();
-                Collections.addAll(linkedList, resp.getBody());
+                Collections.addAll(linkedList, response.getBody());
                 return linkedList;
             } else {
                 throw new RuntimeException("Get search list request return bad response!");
             }
         } catch (RestClientException e) {
             log.error("server is not available");
-            return null;
+            throw new RestClientException("server is not available");
         }
     }
 
     public LinkedList<ProfileDto> getFavoriteList(UserProfileData userProfileData) {
         String url = SERVER_URL + "favourites";
         try {
-            ResponseEntity<ProfileDto[]> resp = restTemplate.exchange(
+            ResponseEntity<ProfileDto[]> response = restTemplate.exchange(
                     url, HttpMethod.GET, getAuthorizationHeader(userProfileData), ProfileDto[].class);
-            if (resp.getStatusCode().is2xxSuccessful()) {
+            if (response.getStatusCode().is2xxSuccessful()) {
                 LinkedList<ProfileDto> linkedList = new LinkedList<>();
-                Collections.addAll(linkedList, resp.getBody());
+                Collections.addAll(linkedList, response.getBody());
                 return linkedList;
             } else {
                 throw new RuntimeException("Get favorites list request return bad response!");
             }
         } catch (RestClientException e) {
             log.error("server is not available");
-            return null;
+            throw new RestClientException("server is not available");
         }
     }
 
     public void setFavoriteUser(UserProfileData userProfileData, Long toChatId) {
         String url = SERVER_URL + "favourites/" + toChatId;
         try {
-            ResponseEntity<ProfileDto[]> resp = restTemplate.exchange(
+            ResponseEntity<ProfileDto[]> response = restTemplate.exchange(
                     url, HttpMethod.GET, getAuthorizationHeader(userProfileData), ProfileDto[].class);
-            if (!resp.getStatusCode().is2xxSuccessful()) {
+            if (!response.getStatusCode().is2xxSuccessful()) {
                 throw new RuntimeException("Set favorite request return bad response!");
             }
         } catch (RestClientException e) {
             log.error("server is not available");
+            throw new RestClientException("server is not available");
         }
     }
 

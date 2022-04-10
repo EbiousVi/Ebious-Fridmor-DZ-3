@@ -23,11 +23,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class SearchMenuHandler implements UserInputHandler {
-    private final LocaleMessageService localeMessageService;
     private final RestTemplateService restTemplateService;
     private final ReplyMessageService replyMessageService;
-    private final ProfileImageService profileImageService;
-    private final KeyboardService keyboardService;
     private final UserDataCache userDataCache;
 
     @Override
@@ -39,12 +36,13 @@ public class SearchMenuHandler implements UserInputHandler {
         UserSuggestionList userSuggestionList = userDataCache.getUserProfileList(userId);
 
         if (userSuggestionList.isEmpty()) {
-            return sendMessage(chatId, "reply.list.suggestionIsOver", Keyboard.SEARCH_MENU);
+            return replyMessageService.sendPredeterminedMessage(
+                    chatId, "reply.list.suggestionIsOver", Keyboard.SEARCH_MENU);
         }
 
         if (text.equals(Button.LEFT.getValue())) {
             ProfileDto nextSuggestion = userSuggestionList.getNext();
-            return sendSuggestionPhoto(chatId, nextSuggestion, Keyboard.SEARCH_MENU);
+            return replyMessageService.sendSearchPhoto(chatId, nextSuggestion, Keyboard.SEARCH_MENU);
         }
 
         if (text.equals(Button.RIGHT.getValue())) {
@@ -54,34 +52,24 @@ public class SearchMenuHandler implements UserInputHandler {
                     userDataCache.getUserProfileData(chatId), currentSuggestion.getChatId());
             if (currentSuggestion.getIsMatch()) {
                 userDataCache.setUserCurrentBotState(userId, BotState.LIKE_MENU);
-                return sendMessage(chatId, "reply.search.reciprocity", Keyboard.LIKE_MENU);
+                return replyMessageService.sendPredeterminedMessage(
+                        chatId, "reply.search.reciprocity", Keyboard.LIKE_MENU);
             }
             ProfileDto nextSuggestion = userSuggestionList.getNext();
-            return sendSuggestionPhoto(chatId, nextSuggestion, Keyboard.SEARCH_MENU);
+            return replyMessageService.sendSearchPhoto(chatId, nextSuggestion, Keyboard.SEARCH_MENU);
         }
 
         if (text.equals(Button.MAIN.getValue())) {
             userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
-            return sendMessage(chatId, "reply.main.info", Keyboard.MAIN_MENU);
+            return replyMessageService.sendPredeterminedMessage(chatId, "reply.main.info", Keyboard.MAIN_MENU);
         }
 
-        return sendMessage(chatId, "reply.error.invalidValue", Keyboard.SEARCH_MENU);
+        return replyMessageService.sendPredeterminedMessage(
+                chatId, "reply.error.invalidValue", Keyboard.SEARCH_MENU);
     }
 
     @Override
     public BotState getHandlerName() {
         return BotState.SEARCH_MENU;
-    }
-
-    private List<PartialBotApiMethod<?>> sendMessage(long chatId, String message, Keyboard keyboardName) {
-        return List.of(replyMessageService.getSendMessage(
-                chatId, localeMessageService.getMessage(message), keyboardService.getReplyKeyboard(keyboardName)));
-    }
-
-    private List<PartialBotApiMethod<?>> sendSuggestionPhoto(long chatId, ProfileDto suggestion, Keyboard keyboardName) {
-        String caption = suggestion.getName() + ", " + suggestion.getSex();
-        return List.of(replyMessageService.getSendPhoto(
-                chatId, profileImageService.getProfileAvatarForSuggestion(suggestion),
-                caption, keyboardService.getReplyKeyboard(keyboardName)));
     }
 }

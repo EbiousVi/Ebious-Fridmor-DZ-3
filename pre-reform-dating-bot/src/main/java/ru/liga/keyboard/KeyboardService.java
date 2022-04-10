@@ -14,6 +14,10 @@ public class KeyboardService {
     public ReplyKeyboard getReplyKeyboard(Keyboard keyboardName) {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
 
+        if (keyboardName == null) {
+            return null;
+        }
+
         switch (keyboardName) {
             case MAIN_MENU:
                 replyKeyboardMarkup.setKeyboard(getMainMenuButtons());
@@ -41,8 +45,6 @@ public class KeyboardService {
                 break;
             case REMOVE:
                 return new ReplyKeyboardRemove(true, true);
-            default:
-                return null;
         }
 
         replyKeyboardMarkup.setResizeKeyboard(true);

@@ -9,7 +9,7 @@ import ru.liga.service.AvatarCreation;
 
 @RestController
 @RequiredArgsConstructor
-public class Controller {
+public class AvatarController {
 
     private final AvatarCreation formCreation;
 

@@ -1,6 +1,7 @@
 package ru.liga.botapi.handler;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
@@ -19,7 +20,6 @@ import ru.liga.service.OpenCsvService;
 import ru.liga.service.ReplyMessageService;
 import ru.liga.service.RestTemplateService;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -48,42 +48,45 @@ public class FillingProfileHandler implements UserInputHandler {
                 userProfileData.setChatId(chatId);
                 userDataCache.setUserProfileData(userId, userProfileData);
                 userProfileData.setProfileState(UserProfileState.SET_GENDER);
-                return sendMessage(chatId, "reply.fill.askGender", Keyboard.GENDER_SELECT);
+                return replyMessageService.sendPredeterminedMessage(
+                        chatId, "reply.fill.askGender", Keyboard.GENDER_SELECT);
             case SET_GENDER:
                 if (!genderIsValid(text)) {
-                    return sendMessage(chatId, "reply.error.invalidValue", Keyboard.GENDER_SELECT);
+                    return replyMessageService.sendPredeterminedMessage(
+                            chatId, "reply.error.invalidValue", Keyboard.GENDER_SELECT);
                 }
                 userProfileData.setSex(UserProfileGender.getByValue(text));
                 userProfileData.setProfileState(UserProfileState.SET_NAME);
-                return sendMessage(chatId, "reply.fill.askName", Keyboard.REMOVE);
+                return replyMessageService.sendPredeterminedMessage(
+                        chatId, "reply.fill.askName", Keyboard.REMOVE);
             case SET_NAME:
                 userProfileData.setName(text);
                 userProfileData.setProfileState(UserProfileState.SET_DESCRIPTION);
-                return sendMessage(chatId, "reply.fill.askDescription", Keyboard.REMOVE);
+                return replyMessageService.sendPredeterminedMessage(
+                        chatId, "reply.fill.askDescription", Keyboard.REMOVE);
             case SET_DESCRIPTION:
                 userProfileData.setDescription(text);
                 userProfileData.setProfileState(UserProfileState.SET_PREFERENCE);
-                return sendMessage(chatId, "reply.fill.askPreference", Keyboard.PREFERENCE_SELECT);
+                return replyMessageService.sendPredeterminedMessage(
+                        chatId, "reply.fill.askPreference", Keyboard.PREFERENCE_SELECT);
             case SET_PREFERENCE:
                 if (!preferenceIsValid(text)) {
-                    return sendMessage(chatId, "reply.error.invalidValue", Keyboard.PREFERENCE_SELECT);
+                    return replyMessageService.sendPredeterminedMessage(
+                            chatId, "reply.error.invalidValue", Keyboard.PREFERENCE_SELECT);
                 }
                 List<UserProfileGender> preferenceList = text.equals(Button.ALL.getValue()) ?
                         List.of(UserProfileGender.MALE, UserProfileGender.FEMALE) :
                         List.of(UserProfileGender.getByValue(text));
                 userProfileData.setPreferences(preferenceList);
-                try {
-                    processUserProfileData(userProfileData);
-                } catch (IOException e) {
-                    return sendError(chatId);
-                }
+                processUserProfileData(userProfileData);
                 userProfileData.setProfileState(UserProfileState.COMPLETED_PROFILE);
                 userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
-                return sendMessage(chatId, "reply.main.info", Keyboard.MAIN_MENU);
+                return replyMessageService.sendPredeterminedMessage(
+                        chatId, "reply.main.info", Keyboard.MAIN_MENU);
             default:
                 log.error("Filling profile error in {} class", FillingProfileHandler.class.getSimpleName());
-                return sendError(chatId);
-
+                return replyMessageService.sendCustomMessage(
+                        chatId, "Ошибка на стороне сервера: filling profile error", null);
         }
     }
 
@@ -92,7 +95,8 @@ public class FillingProfileHandler implements UserInputHandler {
         return BotState.FILLING_PROFILE;
     }
 
-    private void processUserProfileData(UserProfileData userProfileData) throws IOException {
+    @SneakyThrows
+    private void processUserProfileData(UserProfileData userProfileData) {
         UserProfileDto userProfileDto = restTemplateService.createUserProfile(userProfileData);
         openCsvService.writeData(
                 userProfileDto.getChatId(),
@@ -105,16 +109,6 @@ public class FillingProfileHandler implements UserInputHandler {
         userProfileData.setAvatar(userProfileDto.getAvatar());
         userProfileData.setPreferences(userProfileDto.getPreferences());
         userProfileData.setTokens(userProfileDto.getTokens());
-    }
-
-    private List<PartialBotApiMethod<?>> sendMessage(long chatId, String message, Keyboard keyboardName) {
-        return List.of(replyMessageService.getSendMessage(
-                chatId, localeMessageService.getMessage(message), keyboardService.getReplyKeyboard(keyboardName)));
-    }
-
-    private List<PartialBotApiMethod<?>> sendError(long chatId) {
-        return List.of(replyMessageService.getSendMessage(
-                chatId, "Ошибка на стороне сервера: filling profile error", null));
     }
 
     private boolean genderIsValid(String text) {

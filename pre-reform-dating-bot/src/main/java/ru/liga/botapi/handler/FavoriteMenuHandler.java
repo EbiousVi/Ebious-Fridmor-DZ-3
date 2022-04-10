@@ -20,10 +20,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class FavoriteMenuHandler implements UserInputHandler {
-    private final LocaleMessageService localeMessageService;
-    private final ProfileImageService profileImageService;
     private final ReplyMessageService replyMessageService;
-    private final KeyboardService keyboardService;
     private final UserDataCache userDataCache;
 
     @Override
@@ -36,35 +33,26 @@ public class FavoriteMenuHandler implements UserInputHandler {
 
         if (text.equals(Button.LEFT.getValue())) {
             ProfileDto previousSuggestion = userSuggestionList.getPrevious();
-            return sendPhoto(chatId, previousSuggestion);
+            return replyMessageService.sendFavoritePhoto(chatId, previousSuggestion, Keyboard.FAVORITE_MENU);
         }
 
         if (text.equals(Button.RIGHT.getValue())) {
             ProfileDto nextSuggestion = userSuggestionList.getNext();
-            return sendPhoto(chatId, nextSuggestion);
+            return replyMessageService.sendFavoritePhoto(chatId, nextSuggestion, Keyboard.FAVORITE_MENU);
         }
 
         if (text.equals(Button.MAIN.getValue())) {
             userDataCache.setUserCurrentBotState(userId, BotState.MAIN_MENU);
-            return sendMessage(chatId, "reply.main.info", Keyboard.MAIN_MENU);
+            return replyMessageService.sendPredeterminedMessage(
+                    chatId, "reply.main.info", Keyboard.MAIN_MENU);
         }
 
-        return sendMessage(chatId, "reply.error.invalidValue", Keyboard.FAVORITE_MENU);
+        return replyMessageService.sendPredeterminedMessage(
+                chatId, "reply.error.invalidValue", Keyboard.FAVORITE_MENU);
     }
 
     @Override
     public BotState getHandlerName() {
         return BotState.FAVORITE_MENU;
-    }
-
-    private List<PartialBotApiMethod<?>> sendMessage(long chatId, String message, Keyboard keyboardName) {
-        return List.of(replyMessageService.getSendMessage(
-                chatId, localeMessageService.getMessage(message), keyboardService.getReplyKeyboard(keyboardName)));
-    }
-
-    private List<PartialBotApiMethod<?>> sendPhoto(long chatId, ProfileDto suggestion) {
-        String caption = suggestion.getName() + ", " + suggestion.getSex() + ", " + suggestion.getStatus();
-        return List.of(replyMessageService.getSendPhoto(
-                chatId, profileImageService.getProfileAvatarForSuggestion(suggestion), caption, null));
     }
 }
