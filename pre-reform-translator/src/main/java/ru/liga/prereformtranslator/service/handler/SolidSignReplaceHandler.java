@@ -30,8 +30,8 @@ public class SolidSignReplaceHandler implements Handler {
         Matcher matcher = CONSONANT_AT_THE_END.matcher(token);
         StringBuilder sb = new StringBuilder(token);
         if (matcher.find()) {
-            int i = token.indexOf(matcher.group());
-            sb.insert(i + 1, SOLID_SIGN);
+            int lastChar = token.lastIndexOf(matcher.group());
+            sb.insert(lastChar + 1, SOLID_SIGN);
         }
         return sb.toString();
     }
@@ -39,8 +39,8 @@ public class SolidSignReplaceHandler implements Handler {
     private String replaceSoftSign(String token) {
         Matcher matcher = SOFT_SIGN_PATTERN.matcher(token);
         if (matcher.find()) {
-            int i = token.lastIndexOf(SOFT_SIGN);
-            return token.substring(0, i) + SOLID_SIGN;
+            int lastChar = token.lastIndexOf(SOFT_SIGN);
+            return token.substring(0, lastChar) + SOLID_SIGN;
         }
         return token;
     }

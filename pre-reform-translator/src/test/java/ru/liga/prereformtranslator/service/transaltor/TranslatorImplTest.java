@@ -42,4 +42,11 @@ class TranslatorImplTest {
         String translateTest2 = translatorImpl.translate(test2);
         System.out.println(translateTest2);
     }
+
+    @Test
+    void translateToString33() {
+        String test2 = "Как\nдела";
+        String translateTest2 = translatorImpl.translate(test2);
+        System.out.println(translateTest2);
+    }
 }
