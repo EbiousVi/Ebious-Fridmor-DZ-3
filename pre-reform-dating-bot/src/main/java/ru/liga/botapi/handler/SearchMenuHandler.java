@@ -35,12 +35,11 @@ public class SearchMenuHandler implements UserInputHandler {
 
         UserSuggestionList userSuggestionList = userDataCache.getUserProfileList(userId);
 
-        if (userSuggestionList.isEmpty()) {
-            return replyMessageService.sendPredeterminedMessage(
-                    chatId, "reply.list.suggestionIsOver", Keyboard.SEARCH_MENU);
-        }
-
         if (text.equals(Button.LEFT.getValue())) {
+            if (userSuggestionList.isEmpty()) {
+                return replyMessageService.sendPredeterminedMessage(
+                        chatId, "reply.list.suggestionIsOver", Keyboard.SEARCH_MENU);
+            }
             ProfileDto nextSuggestion = userSuggestionList.getNext();
             return replyMessageService.sendSearchPhoto(chatId, nextSuggestion, Keyboard.SEARCH_MENU);
         }
