@@ -13,6 +13,8 @@ import java.util.Set;
 
 @Table("user_profile")
 @Data
+@Builder
+@AllArgsConstructor
 public class UserProfile implements Persistable<Long> {
 
     @Id
@@ -31,9 +33,6 @@ public class UserProfile implements Persistable<Long> {
     @Column("description")
     private String description;
 
-    @Column("avatar")
-    private String avatar;
-
     @Transient
     @EqualsAndHashCode.Exclude
     private Boolean isNew;
@@ -41,30 +40,13 @@ public class UserProfile implements Persistable<Long> {
     @MappedCollection(idColumn = "chat_id")
     private Set<Preferences> preferences;
 
-    @Builder
-    public UserProfile(Long chatId, String password, String name, String sex,
-                       String description, String avatar, Boolean isNew,
-                       Set<Preferences> preferences) {
-        this.chatId = chatId;
-        this.password = password;
-        this.name = name;
-        this.sex = sex;
-        this.description = description;
-        this.avatar = avatar;
-        this.isNew = isNew;
-        this.preferences = preferences;
-    }
-
     @PersistenceConstructor
-    public UserProfile(Long chatId,
-                       String name, String sex,
-                       String description, String avatar,
-                       Set<Preferences> preferences) {
+    public UserProfile(Long chatId, String name, String sex,
+                       String description, Set<Preferences> preferences) {
         this.chatId = chatId;
         this.name = name;
         this.sex = sex;
         this.description = description;
-        this.avatar = avatar;
         this.preferences = preferences;
         this.isNew = false;
     }
@@ -77,9 +59,5 @@ public class UserProfile implements Persistable<Long> {
     @Override
     public boolean isNew() {
         return isNew;
-    }
-
-    public void addPreferences(Set<Preferences> preferences) {
-        this.preferences.addAll(preferences);
     }
 }

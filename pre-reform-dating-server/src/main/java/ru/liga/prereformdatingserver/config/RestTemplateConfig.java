@@ -10,8 +10,8 @@ import java.time.Duration;
 @Configuration
 public class RestTemplateConfig {
 
-    private static final long TIMEOUT = 300_000L;
-    private static final long READ_TIMEOUT = 300_000L;
+    private static final long TIMEOUT = 150_000L;
+    private static final long READ_TIMEOUT = 150_000L;
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {

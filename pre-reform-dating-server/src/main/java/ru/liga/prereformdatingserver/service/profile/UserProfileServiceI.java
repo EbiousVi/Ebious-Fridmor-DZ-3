@@ -7,7 +7,7 @@ public interface UserProfileServiceI {
 
     UserProfile getUserProfileById(Long chatId);
 
-    UserProfile createUserProfile(NewProfileDto dto);
+    UserProfile saveUserProfile(NewProfileDto dto);
 
     UserProfile updateUserProfile(Long chatId, NewProfileDto dto);
 

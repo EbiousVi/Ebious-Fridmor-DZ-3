@@ -11,7 +11,6 @@ CREATE TABLE dating.user_profile
     name        VARCHAR(127) NOT NULL,
     sex         dating.sex   NOT NULL,
     description TEXT         NOT NULL,
-    avatar      VARCHAR(255),
     CONSTRAINT PK_user_profile PRIMARY KEY (chat_id)
 );
 

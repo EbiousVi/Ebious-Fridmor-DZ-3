@@ -14,7 +14,7 @@ public interface SearchProfileRepository extends Repository<SearchProfileProject
             "DESIRED_PROFILE.CHAT_ID, " +
             "DESIRED_PROFILE.NAME, " +
             "DESIRED_PROFILE.SEX, " +
-            "DESIRED_PROFILE.AVATAR, " +
+            "DESIRED_PROFILE.DESCRIPTION, " +
             "CASE " +
             "WHEN EXISTS (SELECT * FROM DATING.FAVOURITES " +
             "             WHERE FROM_CHAT_ID = DESIRED_PROFILE.CHAT_ID " +

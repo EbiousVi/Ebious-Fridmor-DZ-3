@@ -7,7 +7,7 @@ outer-service:
 signature:
   secret: victor
 credentials:
-  user: foo-bar-bazz
+  pass: foo-bar-bazz
 
 
 spring:
@@ -30,8 +30,8 @@ spring:
       fail-on-empty-beans: false
 logging:
   level:
-    sql: TRACE
-    org.springframework.jdbc.core: TRACE
+    sql: debug
+    org.springframework.jdbc.core: debug
 
 
 

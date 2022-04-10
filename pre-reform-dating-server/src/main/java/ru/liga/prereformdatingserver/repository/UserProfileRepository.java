@@ -23,7 +23,7 @@ public interface UserProfileRepository extends CrudRepository<UserProfile, Long>
             "WHERE CHAT_ID IN " +
             "                (SELECT FROM_CHAT_ID FROM DATING.FAVOURITES " +
             "                 WHERE TO_CHAT_ID = :chatId)")
-    List<UserProfile> findWhoseFavouriteAmI(@Param("chatId") Long chatId);
+    List<UserProfile> findWhoHasMeFavourites(@Param("chatId") Long chatId);
 
     @Query("SELECT * FROM DATING.USER_PROFILE " +
             "WHERE CHAT_ID IN " +

@@ -8,36 +8,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import ru.liga.prereformdatingserver.exception.RestOuterServiceException;
-import ru.liga.prereformdatingserver.service.outer.dto.Description;
 import ru.liga.prereformdatingserver.service.storage.StorageService;
-
-import java.nio.file.Path;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class RestAvatarService {
 
-    private static final String AVATAR_PATH = "/avatar";
+    private static final String AVATAR_PATH = "/api/avatar";
     private final RestTemplate restTemplate;
     private final StorageService storage;
     @Value("${outer-service.avatar}")
     private String avatarURL;
 
-    public Path createAvatar(Description description) {
+    public byte[] generateAvatar(String text) {
         try {
-            HttpEntity<Description> request = new HttpEntity<>(description);
+            HttpEntity<String> request = new HttpEntity<>(text);
             ResponseEntity<byte[]> response = restTemplate.postForEntity(avatarURL + AVATAR_PATH, request, byte[].class);
             if (response.getStatusCode().is2xxSuccessful()) {
-                return storage.saveAvatar(response.getBody());
+                return response.getBody();
             } else {
-                log.error("Pre reform avatar service bad response = {}", response);
-                throw new RestOuterServiceException("Pre reform avatar service return bad response!");
+                log.error("Pre reform avatar service send bad response = {}", response);
+                return storage.loadDefaultAvatar();
             }
         } catch (RestClientException e) {
             log.error("Pre reform avatar service unavailable now!", e);
-            throw new RestOuterServiceException("Pre reform avatar service unavailable now!");
+            return storage.loadDefaultAvatar();
         }
     }
 }

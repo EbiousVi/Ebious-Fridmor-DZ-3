@@ -1,5 +1,8 @@
 package ru.liga.prereformdatingserver.domain.enums;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public enum Sex {
     MALE("Сударъ"),
     FEMALE("Сударыня");
@@ -14,6 +17,7 @@ public enum Sex {
         for (Sex sex : values()) {
             if (sex.name.equals(value)) return sex;
         }
-        throw new IllegalArgumentException("Unsupported sex type!");
+        log.error("Unexpected case, illegal Sex type!");
+        throw new IllegalArgumentException("Unsupported sex type");
     }
 }

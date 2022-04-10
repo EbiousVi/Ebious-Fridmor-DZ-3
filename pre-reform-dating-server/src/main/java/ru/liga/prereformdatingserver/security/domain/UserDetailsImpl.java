@@ -1,6 +1,6 @@
 package ru.liga.prereformdatingserver.security.domain;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,7 +9,7 @@ import ru.liga.prereformdatingserver.domain.entity.UserProfile;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @ToString
 public class UserDetailsImpl implements UserDetails {
 

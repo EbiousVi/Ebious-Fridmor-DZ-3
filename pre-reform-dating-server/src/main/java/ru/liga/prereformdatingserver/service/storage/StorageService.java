@@ -1,41 +1,27 @@
 package ru.liga.prereformdatingserver.service.storage;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import ru.liga.prereformdatingserver.exception.StorageException;
+import ru.liga.prereformdatingserver.exception.AvatarNotFoundException;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
 
 @Service
 @Slf4j
 public class StorageService {
 
-    private static final String IMAGE_EXTENSION = ".jpg";
-    private final Path AVATAR_STORAGE = Paths.get("storage", "pre-reform-dating-server", "avatars");
+    @Value("classpath:/static/default-avatar.jpg")
+    private Resource defaultAvatar;
 
-    public Path saveAvatar(byte[] bytes) {
+    public byte[] loadDefaultAvatar() {
         try {
-            String filename = UUID.randomUUID() + IMAGE_EXTENSION;
-            Path save = AVATAR_STORAGE.resolve(filename);
-            FileUtils.writeByteArrayToFile(save.toFile(), bytes);
-            return save;
+            return IOUtils.toByteArray(defaultAvatar.getURI());
         } catch (IOException e) {
-            log.error("Can not save avatar image", e);
-            throw new StorageException("Can not save avatar image!");
-        }
-    }
-
-    public byte[] findAvatarAsByteArray(String filename) {
-        try {
-            return IOUtils.toByteArray(AVATAR_STORAGE.resolve(filename).toUri());
-        } catch (IOException e) {
-            log.error("Can not write avatar to byte array!", e);
-            throw new StorageException("Can not write avatar to byte array!");
+            log.error("Can not write default Avatar to byte array!", e);
+            throw new AvatarNotFoundException("Avatars service does not work!");
         }
     }
 }

@@ -23,7 +23,7 @@ public class FavouritesService {
     private final FavouritesRepository favouritesRepository;
     private final UserProfileRepository userProfileRepository;
 
-    public void setAFavorite(Long fromChatId, Long toChatId) {
+    public void setFavourite(Long fromChatId, Long toChatId) {
         try {
             favouritesRepository.save(new Favourites(fromChatId, toChatId));
         } catch (DbActionExecutionException e) {
@@ -31,27 +31,29 @@ public class FavouritesService {
                 log.info("Duplicate like from {} to {}", fromChatId, toChatId, e);
             }
             if (e.getCause() instanceof DataIntegrityViolationException) {
-                log.info("Someone chat id not found, from = {}, to {}", fromChatId, toChatId, e);
+                log.info("Chat id not found or null, from = {}, to {}", fromChatId, toChatId, e);
             }
             log.error("Unexpected exception case", e);
         }
     }
 
     @Transactional
-    public void raisePopularityForNewbie(UserProfile userProfile) {
+    public void generatePopularityForNewbie(UserProfile userProfile) {
         List<UserProfile> allProfiles = userProfileRepository.findAll();
         Collections.shuffle(allProfiles);
         int raisePopularityScore = 3;
         allProfiles.stream()
                 .filter(profile -> !profile.getChatId().equals(userProfile.getChatId()))
-                .filter(profile -> userProfile.getPreferences().stream().anyMatch(pref -> pref.getSex().equals(profile.getSex())))
-                .filter(profile -> profile.getPreferences().stream().anyMatch(pref -> pref.getSex().equals(userProfile.getSex())))
+                .filter(profile -> userProfile.getPreferences().stream()
+                        .anyMatch(pref -> pref.getSex().equals(profile.getSex())))
+                .filter(profile -> profile.getPreferences().stream()
+                        .anyMatch(pref -> pref.getSex().equals(userProfile.getSex())))
                 .limit(raisePopularityScore)
-                .forEach(profile -> setAFavorite(profile.getChatId(), userProfile.getChatId()));
+                .forEach(profile -> setFavourite(profile.getChatId(), userProfile.getChatId()));
     }
-
-    public List<UserProfile> getWhoseFavouriteAmI(Long chatId) {
-        return userProfileRepository.findWhoseFavouriteAmI(chatId);
+    
+    public List<UserProfile> getWhoHasMeFavourites(Long chatId) {
+        return userProfileRepository.findWhoHasMeFavourites(chatId);
     }
 
     public List<UserProfile> getMyFavourites(Long chatId) {

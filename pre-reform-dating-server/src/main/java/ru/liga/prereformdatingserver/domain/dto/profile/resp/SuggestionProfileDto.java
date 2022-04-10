@@ -4,7 +4,7 @@ import lombok.*;
 
 @Data
 @Builder
-public class ProfileDto {
+public class SuggestionProfileDto {
     private Long chatId;
     private String name;
     private String sex;
