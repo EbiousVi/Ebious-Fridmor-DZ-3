@@ -16,7 +16,7 @@ public class YatReplaceHandler implements Handler {
 
     @Override
     public String handle(String token) {
-        String stem = stemmerPorter.stem(token);
+        String stem = stemmerPorter.stem(token.trim());
         if (dictionary.contains(stem)) {
             return token.replace(stem, dictionary.getPattern(stem));
         } else {

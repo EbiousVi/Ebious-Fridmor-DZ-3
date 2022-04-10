@@ -24,7 +24,8 @@ public class CsvReader {
     Resource dictionary;
 
     public List<Entry> readDataSetFromCsv() {
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(dictionary.getInputStream(), StandardCharsets.UTF_8))) {
+        try (BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(dictionary.getInputStream(), StandardCharsets.UTF_8))) {
             return bufferedReader
                     .lines()
                     .skip(TITLE_ROW_INDEX)

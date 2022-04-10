@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 @Order(4)
 public class FitaReplaceHandler implements Handler {
 
-    private static final Pattern PATTERN = Pattern.compile("\\b[А-Я][а-я]+\\b");
+    private static final Pattern PATTERN = Pattern.compile("\\s*[А-Я][а-я]+\\s*");
     private static final String REPLACEABLE = "ф";
     private static final String REPLACEMENT = "ѳ";
 

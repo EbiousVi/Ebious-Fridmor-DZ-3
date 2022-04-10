@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
 @Order(3)
 public class SolidSignReplaceHandler implements Handler {
 
-    private static final Pattern CONSONANT_AT_THE_END = Pattern.compile("[бвгджзклмнпрстфхцчшщ]$");
-    private static final String END_OF_WORD_PATTERN = "ь$";
+    private static final Pattern CONSONANT_AT_THE_END = Pattern.compile("[бвгджзклмнпрстфхцчшщ]\\s*$");
+    private static final Pattern SOFT_SIGN_PATTERN = Pattern.compile("[ь]\\s*$");
     private static final String SOFT_SIGN = "ь";
     private static final String SOLID_SIGN = "ъ";
 
@@ -29,15 +29,18 @@ public class SolidSignReplaceHandler implements Handler {
     private String addSolidSign(String token) {
         Matcher matcher = CONSONANT_AT_THE_END.matcher(token);
         StringBuilder sb = new StringBuilder(token);
-        while (matcher.find()) {
-            sb.append(SOLID_SIGN);
+        if (matcher.find()) {
+            int i = token.indexOf(matcher.group());
+            sb.insert(i + 1, SOLID_SIGN);
         }
         return sb.toString();
     }
 
     private String replaceSoftSign(String token) {
-        if (token.endsWith(SOFT_SIGN)) {
-            return token.replaceAll(END_OF_WORD_PATTERN, SOLID_SIGN);
+        Matcher matcher = SOFT_SIGN_PATTERN.matcher(token);
+        if (matcher.find()) {
+            int i = token.lastIndexOf(SOFT_SIGN);
+            return token.substring(0, i) + SOLID_SIGN;
         }
         return token;
     }
