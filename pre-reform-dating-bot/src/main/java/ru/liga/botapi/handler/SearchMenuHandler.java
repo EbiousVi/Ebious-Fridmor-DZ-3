@@ -55,6 +55,10 @@ public class SearchMenuHandler implements UserInputHandler {
                 return replyMessageService.sendPredeterminedMessage(
                         chatId, "reply.search.reciprocity", Keyboard.LIKE_MENU);
             }
+            if (userSuggestionList.isEmpty()) {
+                return replyMessageService.sendPredeterminedMessage(
+                        chatId, "reply.list.suggestionIsOver", Keyboard.SEARCH_MENU);
+            }
             ProfileDto nextSuggestion = userSuggestionList.getNext();
             return replyMessageService.sendSearchPhoto(chatId, nextSuggestion, Keyboard.SEARCH_MENU);
         }
