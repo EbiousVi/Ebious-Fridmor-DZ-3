@@ -11,13 +11,14 @@ import ru.liga.service.AvatarCreation;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-public class Controller {
+public class AvatarController {
 
     private final AvatarCreation avatarCreation;
     private final Parser parser;
 
     @PostMapping("/avatar")
     public byte[] createAvatar(@RequestBody String text) {
+        System.out.println(parser.parseDescription(text));
         return avatarCreation.execute(parser.parseDescription(text));
     }
 }

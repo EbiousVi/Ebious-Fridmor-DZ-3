@@ -39,7 +39,7 @@ public class Parser {
         Matcher matcher = compile.matcher(replace);
         if (matcher.find()) {
             String group = matcher.group();
-            return new Description(group, replace.substring(group.length()));
+            return new Description(group, replace.substring(group.length()).trim());
         } else {
             return new Description(TITLE, replace);
         }
