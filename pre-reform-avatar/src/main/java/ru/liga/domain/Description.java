@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class Description {
-    private final String tittle;
+    private final String title;
     private final String body;
 }

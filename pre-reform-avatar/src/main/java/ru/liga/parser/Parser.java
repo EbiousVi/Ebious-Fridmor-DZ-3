@@ -1,7 +1,7 @@
-package ru.liga.prereformtranslator.service.parser;
+package ru.liga.parser;
 
 import org.springframework.stereotype.Service;
-import ru.liga.prereformtranslator.service.domain.Description;
+import ru.liga.domain.Description;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,15 +21,19 @@ public class Parser {
         String replace = text.replaceAll(HORIZONTAL_WHITESPACES, WHITESPACE).trim();
         int firstIdx = replace.indexOf(LINE_SEPARATOR);
         if (firstIdx >= 1 && firstIdx <= TITTLE_LENGTH_LIMIT) {
-            return new Description(
-                    replace.substring(0, firstIdx).trim(),
-                    replace.substring(firstIdx).trim()
-            );
+            return getFirstRowDescription(replace, firstIdx);
+        } else {
+            return getFirstWordDescription(replace);
         }
-        return getDescriptionTitle(replace);
     }
 
-    private Description getDescriptionTitle(String text) {
+    private Description getFirstRowDescription(String text, int firstIdx) {
+        String title = text.substring(0, firstIdx).trim();
+        String body = text.substring(firstIdx);
+        return new Description(title, body.replaceAll(ALL_WHITESPACE, WHITESPACE).trim());
+    }
+
+    private Description getFirstWordDescription(String text) {
         String replace = text.replaceAll(ALL_WHITESPACE, WHITESPACE).trim();
         Pattern compile = Pattern.compile(FIRST_WORD);
         Matcher matcher = compile.matcher(replace);

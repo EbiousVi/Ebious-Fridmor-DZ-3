@@ -1,6 +1,7 @@
 package ru.liga.service;
 
 import lombok.Cleanup;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.liga.domain.Description;
@@ -16,6 +17,7 @@ import java.util.Objects;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AvatarCreation {
 
     private static final String BACKGROUNG_IMAGE_SOURCE = "prerev-background.jpg";
@@ -45,7 +47,7 @@ public class AvatarCreation {
 
             int curX = 0;
 
-            String tittle = description.getTittle();
+            String tittle = description.getTitle();
             List<String> wordList = List.of(description.getBody().split("\\s+"));
 
             int headerFontSize = getFontSizeForTittle(graphics, headerFont, tittle, imageWidth);
