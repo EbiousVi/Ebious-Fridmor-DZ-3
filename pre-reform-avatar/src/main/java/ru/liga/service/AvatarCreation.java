@@ -68,7 +68,7 @@ public class AvatarCreation {
 
             return os.toByteArray();
         } catch (IOException | FontFormatException e) {
-            log.error("Avatar creation failed: wrong background/font file");
+            log.error("Avatar creation failed: wrong background/font file", e);
             throw new RuntimeException("Avatar creation failed");
         }
     }

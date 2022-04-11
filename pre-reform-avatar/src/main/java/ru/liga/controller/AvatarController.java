@@ -18,7 +18,6 @@ public class AvatarController {
 
     @PostMapping("/avatar")
     public byte[] createAvatar(@RequestBody String text) {
-        System.out.println(parser.parseDescription(text));
         return avatarCreation.execute(parser.parseDescription(text));
     }
 }
