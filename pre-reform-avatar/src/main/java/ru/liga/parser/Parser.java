@@ -14,7 +14,7 @@ public class Parser {
     private static final String LINE_SEPARATOR = "\n";
     private static final String HORIZONTAL_WHITESPACES = "\\h+";
     private static final String ALL_WHITESPACE = "\\s+";
-    private static final String FIRST_WORD = "^[а-яА-Яa-zA-Z]{1,32},?";
+    private static final String FIRST_WORD = "^[а-яА-Яa-zA-ZѣѳѲ\\-.?!)(,:]{1,32}";
     private static final String TITLE = "Title";
 
     public Description parseDescription(String text) {
