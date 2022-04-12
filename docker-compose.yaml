@@ -1,0 +1,42 @@
+version: "3.5"
+
+services:
+  database:
+    build:
+      context: ./database/
+      dockerfile: Dockerfile
+    ports:
+      - "65432:5432"
+  bot:
+    build:
+      context: ./pre-reform-dating-bot
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - BOT_USERNAME=_____BOT_USERNAME_____
+      - BOT_TOKEN=_____BOT_TOKEN_____
+    ports:
+      - "6128:6128"
+  server:
+    build:
+      context: ./pre-reform-dating-server
+      dockerfile: Dockerfile
+    restart: on-failure
+    depends_on:
+      - database
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - "6064:6064"
+  translator:
+    build:
+      context: ./pre-reform-translator
+      dockerfile: Dockerfile
+    ports:
+      - "6032:6032"
+  avatar:
+    build:
+      context: ./pre-reform-avatar
+      dockerfile: Dockerfile
+    ports:
+      - "6016:6016"
