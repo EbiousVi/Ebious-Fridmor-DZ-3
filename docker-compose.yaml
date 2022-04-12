@@ -13,8 +13,8 @@ services:
       dockerfile: Dockerfile
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - BOT_USERNAME=_____BOT_USERNAME_____
-      - BOT_TOKEN=_____BOT_TOKEN_____
+      - BOT_USERNAME=___BOT_USERNAME___
+      - BOT_TOKEN=___BOT_TOKEN___
     ports:
       - "6128:6128"
   server:
