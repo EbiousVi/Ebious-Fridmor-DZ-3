@@ -16,13 +16,14 @@ public class FavouritesProfileDtoMapper {
     private final RestAvatarService avatarService;
 
     public SuggestionProfileDto map(UserProfile userProfile, Relation relation) {
+        String description = translatorService.translate(userProfile.getDescription());
         return SuggestionProfileDto.builder()
                 .chatId(userProfile.getChatId())
                 .name(translatorService.translate(userProfile.getName()))
                 .sex(userProfile.getSex())
                 .status(relation.value)
                 .isMatch(false)
-                .avatar(avatarService.generateAvatar(userProfile.getDescription()))
+                .avatar(avatarService.generateAvatar(description))
                 .build();
     }
 }

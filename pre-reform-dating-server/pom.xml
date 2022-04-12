@@ -6,15 +6,12 @@
     <parent>
         <artifactId>dating-service-ebious-fridmor-team</artifactId>
         <groupId>ru.liga</groupId>
-        <version>0.1</version>
+        <version>0.9.1</version>
     </parent>
 
-    <packaging>jar</packaging>
-
     <artifactId>pre-reform-dating-server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>pre-reform-dating-server</name>
-    <description>Pre-reform-dating-server</description>
+    <version>0.9.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <properties>
         <java.version>11</java.version>
@@ -96,6 +93,7 @@
     </dependencies>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
