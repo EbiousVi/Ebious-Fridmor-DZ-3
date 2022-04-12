@@ -27,7 +27,10 @@ spring:
   jackson:
     serialization:
       fail-on-empty-beans: false
-
+logging:
+  level:
+    sql: info
+    org.springframework.jdbc.core: info
 
 
 

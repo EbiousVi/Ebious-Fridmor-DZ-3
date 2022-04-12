@@ -16,17 +16,16 @@
         </encoder>
     </appender>
 
-    <logger name="org.springframework" level="INFO"/>
-    <logger name="ru.liga.pre-reform-dating-server" level="INFO"/>
-
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </root>
-    <springProfile name="dev">
-        <logger name="ru.liga.pre-reform-dating-server" level="DEBUG"/>
+    <springProfile name="default">
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="ru.liga.pre-reform-dating-server" level="INFO"/>>
     </springProfile>
-    <springProfile name="test">
-        <logger name="ru.liga.pre-reform-dating-server" level="DEBUG"/>
+    <springProfile name="prod">
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="ru.liga.pre-reform-dating-server" level="INFO"/>
     </springProfile>
 </configuration>

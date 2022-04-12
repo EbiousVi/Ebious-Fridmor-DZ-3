@@ -21,7 +21,7 @@ class ProfileCreatorServiceTest extends PostgresContainer {
                 .chatId(100_000L)
                 .name("U_100_000")
                 .sex(Sex.FEMALE)
-                .description("Врач-терапевт")
+                .description("Description")
                 .preferences(List.of(Sex.MALE))
                 .build();
 
