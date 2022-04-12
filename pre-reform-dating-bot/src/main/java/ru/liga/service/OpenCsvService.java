@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class OpenCsvService {
-    private static final Path PATH = Paths.get("storage","pre-reform-dating-bot", "tokens", "user_token.csv");
+    private static final Path PATH = Paths.get("storage", "pre-reform-dating-bot", "tokens", "user_token.csv");
     private static final String[] header = {"id", "accessToken", "refreshToken"};
 
     public void writeData(long userId, String accessToken, String refreshToken) throws IOException {

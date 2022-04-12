@@ -31,7 +31,7 @@ public class FillingProfileHandler implements UserInputHandler {
     private final RestTemplateService restTemplateService;
     private final ReplyMessageService replyMessageService;
     private final KeyboardService keyboardService;
-    private final OpenCsvService openCsvService;
+    //private final OpenCsvService openCsvService;
     private final UserDataCache userDataCache;
 
     @Override
@@ -46,7 +46,7 @@ public class FillingProfileHandler implements UserInputHandler {
         switch (userProfileState) {
             case EMPTY_PROFILE:
                 userProfileData.setChatId(chatId);
-                userDataCache.setUserProfileData(userId, userProfileData);
+                /*userDataCache.setUserProfileData(userId, userProfileData);*/
                 userProfileData.setProfileState(UserProfileState.SET_GENDER);
                 return replyMessageService.sendPredeterminedMessage(
                         chatId, "reply.fill.askGender", Keyboard.GENDER_SELECT);
@@ -98,10 +98,10 @@ public class FillingProfileHandler implements UserInputHandler {
     @SneakyThrows
     private void processUserProfileData(UserProfileData userProfileData) {
         UserProfileDto userProfileDto = restTemplateService.createUserProfile(userProfileData);
-        openCsvService.writeData(
+/*        openCsvService.writeData(
                 userProfileDto.getChatId(),
                 userProfileDto.getTokens().get("accessToken"),
-                userProfileDto.getTokens().get("refreshToken"));
+                userProfileDto.getTokens().get("refreshToken"));*/
         userProfileData.setChatId(userProfileDto.getChatId());
         userProfileData.setName(userProfileDto.getName());
         userProfileData.setSex(userProfileDto.getSex());

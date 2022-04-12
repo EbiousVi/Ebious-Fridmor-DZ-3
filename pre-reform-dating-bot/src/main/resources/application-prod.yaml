@@ -9,7 +9,7 @@ telegram:
   botToken: ${BOT_TOKEN}
 
 outer:
-  dating-server: http://localhost:6064
+  dating-server: http://server:6064
 
 credentials:
   pass: foo-bar-bazz

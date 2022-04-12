@@ -31,7 +31,7 @@ public class UserDataCache {
     @SneakyThrows
     @PostConstruct
     private void postConstruct() {
-        List<String[]> data = openCsvService.readData();
+/*        List<String[]> data = openCsvService.readData();
         for (int i = 1; i < data.size(); i++) {
             String[] userData = data.get(i);
             long userId = Long.parseLong(userData[0]);
@@ -42,7 +42,7 @@ public class UserDataCache {
             userProfileData.setChatId(userId);
             userProfileData.setTokens(tokens);
             userProfileDataMap.put(userId, userProfileData);
-        }
+        }*/
     }
 
     public BotState getUserCurrentBotState(long userId) {
@@ -73,23 +73,27 @@ public class UserDataCache {
     }
 
     public void fillUserDataCacheForUser(long userId) {
-        if (userProfileDataMap.get(userId) != null) {
-            if (userProfileDataMap.get(userId).getProfileState() == UserProfileState.EMPTY_PROFILE) {
-                UserProfileDto userProfileDto = restTemplateService.getUserProfile(userProfileDataMap.get(userId));
-                if (userProfileDto != null) {
-                    userBotStateMap.put(userId, BotState.MAIN_MENU);
-                    userProfileDataMap.put(userId, UserProfileData.builder()
-                            .chatId(userProfileDto.getChatId())
-                            .name(userProfileDto.getName())
-                            .sex(userProfileDto.getSex())
-                            .description(userProfileDto.getDescription())
-                            .avatar(userProfileDto.getAvatar())
-                            .preferences(userProfileDto.getPreferences())
-                            .profileState(UserProfileState.COMPLETED_PROFILE)
-                            .tokens(userProfileDataMap.get(userId).getTokens())
-                            .build());
-                }
+        if (userProfileDataMap.get(userId) == null) {
+            UserProfileDto userProfileDto = restTemplateService.getUserProfile(userId);
+            if (userProfileDto != null) {
+                userBotStateMap.put(userId, BotState.MAIN_MENU);
+                userProfileDataMap.put(userId, UserProfileData.builder()
+                        .chatId(userProfileDto.getChatId())
+                        .name(userProfileDto.getName())
+                        .sex(userProfileDto.getSex())
+                        .description(userProfileDto.getDescription())
+                        .avatar(userProfileDto.getAvatar())
+                        .preferences(userProfileDto.getPreferences())
+                        .profileState(UserProfileState.COMPLETED_PROFILE)
+                        .tokens(userProfileDto.getTokens())
+                        .build());
+            } else {
+                userProfileDataMap.put(userId, UserProfileData.builder()
+                        .chatId(userId)
+                        .profileState(UserProfileState.EMPTY_PROFILE)
+                        .build());
             }
         }
+
     }
 }

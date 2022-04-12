@@ -2,6 +2,7 @@ package ru.liga.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import ru.liga.dto.LoginDto;
 import ru.liga.dto.ProfileDto;
 import ru.liga.dto.UserProfileDto;
 import ru.liga.model.UserProfileData;
@@ -20,14 +22,18 @@ import java.util.LinkedList;
 @Service
 @RequiredArgsConstructor
 public class RestTemplateService {
+
     private static final String TOKEN_PREFIX = "Bearer ";
-    private static final String SERVER_URL = "http://localhost:6064/dating-server/";
     private static final String AUTHORIZATION = "Authorization";
     private final RestTemplate restTemplate;
+    @Value("${outer.dating-server}")
+    private String server;
+    @Value("${credentials.pass}")
+    private String credentials;
 
     public UserProfileDto createUserProfile(UserProfileData userProfile) {
         HttpEntity<UserProfileData> request = new HttpEntity<>(userProfile);
-        String url = SERVER_URL + "profiles";
+        String url = server + "/dating-server/profiles";
         ResponseEntity<UserProfileDto> response = restTemplate.postForEntity(url, request, UserProfileDto.class);
         if (response.getStatusCode().is2xxSuccessful()) {
             return response.getBody();
@@ -36,24 +42,25 @@ public class RestTemplateService {
         }
     }
 
-    public UserProfileDto getUserProfile(UserProfileData userProfileData) {
-        String url = SERVER_URL + "profile";
+    public UserProfileDto getUserProfile(long userId) {
+        String url = server + "/dating-server/auth/login";
         try {
+            HttpEntity<LoginDto> request = new HttpEntity<>(new LoginDto(String.valueOf(userId), credentials));
             ResponseEntity<UserProfileDto> response = restTemplate.exchange(
-                    url, HttpMethod.GET, getAuthorizationHeader(userProfileData), UserProfileDto.class);
+                    url, HttpMethod.POST, request, UserProfileDto.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 return response.getBody();
             } else {
-                throw new RuntimeException("get user profile request return bad response!");
+                return null;
             }
         } catch (RestClientException e) {
-            log.error("server is not available");
-            throw new RestClientException("server is not available");
+            log.info("Potential new user registration", e);
+            return null;
         }
     }
 
     public UserProfileDto updateUserProfile(UserProfileData userProfile) {
-        String url = SERVER_URL + "profile";
+        String url = server + "/dating-server/profile";
         HttpHeaders headers = getAuthorizationHeader(userProfile).getHeaders();
         HttpEntity<UserProfileData> request = new HttpEntity<>(userProfile, headers);
         try {
@@ -71,7 +78,7 @@ public class RestTemplateService {
     }
 
     public LinkedList<ProfileDto> getSearchList(UserProfileData userProfileData) {
-        String url = SERVER_URL + "search";
+        String url = server + "/dating-server/search";
         try {
             ResponseEntity<ProfileDto[]> response = restTemplate.exchange(
                     url, HttpMethod.GET, getAuthorizationHeader(userProfileData), ProfileDto[].class);
@@ -89,7 +96,7 @@ public class RestTemplateService {
     }
 
     public LinkedList<ProfileDto> getFavoriteList(UserProfileData userProfileData) {
-        String url = SERVER_URL + "favourites";
+        String url = server + "/dating-server/favourites";
         try {
             ResponseEntity<ProfileDto[]> response = restTemplate.exchange(
                     url, HttpMethod.GET, getAuthorizationHeader(userProfileData), ProfileDto[].class);
@@ -107,7 +114,7 @@ public class RestTemplateService {
     }
 
     public void setFavoriteUser(UserProfileData userProfileData, Long toChatId) {
-        String url = SERVER_URL + "favourites/" + toChatId;
+        String url = server + "/dating-server/favourites/" + toChatId;
         try {
             ResponseEntity<ProfileDto[]> response = restTemplate.exchange(
                     url, HttpMethod.GET, getAuthorizationHeader(userProfileData), ProfileDto[].class);
